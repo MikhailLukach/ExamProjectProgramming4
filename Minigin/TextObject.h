@@ -1,4 +1,4 @@
-#pragma once
+/*#pragma once
 #include <string>
 #include <memory>
 #include "GameObject.h"
@@ -11,7 +11,7 @@ namespace dae
 	class TextObject final : public GameObject
 	{
 	public:
-		void Update() override;
+		void Update(float deltaTime) override;
 		void Render() const override;
 
 		void SetText(const std::string& text);
@@ -30,4 +30,4 @@ namespace dae
 		std::shared_ptr<Font> m_font;
 		std::shared_ptr<Texture2D> m_textTexture;
 	};
-}
+}*/

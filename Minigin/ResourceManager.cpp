@@ -1,6 +1,7 @@
 #include <stdexcept>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
+#include <iostream>
 #include "ResourceManager.h"
 #include "Renderer.h"
 #include "Texture2D.h"
@@ -16,6 +17,17 @@ void dae::ResourceManager::Init(const std::filesystem::path& dataPath)
 	{
 		throw std::runtime_error(std::string("Failed to load support for fonts: ") + SDL_GetError());
 	}
+
+	if (!(IMG_Init(IMG_INIT_PNG | IMG_INIT_JPG)))
+	{
+		throw std::runtime_error(std::string("Failed to initialize SDL_image: ") + IMG_GetError());
+	}
+
+	SDL_version compiled;
+	SDL_IMAGE_VERSION(&compiled);
+	std::cout << "Using SDL_image version: " << (int)compiled.major << "." << (int)compiled.minor << "." << (int)compiled.patch << std::endl;
+
+	std::cout << "ResourceManager initialized. Data path: " << m_dataPath << std::endl;
 }
 
 std::shared_ptr<dae::Texture2D> dae::ResourceManager::LoadTexture(const std::string& file)

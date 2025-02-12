@@ -1,7 +1,8 @@
 #pragma once
 #include <string>
+#include <SDL_ttf.h>
 
-struct _TTF_Font;
+//struct _TTF_Font;
 namespace dae
 {
 	/**
@@ -10,7 +11,7 @@ namespace dae
 	class Font final
 	{
 	public:
-		_TTF_Font* GetFont() const;
+		TTF_Font* GetFont() const;
 		explicit Font(const std::string& fullPath, unsigned int size);
 		~Font();
 
@@ -19,6 +20,6 @@ namespace dae
 		Font & operator= (const Font &) = delete;
 		Font & operator= (const Font &&) = delete;
 	private:
-		_TTF_Font* m_font;
+		TTF_Font* m_font;
 	};
 }
