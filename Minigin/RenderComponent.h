@@ -4,7 +4,7 @@
 #include "ResourceManager.h"
 #include "Transform.h"
 #include <memory>
-
+//both for render and text component, pass a transform component and take the location from it
 namespace dae
 {
 	class RenderComponent : public Component

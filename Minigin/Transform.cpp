@@ -8,7 +8,7 @@ void dae::Transform::SetPosition(const float x, const float y, const float z)
 	m_position.z = z;
 }
 
-void dae::Transform::Update([[maybe_unused]] float deltaTime)
+void dae::Transform::Update(float)
 {
-
+	
 }

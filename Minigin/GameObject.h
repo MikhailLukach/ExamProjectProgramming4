@@ -11,20 +11,16 @@
 
 namespace dae
 {
-	//class Texture2D;
 	class Component;
 	// todo: this should become final. Done
 	class GameObject final
 	{
 	public:
-		virtual void Update(float deltaTime);
-		virtual void Render() const;
-
-		//void SetTexture(const std::string& filename);
-		//void SetPosition(float x, float y);
+		void Update(float deltaTime);
+		void Render() const;
 
 		GameObject() = default;
-		virtual ~GameObject();
+		~GameObject();
 
 		GameObject(const GameObject& other) = delete;
 		GameObject(GameObject&& other) = delete;
@@ -45,9 +41,6 @@ namespace dae
 
 
 	private:
-		//Transform m_transform{};
-		// todo: mmm, every gameobject has a texture? Is that correct?
-		//std::shared_ptr<Texture2D> m_texture{};
 		std::unordered_map<std::type_index, std::shared_ptr<Component>> m_components;
 	};
 
@@ -63,7 +56,7 @@ namespace dae
 			return std::static_pointer_cast<T>(m_components[typeIndex]);
 		}
 		auto component = std::make_shared<T>(std::forward<Args>(args)...);
-		component->SetOwner(this);
+		//component->SetOwner(this);
 		m_components[typeIndex] = component;
 
 		return component;
@@ -76,7 +69,7 @@ namespace dae
 
 		if (m_components.find(typeIndex) != m_components.end())
 		{
-			m_components.erase(typeIndex);
+			m_components.erase(typeIndex); //avoid using erase
 		}
 	}
 
