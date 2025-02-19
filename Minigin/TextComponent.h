@@ -4,6 +4,7 @@
 #include "Texture2D.h"
 #include "Renderer.h"
 #include "ResourceManager.h"
+#include "Transform.h"
 #include <string>
 #include <memory>
 
@@ -12,11 +13,11 @@ namespace dae
 	class TextComponent : public Component
 	{
 	public:
-		TextComponent(const std::string& text, const std::string& fontPath, unsigned int fontSize);
+		TextComponent(std::shared_ptr<Transform> transform, const std::string& text, const std::string& fontPath, unsigned int fontSize);
 		void Render() const override;
 		void SetText(const std::string& newText);
 		void SetColor(SDL_Color color);
-		void SetPosition(float x, float y);
+		//void SetPosition(float x, float y);
 	private:
 		void UpdateTexture();
 
@@ -24,7 +25,8 @@ namespace dae
 		SDL_Color m_color = { 255, 255, 255, 255 };
 		std::shared_ptr<Font> m_font;
 		std::shared_ptr<Texture2D> m_texture;
+		std::weak_ptr<Transform> m_pTransform;
 
-		float m_x = 0.0f, m_y = 0.0f;
+		//float m_x = 0.0f, m_y = 0.0f;
 	};
 }
