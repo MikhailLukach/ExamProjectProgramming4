@@ -2,7 +2,8 @@
 #include "GameObject.h"
 #include "ResourceManager.h"
 #include "Renderer.h"
-
+//Don't assume that gameobject doesn't have a transform, it will always have a transform
+//otherwise too many if checks
 dae::GameObject::~GameObject() = default;
 
 void dae::GameObject::Update(float deltaTime)
@@ -33,8 +34,11 @@ std::shared_ptr<dae::GameObject> dae::GameObject::GetParent() const
 
 void dae::GameObject::SetParent(std::shared_ptr<GameObject> newParent, bool keepWorldPosition)
 {
-	if (IsChild(std::const_pointer_cast<const GameObject>(newParent)) || newParent.get() == this || m_pParent.lock() == newParent)
+	if (IsChild(std::const_pointer_cast<const GameObject>(newParent)) || newParent.get() == this
+		|| m_pParent.lock() == newParent)
+	{
 		return;
+	}
 
 	auto transform = GetComponent<Transform>();
 
@@ -97,7 +101,9 @@ std::shared_ptr<dae::GameObject> dae::GameObject::GetChildAt(size_t index) const
 void dae::GameObject::RemoveChild(std::shared_ptr<GameObject> child)
 {
 	if (!child || child->m_pParent.lock().get() != this)
+	{
 		return;
+	}
 
 	m_pVecChildren.erase(std::remove(m_pVecChildren.begin(), m_pVecChildren.end(), child), m_pVecChildren.end());
 

@@ -18,24 +18,23 @@ void dae::RotatorComponent::Update(float deltaTime)
         return;
     glm::vec3 center = m_center;
     GameObject* owner = GetOwner();
-    if (!owner)
+    //owner will always exist get rid of it
+    //a sharedptr is not necessary, don't make one
+    /*std::shared_ptr<GameObject> parent = GetOwner()->GetParent();
+    if (parent)
     {
-        //std::cerr << owner << "RotatorComponent: GetOwner() returned nullptr!\n";
-        return;
-    }
-    else
+        center = parent->GetWorldPosition();
+    }*/
+    if(owner->GetParent())
     {
-        std::shared_ptr<GameObject> parent = GetOwner()->GetParent();
-
-        if (parent)
-        {
-            center = parent->GetWorldPosition();
-        }
+        center = owner->GetParent()->GetWorldPosition();
     }
 
     m_angle += m_speed * deltaTime;
-    if (m_angle >= 360.0f)
-        m_angle -= 360.0f;
+    if (m_angle >= 360.f)
+        m_angle -= 360.f;
+    else if (m_angle <= 360.f)
+        m_angle += 360.f;
 
     float radians = glm::radians(m_angle);
     float x = center.x + m_radius * cos(radians);

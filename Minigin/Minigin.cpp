@@ -86,7 +86,6 @@ void dae::Minigin::Run(const std::function<void()>& load)
 	auto& sceneManager = SceneManager::GetInstance();
 	auto& input = InputManager::GetInstance();
 
-	// todo: this update loop could use some work. DONE.
 	bool doContinue = true;
 	constexpr int msPerFrame = 16;
 	auto lastTime = high_resolution_clock::now();
