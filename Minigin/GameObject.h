@@ -9,6 +9,7 @@
 #include "TextComponent.h"
 #include "FPSComponent.h"
 #include "RotatorComponent.h"
+#include "CacheTestComponent.h"
 #include "Component.h"
 
 namespace dae

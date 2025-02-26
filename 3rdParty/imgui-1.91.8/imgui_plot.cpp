@@ -9,9 +9,9 @@ static float rescale(float t, float min, float max, PlotConfig::Scale::Type type
     case PlotConfig::Scale::Linear:
         return t;
     case PlotConfig::Scale::Log10:
-        return log10(ImLerp(min, max, t) / min) / log10(max / min);
+        return static_cast<float>(log10(ImLerp(min, max, t) / min) / log10(max / min));
     }
-    return 0;
+    return 0.f;
 }
 
 // [0..1] -> [0..1]
@@ -20,14 +20,14 @@ static float rescale_inv(float t, float min, float max, PlotConfig::Scale::Type 
     case PlotConfig::Scale::Linear:
         return t;
     case PlotConfig::Scale::Log10:
-        return (pow(max/min, t) * min - min) / (max - min);
+        return static_cast<float>((pow(max/min, t) * min - min) / (max - min));
     }
-    return 0;
+    return 0.f;
 }
 
 static int cursor_to_idx(const ImVec2& pos, const ImRect& bb, const PlotConfig& conf, float x_min, float x_max) {
     const float t = ImClamp((pos.x - bb.Min.x) / (bb.Max.x - bb.Min.x), 0.0f, 0.9999f);
-    const int v_idx = (int)(rescale_inv(t, x_min, x_max, conf.scale.type) * (conf.values.count - 1));
+    const int v_idx = static_cast<int>(rescale_inv(t, x_min, x_max, conf.scale.type) * (conf.values.count - 1));
     IM_ASSERT(v_idx >= 0 && v_idx < conf.values.count);
 
     return v_idx;
@@ -81,11 +81,11 @@ PlotStatus Plot(const char* label, const PlotConfig& conf) {
         res_w -= 1;
         int item_count = conf.values.count - 1;
 
-        float x_min = conf.values.offset;
-        float x_max = conf.values.offset + conf.values.count - 1;
+        float x_min = static_cast<float>(conf.values.offset);
+        float x_max = static_cast<float>(conf.values.offset + conf.values.count - 1);
         if (conf.values.xs) {
-            x_min = conf.values.xs[size_t(x_min)];
-            x_max = conf.values.xs[size_t(x_max)];
+            x_min = static_cast<float>(conf.values.xs[size_t(x_min)]);
+            x_max = static_cast<float>(conf.values.xs[size_t(x_max)]);
         }
 
         // Tooltip on hover
@@ -93,28 +93,28 @@ PlotStatus Plot(const char* label, const PlotConfig& conf) {
         if (conf.tooltip.show && hovered && inner_bb.Contains(g.IO.MousePos)) {
             const int v_idx = cursor_to_idx(g.IO.MousePos, inner_bb, conf, x_min, x_max);
             const size_t data_idx = conf.values.offset + (v_idx % conf.values.count);
-            const float x0 = conf.values.xs ? conf.values.xs[data_idx] : v_idx;
-            const float y0 = ys_list[0][data_idx]; // TODO: tooltip is only shown for the first y-value!
+            const float x0 = conf.values.xs ? static_cast<float>(conf.values.xs[data_idx]) : v_idx;
+            const float y0 = static_cast<float>(ys_list[0][data_idx]); // TODO: tooltip is only shown for the first y-value!
             SetTooltip(conf.tooltip.format, x0, y0);
             v_hovered = v_idx;
         }
 
-        const float t_step = 1.0f / (float)res_w;
+        const float t_step = 1.0f / static_cast<float>(res_w);
         const float inv_scale = (conf.scale.min == conf.scale.max) ?
                                     0.0f : (1.0f / (conf.scale.max - conf.scale.min));
 
         if (conf.grid_x.show) {
-            int y0 = inner_bb.Min.y;
-            int y1 = inner_bb.Max.y;
+            int y0 = static_cast<int>(inner_bb.Min.y);
+            int y1 = static_cast<int>(inner_bb.Max.y);
             switch (conf.scale.type) {
             case PlotConfig::Scale::Linear: {
-                float cnt = conf.values.count / (conf.grid_x.size / conf.grid_x.subticks);
+                float cnt = static_cast<float>(conf.values.count) / (conf.grid_x.size / conf.grid_x.subticks);
                 float inc = 1.f / cnt;
-                for (int i = 0; i <= cnt; ++i) {
-                    int x0 = ImLerp(inner_bb.Min.x, inner_bb.Max.x, i * inc);
+                for (int i = 0; i <= static_cast<float>(cnt); ++i) {
+                    int x0 = static_cast<int>(ImLerp(inner_bb.Min.x, inner_bb.Max.x, i * inc));
                     window->DrawList->AddLine(
-                        ImVec2(x0, y0),
-                        ImVec2(x0, y1),
+                        ImVec2(static_cast<float>(x0), static_cast<float>(y0)),
+                        ImVec2(static_cast<float>(x0), static_cast<float>(y1)),
                         IM_COL32(200, 200, 200, (i % conf.grid_x.subticks) ? 128 : 255));
                 }
                 break;
@@ -126,11 +126,11 @@ PlotStatus Plot(const char* label, const PlotConfig& conf) {
                         float x = start * i;
                         if (x < x_min) continue;
                         if (x > x_max) break;
-                        float t = log10(x / x_min) / log10(x_max / x_min);
-                        int x0 = ImLerp(inner_bb.Min.x, inner_bb.Max.x, t);
+                        float t = static_cast<float>(log10(x / x_min) / log10(x_max / x_min));
+                        int x0 = static_cast<int>(ImLerp(inner_bb.Min.x, inner_bb.Max.x, t));
                         window->DrawList->AddLine(
-                            ImVec2(x0, y0),
-                            ImVec2(x0, y1),
+                            ImVec2(static_cast<float>(x0), static_cast<float>(y0)),
+                            ImVec2(static_cast<float>(x0), static_cast<float>(y1)),
                             IM_COL32(200, 200, 200, (i > 1) ? 128 : 255));
                     }
                     start *= 10.f;
@@ -140,15 +140,15 @@ PlotStatus Plot(const char* label, const PlotConfig& conf) {
             }
         }
         if (conf.grid_y.show) {
-            int x0 = inner_bb.Min.x;
-            int x1 = inner_bb.Max.x;
+            int x0 = static_cast<int>(inner_bb.Min.x);
+            int x1 = static_cast<int>(inner_bb.Max.x);
             float cnt = (conf.scale.max - conf.scale.min) / (conf.grid_y.size / conf.grid_y.subticks);
             float inc = 1.f / cnt;
             for (int i = 0; i <= cnt; ++i) {
-                int y0 = ImLerp(inner_bb.Min.y, inner_bb.Max.y, i * inc);
+                int y0 = static_cast<int>(ImLerp(inner_bb.Min.y, inner_bb.Max.y, i * inc));
                 window->DrawList->AddLine(
-                    ImVec2(x0, y0),
-                    ImVec2(x1, y0),
+                    ImVec2(static_cast<float>(x0), static_cast<float>(y0)),
+                    ImVec2(static_cast<float>(x1), static_cast<float>(y0)),
                     IM_COL32(0, 0, 0, (i % conf.grid_y.subticks) ? 16 : 64));
             }
         }
@@ -216,7 +216,7 @@ PlotStatus Plot(const char* label, const PlotConfig& conf) {
                     uint32_t end = start;
                     if (conf.selection.sanitize_fn)
                         end = conf.selection.sanitize_fn(end - start) + start;
-                    if (end < conf.values.offset + conf.values.count) {
+                    if (static_cast<int>(end) < conf.values.offset + conf.values.count) {
                         *conf.selection.start = start;
                         *conf.selection.length = end - start;
                         status = PlotStatus::selection_updated;
@@ -232,7 +232,7 @@ PlotStatus Plot(const char* label, const PlotConfig& conf) {
                     if (end > start) {
                         if (conf.selection.sanitize_fn)
                             end = conf.selection.sanitize_fn(end - start) + start;
-                        if (end < conf.values.offset + conf.values.count) {
+                        if (static_cast<int>(end) < conf.values.offset + conf.values.count) {
                             *conf.selection.length = end - start;
                             status = PlotStatus::selection_updated;
                         }
@@ -241,7 +241,7 @@ PlotStatus Plot(const char* label, const PlotConfig& conf) {
                     ClearActiveID();
                 }
             }
-            float fSelectionStep = 1.0 / item_count;
+            float fSelectionStep = static_cast<float>(1.0 / item_count);
             ImVec2 pos0 = ImLerp(inner_bb.Min, inner_bb.Max,
                                  ImVec2(fSelectionStep * *conf.selection.start, 0.f));
             ImVec2 pos1 = ImLerp(inner_bb.Min, inner_bb.Max,
