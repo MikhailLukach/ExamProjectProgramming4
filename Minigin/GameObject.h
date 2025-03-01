@@ -37,6 +37,9 @@ namespace dae
 
 		void RemoveChild(std::shared_ptr<GameObject> child);
 
+		void MarkForDeletion() { m_MarkedForDeletion = true; }
+		bool IsMarkedForDeletion() const { return m_MarkedForDeletion; }
+
 		//void SetLocalPosition(const glm::vec3& pos);
 		//glm::vec3 GetWorldPosition();
 		//void UpdateWorldTransform();
@@ -66,6 +69,7 @@ namespace dae
 		glm::vec3 m_scale{ 1.0f, 1.0f, 1.0f };
 
 		bool m_transformDirty = true;
+		bool m_MarkedForDeletion{ false };
 
 		void MarkTransformDirty();
 	};
