@@ -24,7 +24,7 @@ namespace dae
 
 		if (auto transform = m_pTransform.lock())
 		{
-			glm::vec3 position = transform->GetPosition();
+			glm::vec3 position = transform->GetLocalPosition();
 			Renderer::GetInstance().RenderTexture(*m_texture, position.x, position.y);
 		}
 		else

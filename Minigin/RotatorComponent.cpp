@@ -27,7 +27,7 @@ void dae::RotatorComponent::Update(float deltaTime)
     }*/
     if(owner->GetParent())
     {
-        center = owner->GetParent()->GetWorldPosition();
+        center = owner->GetParent()->GetTransform()->GetWorldPosition();
     }
 
     m_angle += m_speed * deltaTime;

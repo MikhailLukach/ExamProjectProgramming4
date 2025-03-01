@@ -34,7 +34,7 @@ void dae::Transform::SetWorldPosition(const glm::vec3& pos)
 {
 	if (auto owner = GetOwner()->GetParent())
 	{
-		m_position = pos - owner->GetWorldPosition();
+		m_position = pos - owner->GetTransform()->GetWorldPosition();
 	}
 	else
 	{
@@ -55,7 +55,7 @@ void dae::Transform::UpdateWorldPosition()
 {
 	if (auto owner = GetOwner()->GetParent())
 	{
-		m_worldPosition = owner->GetWorldPosition() + m_position;
+		m_worldPosition = owner->GetTransform()->GetWorldPosition() + m_position;
 	}
 	else
 	{

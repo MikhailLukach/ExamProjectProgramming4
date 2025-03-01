@@ -37,9 +37,9 @@ namespace dae
 
 		void RemoveChild(std::shared_ptr<GameObject> child);
 
-		void SetLocalPosition(const glm::vec3& pos);
-		glm::vec3 GetWorldPosition();
-		void UpdateWorldTransform();
+		//void SetLocalPosition(const glm::vec3& pos);
+		//glm::vec3 GetWorldPosition();
+		//void UpdateWorldTransform();
 
 		std::shared_ptr<Transform> GetTransform() const { return m_pTransform; }
 
