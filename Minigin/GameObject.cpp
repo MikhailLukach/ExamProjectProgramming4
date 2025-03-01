@@ -2,6 +2,12 @@
 #include "GameObject.h"
 #include "ResourceManager.h"
 #include "Renderer.h"
+dae::GameObject::GameObject()
+{
+	m_pTransform = std::make_shared<Transform>();
+	m_pTransform->SetOwner(this);
+}
+
 //Don't assume that gameobject doesn't have a transform, it will always have a transform
 //otherwise too many if checks
 dae::GameObject::~GameObject() = default;
@@ -26,7 +32,6 @@ std::shared_ptr<dae::GameObject> dae::GameObject::GetParent() const
 {
 	if (m_pParent.expired())
 	{
-		//std::cerr << "GameObject: Parent has expired!\n";
 		return nullptr;
 	}
 	return m_pParent.lock();
@@ -40,20 +45,17 @@ void dae::GameObject::SetParent(std::shared_ptr<GameObject> newParent, bool keep
 		return;
 	}
 
-	auto transform = GetComponent<Transform>();
+	//auto transform = GetComponent<Transform>();
 
 	if (!newParent)
 	{
-		if (transform)
-		{
-			transform->SetWorldPosition(transform->GetWorldPosition()); // Keep world position
-		}
+		m_pTransform->SetWorldPosition(m_pTransform->GetWorldPosition()); // Keep world position
 	}
 	else
 	{
-		if (transform && keepWorldPosition)
+		if (keepWorldPosition)
 		{
-			transform->SetPosition(transform->GetWorldPosition() - newParent->GetWorldPosition());
+			m_pTransform->SetPosition(m_pTransform->GetWorldPosition() - newParent->GetWorldPosition());
 		}
 	}
 
@@ -114,11 +116,9 @@ void dae::GameObject::SetLocalPosition(const glm::vec3& pos)
 {
 	//m_localPosition = pos;
 	//MarkTransformDirty();
-	auto transform = GetComponent<Transform>();
-	if (transform)
-	{
-		transform->SetPosition(pos.x, pos.y, pos.z);
-	}
+	//auto transform = GetComponent<Transform>();
+	//m_transform->SetPosition(pos.x, pos.y, pos.z);
+	m_pTransform->SetPosition(pos.x, pos.y, pos.z);
 }
 
 glm::vec3 dae::GameObject::GetWorldPosition()
@@ -128,8 +128,9 @@ glm::vec3 dae::GameObject::GetWorldPosition()
 		//UpdateWorldTransform();
 	//}
 	//return m_worldPosition;
-	auto transform = GetComponent<Transform>();
-	return transform ? transform->GetWorldPosition() : glm::vec3(0, 0, 0);
+	//auto transform = GetComponent<Transform>();
+	//return transform ? transform->GetWorldPosition() : glm::vec3(0, 0, 0);
+	return m_pTransform->GetWorldPosition();
 }
 
 void dae::GameObject::UpdateWorldTransform()
@@ -141,11 +142,12 @@ void dae::GameObject::UpdateWorldTransform()
 
 	if (auto parent = m_pParent.lock())
 	{
-		m_worldPosition = parent->GetWorldPosition() + m_localPosition;
+		m_pTransform->SetWorldPosition(parent->GetTransform()->GetWorldPosition() + m_pTransform->GetLocalPosition());
 	}
 	else
 	{
-		m_worldPosition = m_localPosition;
+		m_pTransform->SetWorldPosition(m_pTransform->GetLocalPosition());
+		//m_worldPosition = m_localPosition;
 	}
 
 	m_transformDirty = false;

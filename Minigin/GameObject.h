@@ -21,7 +21,7 @@ namespace dae
 		void Update(float deltaTime);
 		void Render() const;
 
-		GameObject() = default;
+		GameObject();
 		~GameObject();
 
 		GameObject(const GameObject& other) = delete;
@@ -41,6 +41,8 @@ namespace dae
 		glm::vec3 GetWorldPosition();
 		void UpdateWorldTransform();
 
+		std::shared_ptr<Transform> GetTransform() const { return m_pTransform; }
+
 		template <typename T, typename... Args>
 		std::shared_ptr<T> AddComponent(Args&&... args);
 
@@ -56,6 +58,8 @@ namespace dae
 		std::weak_ptr<GameObject> m_pParent;
 		std::vector<std::shared_ptr<GameObject>> m_pVecChildren;
 		std::unordered_map<std::type_index, std::shared_ptr<Component>> m_components;
+		std::shared_ptr<Transform> m_pTransform;
+
 		glm::vec3 m_localPosition{ 0.0f, 0.0f, 0.0f };
 		glm::vec3 m_worldPosition{ 0.0f, 0.0f, 0.0f };
 		float m_rotation = 0.0f;

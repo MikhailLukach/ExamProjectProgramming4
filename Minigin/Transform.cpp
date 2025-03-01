@@ -11,6 +11,11 @@ const glm::vec3& dae::Transform::GetWorldPosition()
 	return m_worldPosition;
 }
 
+const glm::vec3& dae::Transform::GetLocalPosition()
+{
+	return m_position;
+}
+
 void dae::Transform::SetPosition(const float x, const float y, const float z)
 {
 	m_position.x = x;
