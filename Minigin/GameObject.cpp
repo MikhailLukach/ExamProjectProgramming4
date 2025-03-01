@@ -112,47 +112,6 @@ void dae::GameObject::RemoveChild(std::shared_ptr<GameObject> child)
 	child->m_pParent.reset();
 }
 
-/*void dae::GameObject::SetLocalPosition(const glm::vec3& pos)
-{
-	//m_localPosition = pos;
-	//MarkTransformDirty();
-	//auto transform = GetComponent<Transform>();
-	//m_transform->SetPosition(pos.x, pos.y, pos.z);
-	m_pTransform->SetPosition(pos.x, pos.y, pos.z);
-}
-
-glm::vec3 dae::GameObject::GetWorldPosition()
-{
-	//if (m_transformDirty)
-	//{
-		//UpdateWorldTransform();
-	//}
-	//return m_worldPosition;
-	//auto transform = GetComponent<Transform>();
-	//return transform ? transform->GetWorldPosition() : glm::vec3(0, 0, 0);
-	return m_pTransform->GetWorldPosition();
-}
-
-void dae::GameObject::UpdateWorldTransform()
-{
-	if (!m_transformDirty)
-	{
-		return;
-	}
-
-	if (auto parent = m_pParent.lock())
-	{
-		m_pTransform->SetWorldPosition(parent->GetTransform()->GetWorldPosition() + m_pTransform->GetLocalPosition());
-	}
-	else
-	{
-		m_pTransform->SetWorldPosition(m_pTransform->GetLocalPosition());
-		//m_worldPosition = m_localPosition;
-	}
-
-	m_transformDirty = false;
-}*/
-
 void dae::GameObject::MarkTransformDirty()
 {
 	if (!m_transformDirty)
