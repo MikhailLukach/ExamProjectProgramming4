@@ -11,7 +11,7 @@ namespace dae
 		explicit FPSComponent(std::shared_ptr<TextComponent> textComponent);
 		void Update(float deltaTime) override;
 	private:
-		std::shared_ptr<TextComponent> m_pTextComponent;
+		std::weak_ptr<TextComponent> m_pTextComponent;
 		float m_ElapsedTime = 0.0f;
 		int m_FrameCount = 0;
 	};

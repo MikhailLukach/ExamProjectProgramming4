@@ -13,7 +13,7 @@ namespace dae
 	class TextComponent : public Component
 	{
 	public:
-		TextComponent(std::shared_ptr<Transform> transform, const std::string& text, const std::string& fontPath, unsigned int fontSize);
+		TextComponent(const std::string& text, const std::string& fontPath, unsigned int fontSize);
 		void Render() const override;
 		void SetText(const std::string& newText);
 		void SetColor(SDL_Color color);
@@ -25,7 +25,6 @@ namespace dae
 		SDL_Color m_color = { 255, 255, 255, 255 };
 		std::shared_ptr<Font> m_font;
 		std::shared_ptr<Texture2D> m_texture;
-		std::weak_ptr<Transform> m_pTransform;
 
 		//float m_x = 0.0f, m_y = 0.0f;
 	};

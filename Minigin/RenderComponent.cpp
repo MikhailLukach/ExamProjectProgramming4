@@ -5,8 +5,7 @@
 
 namespace dae
 {
-	dae::RenderComponent::RenderComponent(std::shared_ptr<Transform> transform, const std::string& texturePath)
-		:m_pTransform(transform)
+	dae::RenderComponent::RenderComponent(const std::string& texturePath)
 	{
 		if (!texturePath.empty())
 		{
@@ -22,15 +21,8 @@ namespace dae
 			return;
 		}
 
-		if (auto transform = m_pTransform.lock())
-		{
-			glm::vec3 position = transform->GetLocalPosition();
-			Renderer::GetInstance().RenderTexture(*m_texture, position.x, position.y);
-		}
-		else
-		{
-			std::cerr << "Warning: TransformComponent is expired!\n";
-		}
+		glm::vec3 position = GetOwner()->GetTransform()->GetLocalPosition();
+		Renderer::GetInstance().RenderTexture(*m_texture, position.x, position.y);
 	}
 
 	void dae::RenderComponent::SetTexture(const std::string& texturePath)

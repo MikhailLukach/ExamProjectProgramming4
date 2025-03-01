@@ -1,7 +1,6 @@
 #pragma once
 #include <memory>
 #include <iostream>
-//#include "GameObject.h"
 
 namespace dae
 {
@@ -11,12 +10,19 @@ namespace dae
 	{
 	public:
 		virtual ~Component() = default;
-		virtual void Update([[maybe_unused]] float deltaTime) { } //fix this later, ok?
+		virtual void Update(float deltaTime) { (void)deltaTime; } 
 		virtual void Render() const {}
 
 		void SetOwner(GameObject* owner)
 		{ 
-			m_owner = owner;
+			if (m_owner == nullptr)
+			{
+				m_owner = owner;
+			}
+			else
+			{
+				std::cerr << "Warning: You are attempting to change component owner after assignment" << std::endl;
+			}
 		}
 		GameObject* GetOwner() const { return m_owner; }
 	protected:

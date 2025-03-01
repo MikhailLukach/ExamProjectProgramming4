@@ -2,7 +2,7 @@
 #include <iostream>
 
 dae::FPSComponent::FPSComponent(std::shared_ptr<TextComponent> textComponent)
-	:m_pTextComponent(std::move(textComponent))
+	:m_pTextComponent(textComponent)
 {
 }
 
@@ -13,9 +13,9 @@ void dae::FPSComponent::Update(float deltaTime)
     if (m_ElapsedTime >= 1.0f)
     {
         int fps = static_cast<int>(m_FrameCount / m_ElapsedTime);
-        if(m_pTextComponent)
+        if(auto textComp = m_pTextComponent.lock())
         {
-            m_pTextComponent->SetText("FPS: " + std::to_string(fps));
+            textComp->SetText("FPS: " + std::to_string(fps));
         }
 
         m_ElapsedTime = 0.0f;

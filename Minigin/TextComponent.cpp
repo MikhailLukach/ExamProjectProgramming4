@@ -4,8 +4,8 @@
 #include <SDL_ttf.h>
 #include <iostream>
 
-dae::TextComponent::TextComponent(std::shared_ptr<Transform> transform, const std::string& text, const std::string& fontPath, unsigned int fontSize)
-    :m_pTransform(transform), m_text(text)
+dae::TextComponent::TextComponent(const std::string& text, const std::string& fontPath, unsigned int fontSize)
+    :m_text(text)
 {
 	m_font = ResourceManager::GetInstance().LoadFont(fontPath, static_cast<uint8_t>(fontSize));
 	UpdateTexture();
@@ -19,15 +19,8 @@ void dae::TextComponent::Render() const
         return;
     }
 
-    if (auto transform = m_pTransform.lock())
-    {
-        glm::vec3 position = transform->GetLocalPosition();
-        Renderer::GetInstance().RenderTexture(*m_texture, position.x, position.y);
-    }
-    else
-    {
-        std::cerr << "TextComponent: TransformComponent is expired!\n";
-    }
+    glm::vec3 position = GetOwner()->GetTransform()->GetLocalPosition();
+    Renderer::GetInstance().RenderTexture(*m_texture, position.x, position.y);
 }
 
 void dae::TextComponent::SetText(const std::string& newText)
