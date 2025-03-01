@@ -21,13 +21,15 @@ void dae::Transform::SetPosition(const float x, const float y, const float z)
 	m_position.x = x;
 	m_position.y = y;
 	m_position.z = z;
-	m_transformDirty = true;
+	MarkTransformDirty();
+	//m_transformDirty = true;
 }
 
 void dae::Transform::SetPosition(const glm::vec3& pos)
 {
 	m_position = pos;
-	m_transformDirty = true;
+	MarkTransformDirty();
+	//m_transformDirty = true;
 }
 
 void dae::Transform::SetWorldPosition(const glm::vec3& pos)
@@ -40,7 +42,8 @@ void dae::Transform::SetWorldPosition(const glm::vec3& pos)
 	{
 		m_position = pos;
 	}
-	m_transformDirty = true;
+	MarkTransformDirty();
+	//m_transformDirty = true;
 }
 
 void dae::Transform::Update(float)
@@ -48,6 +51,20 @@ void dae::Transform::Update(float)
 	if (m_transformDirty)
 	{
 		UpdateWorldPosition();
+	}
+}
+
+void dae::Transform::MarkTransformDirty()
+{
+	if (!m_transformDirty)
+	{
+		m_transformDirty = true;
+
+		auto owner = GetOwner();
+		for (size_t i = 0; i < owner->GetChildCount(); ++i)
+		{
+			owner->GetChildAt(i)->GetTransform()->MarkTransformDirty();
+		}
 	}
 }
 

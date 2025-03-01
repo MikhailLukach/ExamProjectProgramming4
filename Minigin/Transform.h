@@ -20,6 +20,7 @@ namespace dae
 
 		bool m_transformDirty = true;
 
+		void MarkTransformDirty();
 		void UpdateWorldPosition();
 	};
 }
