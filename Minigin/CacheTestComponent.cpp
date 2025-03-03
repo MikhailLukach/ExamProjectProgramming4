@@ -1,5 +1,7 @@
 #include "CacheTestComponent.h"
 
+//make a render non-const loop specifically for ImGui
+//fix layout and how sampling is done, not literal number of sample but number of iterations
 struct Transform
 {
     float matrix[16] = {
@@ -265,16 +267,4 @@ void dae::CacheTestComponent::RunPerformanceTest()
     std::cout << "Performance test complete! Data stored." << std::endl;
 
     m_NeedUpdate = false;
-}
-
-void dae::CacheTestComponent::IncreaseSampleSize()
-{
-    m_SampleSize *= 2;
-    const_cast<CacheTestComponent*>(this)->m_NeedUpdate = true;
-}
-
-void dae::CacheTestComponent::DecreaseSampleSize()
-{
-    m_SampleSize /= 2;
-    const_cast<CacheTestComponent*>(this)->m_NeedUpdate = true;
 }

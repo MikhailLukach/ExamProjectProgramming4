@@ -14,6 +14,7 @@ namespace dae
 	{
 	public:
 		CacheTestComponent();
+		~CacheTestComponent() = default;
 		void Update(float deltaTime) override;
 		void Render() const override;
 	private:
@@ -34,8 +35,6 @@ namespace dae
 
 
 		void RunPerformanceTest();
-		void IncreaseSampleSize();
-		void DecreaseSampleSize();
 	};
 }
 

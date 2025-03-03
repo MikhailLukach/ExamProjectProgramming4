@@ -13,6 +13,7 @@ namespace dae
 		virtual void Update(float deltaTime) { (void)deltaTime; } 
 		virtual void Render() const {}
 
+		//no functions at all, just make it so the component cannot exist on its own
 		void SetOwner(GameObject* owner)
 		{ 
 			if (m_owner == nullptr)

@@ -11,7 +11,6 @@ namespace dae
 	public:
 		RotatorComponent( float radius, float speed, const glm::vec3& center);
 		void Update(float deltaTime) override;
-		//void SetCenter(const glm::vec3& newCenter);
 		void SetRadius(float radius);
 		void SetSpeed(float speed);
 	private:

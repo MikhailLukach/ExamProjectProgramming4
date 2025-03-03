@@ -39,11 +39,6 @@ void dae::RotatorComponent::Update(float deltaTime)
     transform->SetPosition(x, y, 0.0f);
 }
 
-/*void dae::RotatorComponent::SetCenter(const glm::vec3& newCenter)
-{
-    m_center = newCenter;
-}*/
-
 void dae::RotatorComponent::SetRadius(float radius)
 {
     m_radius = radius;
