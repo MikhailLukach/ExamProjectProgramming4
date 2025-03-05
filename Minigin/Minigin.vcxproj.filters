@@ -99,6 +99,12 @@
     <ClInclude Include="CacheTestComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Command.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ResourceManager.cpp">
@@ -174,6 +180,9 @@
       <Filter>imgui</Filter>
     </ClCompile>
     <ClCompile Include="CacheTestComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
