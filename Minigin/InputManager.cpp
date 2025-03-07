@@ -50,10 +50,6 @@ bool dae::InputManager::ProcessInput()
 			{
 				commandMap.at(InputType::Pressed)->Execute();
 			}
-			else if (!m_PreviousKeyStates[key] && commandMap.count(InputType::Down)) 
-			{
-				commandMap.at(InputType::Down)->Execute();
-			}
 		}
 		else if (m_PreviousKeyStates[key] && commandMap.count(InputType::Released)) 
 		{
