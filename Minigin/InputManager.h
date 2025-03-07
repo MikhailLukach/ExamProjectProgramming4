@@ -32,7 +32,8 @@ namespace dae
 		void BindCommandController(int controllerIndex, unsigned int button, InputType state, std::unique_ptr<Command> command);
 		void BindCommandKeyboard(SDL_Keycode key, InputType state, std::unique_ptr<Command> command);
 	private:
-		std::vector<GameController> m_Controllers;
+		//std::vector<GameController> m_Controllers;
+		std::vector<std::unique_ptr<GameController>> m_Controllers;
 		std::unordered_map<int, std::unordered_map<unsigned int, std::unordered_map<InputType, std::unique_ptr<Command>>>> m_ControllerCommands;
 
 		std::unordered_map<SDL_Keycode, std::unordered_map<InputType, std::unique_ptr<Command>>> m_KeyboardCommands;

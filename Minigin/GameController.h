@@ -1,30 +1,49 @@
 #pragma once
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h> 
-#include <Xinput.h>
-#pragma comment(lib, "xinput.lib")
+#include <memory>
+
 namespace dae
 {
+	class GameControllerImpl; // Forward declaration
+
 	class GameController
 	{
 	public:
 		explicit GameController(int controllerIndex);
-		void Update();
+		~GameController();
 
+		void Update();
 		bool IsDownThisFrame(unsigned int button) const;
 		bool IsUpThisFrame(unsigned int button) const;
 		bool IsPressed(unsigned int button) const;
 
-		int GetControllerIndex() const { return m_ControllerIndex; }
-		bool IsConnected() const { return m_Connected; }
+		int GetControllerIndex() const;
+		bool IsConnected() const;
+
+		enum GamepadButton
+		{
+			DPAD_UP = 0x0001,
+			DPAD_DOWN = 0x0002,
+			DPAD_LEFT = 0x0004,
+			DPAD_RIGHT = 0x0008,
+			START = 0x0010,
+			BACK = 0x0020,
+			LEFT_THUMB = 0x0040,
+			RIGHT_THUMB = 0x0080,
+			LEFT_SHOULDER = 0x0100,
+			RIGHT_SHOULDER = 0x0200,
+			A = 0x1000,
+			B = 0x2000,
+			X = 0x4000,
+			Y = 0x8000
+		};
+
+		GameController(const GameController&) = delete;
+		GameController& operator=(const GameController&) = delete;
+		GameController(GameController&&) noexcept = default;
+		GameController& operator=(GameController&&) noexcept = default;
 
 	private:
-		int m_ControllerIndex;
-		bool m_Connected;
-		XINPUT_STATE m_CurrentState{};
-		XINPUT_STATE m_PreviousState{};
-		unsigned int buttonsPressedThisFrame = 0;
-		unsigned int buttonsReleasedThisFrame = 0;
+		std::unique_ptr<GameControllerImpl> m_pImpl; // Pointer to the implementation
 	};
 }
 

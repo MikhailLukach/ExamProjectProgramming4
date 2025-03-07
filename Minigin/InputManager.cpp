@@ -8,7 +8,8 @@
 
 dae::InputManager::InputManager()
 {
-	m_Controllers.emplace_back(0);
+	//m_Controllers.emplace_back(0);
+	m_Controllers.emplace_back(std::make_unique<GameController>(0));
 }
 
 bool dae::InputManager::ProcessInput()
@@ -59,21 +60,22 @@ bool dae::InputManager::ProcessInput()
 		m_PreviousKeyStates[key] = isDown;
 	}
 
+	//change -> to .
 	for (auto& controller : m_Controllers)
 	{
-		controller.Update(); 
+		controller->Update(); 
 
-		for (const auto& [button, commandMap] : m_ControllerCommands[controller.GetControllerIndex()])
+		for (const auto& [button, commandMap] : m_ControllerCommands[controller->GetControllerIndex()])
 		{
-			if (controller.IsDownThisFrame(button) && commandMap.count(InputType::Down))
+			if (controller->IsDownThisFrame(button) && commandMap.count(InputType::Down))
 			{
 				commandMap.at(InputType::Down)->Execute();
 			}
-			else if (controller.IsPressed(button) && commandMap.count(InputType::Pressed))
+			else if (controller->IsPressed(button) && commandMap.count(InputType::Pressed))
 			{
 				commandMap.at(InputType::Pressed)->Execute();
 			}
-			else if (controller.IsUpThisFrame(button) && commandMap.count(InputType::Released))
+			else if (controller->IsUpThisFrame(button) && commandMap.count(InputType::Released))
 			{
 				commandMap.at(InputType::Released)->Execute();
 			}
@@ -87,24 +89,32 @@ void dae::InputManager::AddController(int controllerIndex)
 {
 	if (!IsControllerConnected(controllerIndex))
 	{
-		m_Controllers.emplace_back(controllerIndex);
+		//m_Controllers.emplace_back(controllerIndex);
+		m_Controllers.emplace_back(std::make_unique<GameController>(controllerIndex));
 	}
 }
 
 void dae::InputManager::RemoveController(int controllerIndex)
 {
-	m_Controllers.erase
+	/*m_Controllers.erase
 	(
 		std::remove_if(m_Controllers.begin(), m_Controllers.end(),
 		[controllerIndex](const GameController& controller) { return controller.GetControllerIndex() == controllerIndex; }),
+		m_Controllers.end()
+	);*/
+	m_Controllers.erase(
+		std::remove_if(m_Controllers.begin(), m_Controllers.end(),
+			[controllerIndex](const std::unique_ptr<GameController>& controller) { return controller->GetControllerIndex() == controllerIndex; }),
 		m_Controllers.end()
 	);
 }
 
 bool dae::InputManager::IsControllerConnected(int controllerIndex) const
 {
-	return std::any_of(m_Controllers.begin(), m_Controllers.end(), [controllerIndex](const GameController& controller)
-		{ return controller.GetControllerIndex() == controllerIndex; });
+	/*return std::any_of(m_Controllers.begin(), m_Controllers.end(), [controllerIndex](const GameController& controller)
+		{ return controller.GetControllerIndex() == controllerIndex; });*/
+	return std::any_of(m_Controllers.begin(), m_Controllers.end(), [controllerIndex](const std::unique_ptr<GameController>& controller)
+		{ return controller->GetControllerIndex() == controllerIndex; });
 }
 
 void dae::InputManager::BindCommandController(int controllerIndex, unsigned int button, InputType state, std::unique_ptr<Command> command)
