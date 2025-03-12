@@ -1,32 +1,32 @@
 #include "HUDDisplay.h"
 #include <string>
 
-
-
-
-
 std::shared_ptr<dae::HUDDisplay> dae::HUDDisplay::GetInstance()
 {
     static std::shared_ptr<HUDDisplay> instance = std::make_shared<HUDDisplay>();
     return instance;
 }
 
-void dae::HUDDisplay::Initialize(std::shared_ptr<TextComponent> textComponent, std::shared_ptr<HealthComponent> healthComponent)
+void dae::HUDDisplay::Initialize(std::shared_ptr<TextComponent> healthTextComponent, std::shared_ptr<TextComponent> scoreTextComponent
+    , std::shared_ptr<HealthComponent> healthComponent, std::shared_ptr<ScoreComponent> m_scoreComponent)
 {
-    m_TextComponent = textComponent;
+    m_pHealthTextComponent = healthTextComponent;
+    m_ScoreTextComponent = scoreTextComponent;
     m_pHealthComponent = healthComponent;
+    m_pScoreComponent = m_scoreComponent;
 }
 
 void dae::HUDDisplay::Notify(EventId event, GameObject* gameObject)
 {
     (void) gameObject;
     int currentLives = m_pHealthComponent->GetLives();
+    int currentScore = m_pScoreComponent->GetScore();
     if (event == EventId::PLAYER_DAMAGED)
     {
-        if (m_TextComponent)
+        if (m_pHealthTextComponent)
         {
             std::cout << "[DEBUG] HUD received PLAYER_DAMAGED event! Updating text...\n";
-            m_TextComponent->SetText("# lives: " + std::to_string(currentLives));
+            m_pHealthTextComponent->SetText("# lives: " + std::to_string(currentLives));
         }
         else
         {
@@ -36,8 +36,13 @@ void dae::HUDDisplay::Notify(EventId event, GameObject* gameObject)
     else if (event == EventId::PLAYER_DIED)
     {
         std::cout << "[DEBUG] HUD received PLAYER_DIED event! Updating text...\n";
-        m_TextComponent->SetText("# lives: " + std::to_string(currentLives));
+        m_pHealthTextComponent->SetText("# lives: " + std::to_string(currentLives));
 
         SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "PlayerDied", "The player has died!", nullptr);
+    }
+    else if (event == EventId::PLAYER_ADDSCORE)
+    {
+        std::cout << "[DEBUG] HUD received PLAYER_ADDSCORE event! Updating text...\n";
+        m_ScoreTextComponent->SetText("# score: " + std::to_string(currentScore));
     }
 }

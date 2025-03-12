@@ -6,7 +6,8 @@ namespace dae
     enum class EventId
     {
         PLAYER_DAMAGED,
-        PLAYER_DIED
+        PLAYER_DIED,
+        PLAYER_ADDSCORE
     };
 
     class Observer

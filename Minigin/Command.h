@@ -2,6 +2,8 @@
 #include <iostream>
 #include "GameObject.h"
 #include "HealthComponent.h"
+#include "ScoreComponent.h"
+
 namespace dae
 {
 	class Command
@@ -71,6 +73,26 @@ namespace dae
 
     private:
         HealthComponent* m_Health;
+    };
+
+    class AddScoreCommand : public Command
+    {
+    public:
+        explicit AddScoreCommand(ScoreComponent* score, int points)
+            : m_pScoreComponent(score),m_Points(points) {}
+
+        void Execute() override
+        {
+            if (m_pScoreComponent)
+            {
+                m_pScoreComponent->AddPoints(m_Points);
+                std::cout << "[DEBUG] AddScoreCommand Executed!\n";
+            }
+        }
+
+    private:
+        ScoreComponent* m_pScoreComponent;
+        int m_Points;
     };
 }
 

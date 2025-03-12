@@ -2,6 +2,7 @@
 #include "Observer.h"
 #include "TextComponent.h"
 #include "HealthComponent.h"
+#include "ScoreComponent.h"
 
 namespace dae
 {
@@ -10,11 +11,14 @@ namespace dae
     public:
         HUDDisplay() = default;
         static std::shared_ptr<HUDDisplay> GetInstance();
-        void Initialize(std::shared_ptr<TextComponent> textComponent, std::shared_ptr<HealthComponent> healthComponent);
+        void Initialize(std::shared_ptr<TextComponent> healthTextComponent, std::shared_ptr<TextComponent> scoreTextComponent
+            , std::shared_ptr<HealthComponent> healthComponent, std::shared_ptr<ScoreComponent> m_scoreComponent);
         void Notify(EventId event, GameObject* gameObject) override;
 
     private:
-        std::shared_ptr<TextComponent> m_TextComponent;
+        std::shared_ptr<TextComponent> m_pHealthTextComponent;
+        std::shared_ptr<TextComponent> m_ScoreTextComponent;
         std::shared_ptr<HealthComponent> m_pHealthComponent;
+        std::shared_ptr<ScoreComponent> m_pScoreComponent;
     };
 }

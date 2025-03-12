@@ -38,11 +38,6 @@ namespace dae
                     observer->Notify(event, gameObject);
                     ++it;
                 }
-                else
-                {
-                    std::cout << "[DEBUG] WARNING: Null observer found!\n";
-                    it = m_Observers.erase(it); // Remove expired observer
-                }
             }
         }
 
