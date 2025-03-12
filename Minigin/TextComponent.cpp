@@ -29,6 +29,7 @@ void dae::TextComponent::SetText(const std::string& newText)
     {
         return;
     }
+    std::cout << "[DEBUG] Updating text: " << newText << "\n";
     m_text = newText;
     UpdateTexture();
 }

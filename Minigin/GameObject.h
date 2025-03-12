@@ -10,6 +10,7 @@
 #include "FPSComponent.h"
 #include "RotatorComponent.h"
 #include "CacheTestComponent.h"
+#include "HealthComponent.h"
 #include "Component.h"
 
 namespace dae

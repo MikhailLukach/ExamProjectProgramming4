@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include "GameObject.h"
+#include "HealthComponent.h"
 namespace dae
 {
 	class Command
@@ -52,5 +53,24 @@ namespace dae
 		glm::vec3 m_Direction;
 		float m_Speed;
 	};
+
+    class KillPlayerCommand : public Command
+    {
+    public:
+        explicit KillPlayerCommand(HealthComponent* health)
+            : m_Health(health) {}
+
+        void Execute() override
+        {
+            if (m_Health)
+            {
+                m_Health->TakeDamage(1);
+                std::cout << "[DEBUG] KillPlayerCommand Executed!\n";
+            }
+        }
+
+    private:
+        HealthComponent* m_Health;
+    };
 }
 

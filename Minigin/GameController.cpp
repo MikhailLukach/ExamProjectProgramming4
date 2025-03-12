@@ -5,7 +5,7 @@
 
 namespace dae
 {
-    class GameControllerImpl
+    class GameController::GameControllerImpl
     {
     public:
         explicit GameControllerImpl(int controllerIndex)
@@ -58,11 +58,29 @@ namespace dae
 
     GameController::~GameController() = default;
 
-    void GameController::Update() { m_pImpl->Update(); }
-    bool GameController::IsDownThisFrame(unsigned int button) const { return m_pImpl->IsDownThisFrame(button); }
-    bool GameController::IsUpThisFrame(unsigned int button) const { return m_pImpl->IsUpThisFrame(button); }
-    bool GameController::IsPressed(unsigned int button) const { return m_pImpl->IsPressed(button); }
-    int GameController::GetControllerIndex() const { return m_pImpl->GetControllerIndex(); }
-    bool GameController::IsConnected() const { return m_pImpl->IsConnected(); }
+    void GameController::Update() 
+    { 
+        m_pImpl->Update(); 
+    }
+    bool GameController::IsDownThisFrame(unsigned int button) const
+    { 
+        return m_pImpl->IsDownThisFrame(button); 
+    }
+    bool GameController::IsUpThisFrame(unsigned int button) const 
+    { 
+        return m_pImpl->IsUpThisFrame(button); 
+    }
+    bool GameController::IsPressed(unsigned int button) const 
+    { 
+        return m_pImpl->IsPressed(button); 
+    }
+    int GameController::GetControllerIndex() const 
+    { 
+        return m_pImpl->GetControllerIndex(); 
+    }
+    bool GameController::IsConnected() const 
+    { 
+        return m_pImpl->IsConnected(); 
+    }
 }
 

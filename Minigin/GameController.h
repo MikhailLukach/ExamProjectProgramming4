@@ -3,8 +3,6 @@
 
 namespace dae
 {
-	class GameControllerImpl; // Forward declaration
-
 	class GameController
 	{
 	public:
@@ -43,6 +41,7 @@ namespace dae
 		GameController& operator=(GameController&&) noexcept = default;
 
 	private:
+		class GameControllerImpl;
 		std::unique_ptr<GameControllerImpl> m_pImpl; // Pointer to the implementation
 	};
 }
