@@ -11,14 +11,13 @@ namespace dae
     public:
         HUDDisplay() = default;
         static std::shared_ptr<HUDDisplay> GetInstance();
-        void Initialize(std::shared_ptr<TextComponent> healthTextComponent, std::shared_ptr<TextComponent> scoreTextComponent
-            , std::shared_ptr<HealthComponent> healthComponent, std::shared_ptr<ScoreComponent> m_scoreComponent);
+        void Initialize(TextComponent* healthTextComponent, TextComponent* scoreTextComponent, HealthComponent* healthComponent, ScoreComponent* m_scoreComponent);
         void Notify(EventId event, GameObject* gameObject) override;
 
     private:
-        std::shared_ptr<TextComponent> m_pHealthTextComponent;
-        std::shared_ptr<TextComponent> m_ScoreTextComponent;
-        std::shared_ptr<HealthComponent> m_pHealthComponent;
-        std::shared_ptr<ScoreComponent> m_pScoreComponent;
+        TextComponent* m_pHealthTextComponent;
+        TextComponent* m_ScoreTextComponent;
+        HealthComponent* m_pHealthComponent;
+        ScoreComponent* m_pScoreComponent;
     };
 }

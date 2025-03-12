@@ -7,8 +7,8 @@ std::shared_ptr<dae::HUDDisplay> dae::HUDDisplay::GetInstance()
     return instance;
 }
 
-void dae::HUDDisplay::Initialize(std::shared_ptr<TextComponent> healthTextComponent, std::shared_ptr<TextComponent> scoreTextComponent
-    , std::shared_ptr<HealthComponent> healthComponent, std::shared_ptr<ScoreComponent> m_scoreComponent)
+void dae::HUDDisplay::Initialize(TextComponent* healthTextComponent, TextComponent* scoreTextComponent, HealthComponent* healthComponent
+    , ScoreComponent* m_scoreComponent)
 {
     m_pHealthTextComponent = healthTextComponent;
     m_ScoreTextComponent = scoreTextComponent;

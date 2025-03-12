@@ -10,7 +10,6 @@ namespace dae
     public:
         void AddObserver(std::shared_ptr<Observer> observer)
         {
-            // Store weak_ptr instead of raw pointer
             m_Observers.push_back(observer);
             std::cout << "[DEBUG] Total Observers: " << m_Observers.size() << std::endl;
         }
@@ -32,7 +31,7 @@ namespace dae
         {
             for (auto it = m_Observers.begin(); it != m_Observers.end();)
             {
-                if (auto observer = it->lock()) // Convert weak_ptr to shared_ptr safely
+                if (auto observer = it->lock())
                 {
                     std::cout << "[DEBUG] Notifying an observer!\n";
                     observer->Notify(event, gameObject);
@@ -42,6 +41,6 @@ namespace dae
         }
 
     private:
-        std::vector<std::weak_ptr<Observer>> m_Observers; // Store weak_ptr instead of raw pointers
+        std::vector<std::weak_ptr<Observer>> m_Observers;
     };
 }
