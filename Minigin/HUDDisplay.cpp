@@ -1,4 +1,5 @@
 #include "HUDDisplay.h"
+#include "steam_api.h"
 #include <string>
 
 dae::HUDDisplay::HUDDisplay(TextComponent* healthText, TextComponent* scoreText, HealthComponent* health, ScoreComponent* score)
@@ -35,5 +36,11 @@ void dae::HUDDisplay::Notify(EventId event, GameObject* gameObject)
     {
         std::cout << "[DEBUG] HUD received PLAYER_ADDSCORE event! Updating text...\n";
         m_pScoreTextComponent->SetText("# score: " + std::to_string(currentScore));
+    }
+    else if(event == EventId::PLAYER_REACHED_500_POINTS)
+    {
+        std::cout << "[DEBUG] HUD received PLAYER_REACHED_500_POINTS event! Updating achievements...\n";
+        SteamUserStats()->SetAchievement("ACH_WIN_ONE_GAME");
+        SteamUserStats()->StoreStats();
     }
 }

@@ -11,6 +11,7 @@
 #include "SceneManager.h"
 #include "Renderer.h"
 #include "ResourceManager.h"
+#include <steam_api.h>
 
 SDL_Window* g_window{};
 
@@ -81,6 +82,8 @@ void dae::Minigin::Run(const std::function<void()>& load)
 {
 	using namespace std::chrono;
 	load();
+
+	SteamAPI_RunCallbacks();
 
 	auto& renderer = Renderer::GetInstance();
 	auto& sceneManager = SceneManager::GetInstance();

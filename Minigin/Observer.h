@@ -7,7 +7,8 @@ namespace dae
     {
         PLAYER_DAMAGED,
         PLAYER_DIED,
-        PLAYER_ADDSCORE
+        PLAYER_ADDSCORE,
+        PLAYER_REACHED_500_POINTS
     };
 
     class Observer
