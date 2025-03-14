@@ -1,19 +1,10 @@
 #include "HUDDisplay.h"
 #include <string>
 
-std::shared_ptr<dae::HUDDisplay> dae::HUDDisplay::GetInstance()
+dae::HUDDisplay::HUDDisplay(TextComponent* healthText, TextComponent* scoreText, HealthComponent* health, ScoreComponent* score)
+    : m_pHealthTextComponent(healthText), m_pScoreTextComponent(scoreText),
+    m_pHealthComponent(health), m_pScoreComponent(score)
 {
-    static std::shared_ptr<HUDDisplay> instance = std::make_shared<HUDDisplay>();
-    return instance;
-}
-
-void dae::HUDDisplay::Initialize(TextComponent* healthTextComponent, TextComponent* scoreTextComponent, HealthComponent* healthComponent
-    , ScoreComponent* m_scoreComponent)
-{
-    m_pHealthTextComponent = healthTextComponent;
-    m_ScoreTextComponent = scoreTextComponent;
-    m_pHealthComponent = healthComponent;
-    m_pScoreComponent = m_scoreComponent;
 }
 
 void dae::HUDDisplay::Notify(EventId event, GameObject* gameObject)
@@ -43,6 +34,6 @@ void dae::HUDDisplay::Notify(EventId event, GameObject* gameObject)
     else if (event == EventId::PLAYER_ADDSCORE)
     {
         std::cout << "[DEBUG] HUD received PLAYER_ADDSCORE event! Updating text...\n";
-        m_ScoreTextComponent->SetText("# score: " + std::to_string(currentScore));
+        m_pScoreTextComponent->SetText("# score: " + std::to_string(currentScore));
     }
 }
