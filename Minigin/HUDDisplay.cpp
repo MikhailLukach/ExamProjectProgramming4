@@ -39,6 +39,8 @@ void dae::HUDDisplay::Notify(EventId event, GameObject* gameObject)
     }
     else if(event == EventId::PLAYER_REACHED_500_POINTS)
     {
+        //check whether the player already has the acheivement
+        //remove yourself as an observer, since the achievement has been done
         std::cout << "[DEBUG] HUD received PLAYER_REACHED_500_POINTS event! Updating achievements...\n";
         SteamUserStats()->SetAchievement("ACH_WIN_ONE_GAME");
         SteamUserStats()->StoreStats();

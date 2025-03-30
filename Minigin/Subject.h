@@ -8,6 +8,7 @@ namespace dae
     class Subject
     {
     public:
+        //should not use the shared_ptr, it should not have ownership over an observer, just raw pointers
         void AddObserver(std::shared_ptr<Observer> observer)
         {
             m_Observers.push_back(observer);

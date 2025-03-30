@@ -3,6 +3,7 @@ namespace dae
 {
     class GameObject;
 
+    //event id should not be engine level
     enum class EventId
     {
         PLAYER_DAMAGED,

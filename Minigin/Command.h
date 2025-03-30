@@ -75,6 +75,7 @@ namespace dae
         HealthComponent* m_Health;
     };
 
+    //needs to react to something, like pick up pellets, so make this a add pellets
     class AddScoreCommand : public Command
     {
     public:
