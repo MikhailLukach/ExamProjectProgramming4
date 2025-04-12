@@ -93,9 +93,107 @@ void dae::LevelLoader::InitLevelLayout()
 		{TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Dug_Corner_UR,
 		TileVisualType::Dug_Horizontal, TileVisualType::Dug_Horizontal, TileVisualType::Dug_Horizontal, TileVisualType::Dug_Horizontal, TileVisualType::Dug_Horizontal,
 		TileVisualType::Dug_Corner_LU, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug },
-
-		/*{TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug,
-		TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, 
-		TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug },*/
 	};
 }
+
+/*#include "LevelLoader.h"
+#include "Scene.h"
+#include "GameObject.h"
+#include "TileComponent.h"
+#include "RenderComponent.h"
+#include "Transform.h"
+
+dae::LevelLoader::LevelLoader(Scene& scene)
+	: m_Scene(scene)
+{
+	InitLevelLayout();
+}
+
+void dae::LevelLoader::Update(float deltaTime)
+{
+	m_Timer += deltaTime;
+	if (m_Timer >= m_SpawnInterval)
+	{
+		SpawnNextTile();
+		m_Timer = 0.0f;
+	}
+}
+
+void dae::LevelLoader::SpawnNextTile()
+{
+	if (m_CurrentY >= m_LevelHeight) return;
+
+	auto tile = std::make_shared<GameObject>();
+
+	const int HorizontalOffset = (640 - m_TileWidth * m_LevelWidth) / 2;
+	const int VerticalOffset = m_TopMargin;
+
+	float posX = static_cast<float>(m_CurrentX * m_TileWidth + HorizontalOffset);
+	float posY = static_cast<float>(m_CurrentY * m_TileHeight + VerticalOffset);
+
+	tile->GetTransform()->SetPosition(posX, posY, 0.0f);
+
+	auto type = m_LevelLayout[m_CurrentY][m_CurrentX];
+	std::string texture = GetTexturePathForType(type);
+
+	auto render = tile->AddComponent<RenderComponent>(texture);
+	render->SetSize(m_TileWidth, m_TileHeight);
+
+	auto logic = tile->AddComponent<TileComponent>(type);
+	logic->SetRenderComponent(render.get());
+
+	m_Scene.Add(tile);
+
+	// Move to next tile
+	m_CurrentX++;
+	if (m_CurrentX >= m_LevelWidth)
+	{
+		m_CurrentX = 0;
+		m_CurrentY++;
+	}
+}
+
+void dae::LevelLoader::InitLevelLayout()
+{
+	m_LevelLayout = {
+		{ TileVisualType::Dug_Bottom, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug,
+		TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug,
+		TileVisualType::Dug_Corner_BR, TileVisualType::Dug_Horizontal, TileVisualType::Dug_Horizontal, TileVisualType::Dug_Horizontal, TileVisualType::Dug_Left },
+
+		{TileVisualType::Dug_Vertical, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug,
+		TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug,
+		TileVisualType::Dug_Vertical, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug },
+
+		{TileVisualType::Dug_Vertical, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug,
+		TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug,
+		TileVisualType::Dug_Vertical, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug },
+
+		{TileVisualType::Dug_Vertical, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug,
+		TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug,
+		TileVisualType::Dug_Vertical, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug },
+
+		{TileVisualType::Dug_Vertical, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug,
+		TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug,
+		TileVisualType::Dug_Vertical, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug },
+
+		{TileVisualType::Dug_Corner_UR, TileVisualType::Dug_Corner_LB, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug,
+		TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug,
+		TileVisualType::Dug_Vertical, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug },
+
+		{TileVisualType::Undug, TileVisualType::Dug_Vertical, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug,
+		TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug,
+		TileVisualType::Dug_Vertical, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug },
+
+		{TileVisualType::Undug, TileVisualType::Dug_Corner_UR, TileVisualType::Dug_Horizontal, TileVisualType::Dug_Horizontal, TileVisualType::Dug_Corner_LB,
+		TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug,
+		TileVisualType::Dug_Vertical, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug },
+
+		{TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Dug_Vertical,
+		TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug,
+		TileVisualType::Dug_Vertical, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug },
+
+		{TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Dug_Corner_UR,
+		TileVisualType::Dug_Horizontal, TileVisualType::Dug_Horizontal, TileVisualType::Dug_Horizontal, TileVisualType::Dug_Horizontal, TileVisualType::Dug_Horizontal,
+		TileVisualType::Dug_Corner_LU, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug },
+	};
+}*/

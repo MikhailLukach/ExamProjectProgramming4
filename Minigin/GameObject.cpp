@@ -14,9 +14,20 @@ dae::GameObject::~GameObject() = default;
 
 void dae::GameObject::Update(float deltaTime)
 {
+
+	if (m_components.empty()) return;
+
 	for (auto& [type, component] : m_components)
 	{
-		component->Update(deltaTime);
+		if (!component)
+		{
+			std::cout << "Null component of type: " << type.name() << std::endl;
+			continue;
+		}
+		if (component)
+		{
+			component->Update(deltaTime);
+		}
 	}
 }
 
