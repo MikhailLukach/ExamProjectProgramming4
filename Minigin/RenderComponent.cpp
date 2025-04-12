@@ -22,11 +22,18 @@ namespace dae
 		}
 
 		glm::vec3 position = GetOwner()->GetTransform()->GetLocalPosition();
-		Renderer::GetInstance().RenderTexture(*m_texture, position.x, position.y);
+		//Renderer::GetInstance().RenderTexture(*m_texture, position.x, position.y);
+		Renderer::GetInstance().RenderTexture(*m_texture, position.x, position.y, m_Width, m_Height);
 	}
 
 	void dae::RenderComponent::SetTexture(const std::string& texturePath)
 	{
 		m_texture = ResourceManager::GetInstance().LoadTexture(texturePath);
+	}
+
+	void dae::RenderComponent::SetSize(int width, int height)
+	{
+		m_Width = static_cast<float>(width);
+		m_Height = static_cast<float>(height);
 	}
 }

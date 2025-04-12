@@ -86,16 +86,21 @@
   <ItemGroup>
     <ClCompile Include="HealthComponent.cpp" />
     <ClCompile Include="HUDDisplay.cpp" />
+    <ClCompile Include="LevelLoader.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="RotatorComponent.cpp" />
     <ClCompile Include="ScoreComponent.cpp" />
+    <ClCompile Include="TileComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameCommands.h" />
     <ClInclude Include="HealthComponent.h" />
     <ClInclude Include="HUDDisplay.h" />
+    <ClInclude Include="LevelLoader.h" />
     <ClInclude Include="RotatorComponent.h" />
     <ClInclude Include="ScoreComponent.h" />
+    <ClInclude Include="TileComponent.h" />
+    <ClInclude Include="TileTypes.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

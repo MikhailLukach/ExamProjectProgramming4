@@ -17,6 +17,7 @@
 #include "HealthComponent.h"
 #include "ScoreComponent.h"
 #include "GameCommands.h"
+#include "LevelLoader.h"
 
 void load() 
 {
@@ -213,9 +214,19 @@ void load()
 	}*/
 }
 
+void LoadGame()
+{
+	auto& scene = dae::SceneManager::GetInstance().CreateScene("DiggerLevel1");
+	dae::ResourceManager::GetInstance().Init("../Data");
+
+	dae::LevelLoader loader;
+	loader.LoadLevel(scene);
+}
+
 int main(int, char* [])
 {
 	dae::Minigin engine("../Data/");
-	engine.Run(load);
+	//engine.Run(load);
+	engine.Run(LoadGame);
 	return 0;
 }
