@@ -8,10 +8,10 @@
 #include "RenderComponent.h"
 #include "TextComponent.h"
 #include "FPSComponent.h"
-#include "RotatorComponent.h"
+//#include "RotatorComponent.h"
 #include "CacheTestComponent.h"
-#include "HealthComponent.h"
-#include "ScoreComponent.h"
+//#include "HealthComponent.h"
+//#include "ScoreComponent.h"
 #include "Component.h"
 
 namespace dae

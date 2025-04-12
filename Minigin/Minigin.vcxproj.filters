@@ -66,9 +66,6 @@
     <ClInclude Include="FPSComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RotatorComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\3rdParty\imgui-1.91.8\imconfig.h">
       <Filter>imgui</Filter>
     </ClInclude>
@@ -99,25 +96,16 @@
     <ClInclude Include="CacheTestComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Command.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GameController.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="HealthComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="HUDDisplay.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Observer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ScoreComponent.h">
+    <ClInclude Include="Subject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Subject.h">
+    <ClInclude Include="Command.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -167,9 +155,6 @@
     <ClCompile Include="FPSComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RotatorComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\3rdParty\imgui-1.91.8\imgui.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
@@ -198,15 +183,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GameController.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="HealthComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="HUDDisplay.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ScoreComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

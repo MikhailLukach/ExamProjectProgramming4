@@ -1,4 +1,4 @@
-#include "CacheTestComponent.h"
+/*#include "CacheTestComponent.h"
 
 //make a render non-const loop specifically for ImGui
 //fix layout and how sampling is done, not literal number of sample but number of iterations
@@ -267,4 +267,4 @@ void dae::CacheTestComponent::RunPerformanceTest()
     std::cout << "Performance test complete! Data stored." << std::endl;
 
     m_NeedUpdate = false;
-}
+}*/

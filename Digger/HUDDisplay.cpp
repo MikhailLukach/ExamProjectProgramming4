@@ -1,5 +1,5 @@
 #include "HUDDisplay.h"
-#include "steam_api.h"
+//#include "steam_api.h"
 #include <string>
 
 dae::HUDDisplay::HUDDisplay(TextComponent* healthText, TextComponent* scoreText, HealthComponent* health, ScoreComponent* score)
@@ -42,7 +42,7 @@ void dae::HUDDisplay::Notify(EventId event, GameObject* gameObject)
         //check whether the player already has the acheivement
         //remove yourself as an observer, since the achievement has been done
         std::cout << "[DEBUG] HUD received PLAYER_REACHED_500_POINTS event! Updating achievements...\n";
-        SteamUserStats()->SetAchievement("ACH_WIN_ONE_GAME");
-        SteamUserStats()->StoreStats();
+        //SteamUserStats()->SetAchievement("ACH_WIN_ONE_GAME");
+        //SteamUserStats()->StoreStats();
     }
 }

@@ -1,4 +1,4 @@
-#pragma once
+/*#pragma once
 #include "Component.h"
 #include "imgui.h"
 #include "imgui_plot.h"
@@ -36,5 +36,5 @@ namespace dae
 
 		void RunPerformanceTest();
 	};
-}
+}*/
 
