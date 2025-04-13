@@ -90,15 +90,18 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="RotatorComponent.cpp" />
     <ClCompile Include="ScoreComponent.cpp" />
+    <ClCompile Include="SpriteAnimatorComponent.cpp" />
     <ClCompile Include="TileComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AnimationState.h" />
     <ClInclude Include="GameCommands.h" />
     <ClInclude Include="HealthComponent.h" />
     <ClInclude Include="HUDDisplay.h" />
     <ClInclude Include="LevelLoader.h" />
     <ClInclude Include="RotatorComponent.h" />
     <ClInclude Include="ScoreComponent.h" />
+    <ClInclude Include="SpriteAnimatorComponent.h" />
     <ClInclude Include="TileComponent.h" />
     <ClInclude Include="TileTypes.h" />
   </ItemGroup>

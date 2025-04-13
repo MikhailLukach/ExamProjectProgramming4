@@ -15,6 +15,15 @@ namespace dae
 
 	void dae::RenderComponent::Render() const
 	{
+		/*if (!m_texture)
+		{
+			std::cerr << "Warning: No texture set in RenderComponent!\n";
+			return;
+		}
+
+		glm::vec3 position = GetOwner()->GetTransform()->GetLocalPosition();
+		Renderer::GetInstance().RenderTexture(*m_texture, position.x, position.y, m_Width, m_Height);*/
+
 		if (!m_texture)
 		{
 			std::cerr << "Warning: No texture set in RenderComponent!\n";
@@ -22,8 +31,23 @@ namespace dae
 		}
 
 		glm::vec3 position = GetOwner()->GetTransform()->GetLocalPosition();
-		//Renderer::GetInstance().RenderTexture(*m_texture, position.x, position.y);
-		Renderer::GetInstance().RenderTexture(*m_texture, position.x, position.y, m_Width, m_Height);
+
+		SDL_Rect dst{};
+		dst.x = static_cast<int>(position.x);
+		dst.y = static_cast<int>(position.y);
+		dst.w = static_cast<int>(m_Width);
+		dst.h = static_cast<int>(m_Height);
+
+		SDL_Renderer* sdlRenderer = Renderer::GetInstance().GetSDLRenderer();
+
+		if (m_UseSourceRect)
+		{
+			SDL_RenderCopy(sdlRenderer, m_texture->GetSDLTexture(), &m_SourceRect, &dst);
+		}
+		else
+		{
+			SDL_RenderCopy(sdlRenderer, m_texture->GetSDLTexture(), nullptr, &dst);
+		}
 	}
 
 	void dae::RenderComponent::SetTexture(const std::string& texturePath)
@@ -35,5 +59,16 @@ namespace dae
 	{
 		m_Width = static_cast<float>(width);
 		m_Height = static_cast<float>(height);
+	}
+
+	void RenderComponent::SetSourceRect(const SDL_Rect& rect)
+	{
+		m_SourceRect = rect;
+		m_UseSourceRect = true;
+	}
+
+	void RenderComponent::ClearSourceRect()
+	{
+		m_UseSourceRect = false;
 	}
 }

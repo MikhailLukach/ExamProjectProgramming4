@@ -14,9 +14,16 @@ namespace dae
 		void Render() const override;
 		void SetTexture(const std::string& texturePath);
 		void SetSize(int width, int height);
+
+		void SetSourceRect(const SDL_Rect& rect);
+		void ClearSourceRect();
 		//void SetPosition(float x, float y);
 	private:
 		std::shared_ptr<Texture2D> m_texture;
+
+		SDL_Rect m_SourceRect{};
+		bool m_UseSourceRect{ false };
+
 		//std::weak_ptr<Transform> m_pTransform;
 		float m_x{ 0 }, m_y{ 0 }, m_Width{ 0 }, m_Height{ 0 };
 	};
