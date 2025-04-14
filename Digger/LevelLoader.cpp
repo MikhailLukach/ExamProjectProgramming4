@@ -12,6 +12,7 @@ constexpr int NumCols = 15;
 constexpr int NumRows = 10;
 
 constexpr int TopMargin = 48;
+constexpr int HorOffset = 10;
 
 constexpr int TileWidth = ScreenWidth / NumCols;           // 640 / 15 = 42.6 => 42 (int)
 constexpr int TileHeight = (ScreenHeight - TopMargin) / NumRows; // (480 - 48) / 10 = 43.2 => 43
@@ -48,6 +49,13 @@ void dae::LevelLoader::LoadLevel(Scene& scene)
 			scene.Add(tile);
 		}
 	}
+}
+
+glm::vec3 dae::LevelLoader::GetWorldCenterForTile(int tileX, int tileY) const
+{
+	float x = static_cast<float>(tileX * TileWidth + HorOffset);
+	float y = static_cast<float>(tileY * TileHeight + TileHeight / 2 + TopMargin);
+	return { x, y, 0.0f };
 }
 
 void dae::LevelLoader::InitLevelLayout()

@@ -224,14 +224,17 @@ void LoadGame()
 
 	auto& input = dae::InputManager::GetInstance();
 
-	//dae::LevelLoader loader;
-	//loader.LoadLevel(scene);
+	dae::LevelLoader loader;
+	loader.LoadLevel(scene);
 
 	auto player = std::make_shared<dae::GameObject>();
-	player->GetTransform()->SetPosition(100.f, 100.f, 0.f); // Starting position
+	int spawnX = 0;
+	int spawnY = 0;
+	auto spawnPos = loader.GetWorldCenterForTile(spawnX, spawnY);
+	player->GetTransform()->SetPosition(spawnPos);
 
 	auto render = player->AddComponent<dae::RenderComponent>("CharacterSpriteSheetFilledBackground.png");
-	render->SetSize(16, 16);
+	render->SetSize(32, 32);
 
 	auto animator = player->AddComponent<dae::SpriteAnimatorComponent>(render.get(), 16, 16, 0.2f);
 
@@ -239,22 +242,22 @@ void LoadGame()
 
 	scene.Add(player);
 
-	input.BindCommandController(0, dae::GameController::DPAD_UP, dae::InputType::Pressed,
+	input.BindCommandController(0, dae::GameController::DPAD_UP, dae::InputType::Down,
 		std::make_unique<dae::MoveCommand>(player.get(), glm::vec3(0, -1, 0), playerSpeed, animator.get(), dae::AnimationState::WalkUp));
 	input.BindCommandController(0, dae::GameController::DPAD_UP, dae::InputType::Released,
 		std::make_unique<dae::StopAnimationCommand>(animator.get()));
 
-	input.BindCommandController(0, dae::GameController::DPAD_DOWN, dae::InputType::Pressed,
+	input.BindCommandController(0, dae::GameController::DPAD_DOWN, dae::InputType::Down,
 		std::make_unique<dae::MoveCommand>(player.get(), glm::vec3(0, 1, 0), playerSpeed, animator.get(), dae::AnimationState::WalkDown));
 	input.BindCommandController(0, dae::GameController::DPAD_DOWN, dae::InputType::Released,
 		std::make_unique<dae::StopAnimationCommand>(animator.get()));
 
-	input.BindCommandController(0, dae::GameController::DPAD_LEFT, dae::InputType::Pressed,
+	input.BindCommandController(0, dae::GameController::DPAD_LEFT, dae::InputType::Down,
 		std::make_unique<dae::MoveCommand>(player.get(), glm::vec3(-1, 0, 0), playerSpeed, animator.get(), dae::AnimationState::WalkLeft));
 	input.BindCommandController(0, dae::GameController::DPAD_LEFT, dae::InputType::Released,
 		std::make_unique<dae::StopAnimationCommand>(animator.get()));
 
-	input.BindCommandController(0, dae::GameController::DPAD_RIGHT, dae::InputType::Pressed,
+	input.BindCommandController(0, dae::GameController::DPAD_RIGHT, dae::InputType::Down,
 		std::make_unique<dae::MoveCommand>(player.get(), glm::vec3(1, 0, 0), playerSpeed, animator.get(), dae::AnimationState::WalkRight));
 	input.BindCommandController(0, dae::GameController::DPAD_RIGHT, dae::InputType::Released,
 		std::make_unique<dae::StopAnimationCommand>(animator.get()));
