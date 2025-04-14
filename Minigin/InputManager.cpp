@@ -60,12 +60,57 @@ bool dae::InputManager::ProcessInput()
 		m_PreviousKeyStates[key] = isDown;
 	}
 
+	m_CurrentDirection = { 0, 0 };
+
 	//change -> to .
 	for (auto& controller : m_Controllers)
 	{
 		controller->Update(); 
 
-		for (const auto& [button, commandMap] : m_ControllerCommands[controller->GetControllerIndex()])
+		bool up = controller->IsPressed(GameController::DPAD_UP);
+		bool down = controller->IsPressed(GameController::DPAD_DOWN);
+		bool left = controller->IsPressed(GameController::DPAD_LEFT);
+		bool right = controller->IsPressed(GameController::DPAD_RIGHT);
+
+		// Compute intended direction (clamped to one axis)
+		if (up && !down)       m_CurrentDirection.y = -1;
+		else if (down && !up)  m_CurrentDirection.y = 1;
+
+		if (left && !right)    m_CurrentDirection.x = -1;
+		else if (right && !left) m_CurrentDirection.x = 1;
+
+		// Clamp to prevent diagonal movement (optional: prioritize vertical)
+		if (m_CurrentDirection.x != 0 && m_CurrentDirection.y != 0)
+		{
+			// Comment one of these to prioritize the other
+			m_CurrentDirection.y = 0; // prioritizes horizontal over vertical
+			// m_CurrentDirection.x = 0; // prioritizes vertical over horizontal
+		}
+
+		// Now dispatch only one direction based on m_CurrentDirection
+		if (m_CurrentDirection.x == -1)
+		{
+			auto& map = m_ControllerCommands[controller->GetControllerIndex()][GameController::DPAD_LEFT];
+			if (map.count(InputType::Pressed)) map.at(InputType::Pressed)->Execute();
+		}
+		else if (m_CurrentDirection.x == 1)
+		{
+			auto& map = m_ControllerCommands[controller->GetControllerIndex()][GameController::DPAD_RIGHT];
+			if (map.count(InputType::Pressed)) map.at(InputType::Pressed)->Execute();
+		}
+		else if (m_CurrentDirection.y == -1)
+		{
+			auto& map = m_ControllerCommands[controller->GetControllerIndex()][GameController::DPAD_UP];
+			if (map.count(InputType::Pressed)) map.at(InputType::Pressed)->Execute();
+		}
+		else if (m_CurrentDirection.y == 1)
+		{
+			auto& map = m_ControllerCommands[controller->GetControllerIndex()][GameController::DPAD_DOWN];
+			if (map.count(InputType::Pressed)) map.at(InputType::Pressed)->Execute();
+		}
+
+		std::cout << "Clamped Direction: (" << m_CurrentDirection.x << ", " << m_CurrentDirection.y << ")\n";
+		/*for (const auto& [button, commandMap] : m_ControllerCommands[controller->GetControllerIndex()])
 		{
 			if (controller->IsDownThisFrame(button) && commandMap.count(InputType::Down))
 			{
@@ -79,7 +124,7 @@ bool dae::InputManager::ProcessInput()
 			{
 				commandMap.at(InputType::Released)->Execute();
 			}
-		}
+		}*/
 	}
 
 	return true;

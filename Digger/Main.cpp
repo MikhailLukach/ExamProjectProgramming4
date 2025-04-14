@@ -242,22 +242,22 @@ void LoadGame()
 
 	scene.Add(player);
 
-	input.BindCommandController(0, dae::GameController::DPAD_UP, dae::InputType::Down,
+	input.BindCommandController(0, dae::GameController::DPAD_UP, dae::InputType::Pressed,
 		std::make_unique<dae::MoveCommand>(player.get(), glm::vec3(0, -1, 0), playerSpeed, animator.get(), dae::AnimationState::WalkUp));
 	input.BindCommandController(0, dae::GameController::DPAD_UP, dae::InputType::Released,
 		std::make_unique<dae::StopAnimationCommand>(animator.get()));
 
-	input.BindCommandController(0, dae::GameController::DPAD_DOWN, dae::InputType::Down,
+	input.BindCommandController(0, dae::GameController::DPAD_DOWN, dae::InputType::Pressed,
 		std::make_unique<dae::MoveCommand>(player.get(), glm::vec3(0, 1, 0), playerSpeed, animator.get(), dae::AnimationState::WalkDown));
 	input.BindCommandController(0, dae::GameController::DPAD_DOWN, dae::InputType::Released,
 		std::make_unique<dae::StopAnimationCommand>(animator.get()));
 
-	input.BindCommandController(0, dae::GameController::DPAD_LEFT, dae::InputType::Down,
+	input.BindCommandController(0, dae::GameController::DPAD_LEFT, dae::InputType::Pressed,
 		std::make_unique<dae::MoveCommand>(player.get(), glm::vec3(-1, 0, 0), playerSpeed, animator.get(), dae::AnimationState::WalkLeft));
 	input.BindCommandController(0, dae::GameController::DPAD_LEFT, dae::InputType::Released,
 		std::make_unique<dae::StopAnimationCommand>(animator.get()));
 
-	input.BindCommandController(0, dae::GameController::DPAD_RIGHT, dae::InputType::Down,
+	input.BindCommandController(0, dae::GameController::DPAD_RIGHT, dae::InputType::Pressed,
 		std::make_unique<dae::MoveCommand>(player.get(), glm::vec3(1, 0, 0), playerSpeed, animator.get(), dae::AnimationState::WalkRight));
 	input.BindCommandController(0, dae::GameController::DPAD_RIGHT, dae::InputType::Released,
 		std::make_unique<dae::StopAnimationCommand>(animator.get()));

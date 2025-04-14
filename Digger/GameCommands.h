@@ -39,24 +39,9 @@ namespace dae
         {
             if (m_Character)
             {
-                glm::vec3 clampedDirection = m_Direction;
-
-                if (std::abs(m_Direction.x) > std::abs(m_Direction.y))
-                {
-                    clampedDirection = { m_Direction.x > 0 ? 1.0f : -1.0f, 0.0f, 0.0f };
-                }
-                else if (std::abs(m_Direction.y) > 0.0f)
-                {
-                    clampedDirection = { 0.0f, m_Direction.y > 0 ? 1.0f : -1.0f, 0.0f };
-                }
-                else
-                {
-                    clampedDirection = { 0.0f, 0.0f, 0.0f }; // No input
-                }
-
                 auto transform = m_Character->GetTransform();
                 glm::vec3 newPosition = transform->GetWorldPosition() + glm::normalize(m_Direction) * m_Speed;
-                std::cout << "Clamped Dir: (" << clampedDirection.x << ", " << clampedDirection.y << ")\n";
+                //std::cout << "Clamped Dir: (" << clampedDirection.x << ", " << clampedDirection.y << ")\n";
                 transform->SetPosition(newPosition);
 
                 // Play animation if animator is set

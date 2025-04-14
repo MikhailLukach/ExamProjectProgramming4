@@ -39,5 +39,7 @@ namespace dae
 		std::unordered_map<SDL_Keycode, std::unordered_map<InputType, std::unique_ptr<Command>>> m_KeyboardCommands;
 
 		std::unordered_map<SDL_Keycode, bool> m_PreviousKeyStates;
+
+		glm::ivec2 m_CurrentDirection{ 0, 0 };
 	};
 }
