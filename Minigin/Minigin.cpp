@@ -11,6 +11,7 @@
 #include "SceneManager.h"
 #include "Renderer.h"
 #include "ResourceManager.h"
+#include "SoundServiceLocator.h"
 //#include <steam_api.h>
 
 SDL_Window* g_window{};
@@ -52,6 +53,11 @@ dae::Minigin::Minigin(const std::string &dataPath)
 		throw std::runtime_error(std::string("SDL_Init Error: ") + SDL_GetError());
 	}
 
+	if (SDL_Init(SDL_INIT_AUDIO) < 0)
+	{
+		std::cerr << "SDL audio init failed: " << SDL_GetError() << '\n';
+	}
+
 	g_window = SDL_CreateWindow(
 		"Programming 4 assignment",
 		SDL_WINDOWPOS_CENTERED,
@@ -72,6 +78,7 @@ dae::Minigin::Minigin(const std::string &dataPath)
 
 dae::Minigin::~Minigin()
 {
+	SoundServiceLocator::Cleanup();
 	Renderer::GetInstance().Destroy();
 	SDL_DestroyWindow(g_window);
 	g_window = nullptr;

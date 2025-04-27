@@ -109,22 +109,18 @@ bool dae::InputManager::ProcessInput()
 			if (map.count(InputType::Pressed)) map.at(InputType::Pressed)->Execute();
 		}
 
-		std::cout << "Clamped Direction: (" << m_CurrentDirection.x << ", " << m_CurrentDirection.y << ")\n";
-		/*for (const auto& [button, commandMap] : m_ControllerCommands[controller->GetControllerIndex()])
+		//std::cout << "Clamped Direction: (" << m_CurrentDirection.x << ", " << m_CurrentDirection.y << ")\n";
+		for (const auto& [button, commandMap] : m_ControllerCommands[controller->GetControllerIndex()])
 		{
 			if (controller->IsDownThisFrame(button) && commandMap.count(InputType::Down))
 			{
 				commandMap.at(InputType::Down)->Execute();
 			}
-			else if (controller->IsPressed(button) && commandMap.count(InputType::Pressed))
-			{
-				commandMap.at(InputType::Pressed)->Execute();
-			}
 			else if (controller->IsUpThisFrame(button) && commandMap.count(InputType::Released))
 			{
 				commandMap.at(InputType::Released)->Execute();
 			}
-		}*/
+		}
 	}
 
 	return true;

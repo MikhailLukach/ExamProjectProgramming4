@@ -59,7 +59,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\3rdParty\steamworks\public\steam;$(SolutionDir)\3rdParty\imgui-1.91.8;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\3rdParty\steamworks\public\steam;$(SolutionDir)\3rdParty\imgui-1.91.8;$(SolutionDir)3rdParty\SDL2_mixer\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
@@ -90,7 +90,7 @@ xcopy /Y /D "$(SolutionDir)3rdParty\SDL2_ttf\lib\x64\SDL2_ttf.dll" "$(OutputPath
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\3rdParty\steamworks\public\steam;$(SolutionDir)\3rdParty\imgui-1.91.8;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\3rdParty\steamworks\public\steam;$(SolutionDir)\3rdParty\imgui-1.91.8;$(SolutionDir)3rdParty\SDL2_mixer\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
@@ -131,8 +131,12 @@ xcopy /Y /D "$(SolutionDir)3rdParty\SDL2_ttf\lib\x64\SDL2_ttf.dll" "$(OutputPath
     <ClInclude Include="FPSComponent.h" />
     <ClInclude Include="GameController.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="SDLSoundSystem.h" />
+    <ClInclude Include="SoundServiceLocator.h" />
     <ClInclude Include="InputManager.h" />
+    <ClInclude Include="ISoundSystem.h" />
     <ClInclude Include="Minigin.h" />
+    <ClInclude Include="NullSoundSystem.h" />
     <ClInclude Include="Observer.h" />
     <ClInclude Include="RenderComponent.h" />
     <ClInclude Include="Renderer.h" />
@@ -168,6 +172,7 @@ xcopy /Y /D "$(SolutionDir)3rdParty\SDL2_ttf\lib\x64\SDL2_ttf.dll" "$(OutputPath
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="SDLSoundSystem.cpp" />
     <ClCompile Include="TextComponent.cpp" />
     <ClCompile Include="TextObject.cpp" />
     <ClCompile Include="Texture2D.cpp" />

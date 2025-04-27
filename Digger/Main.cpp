@@ -19,6 +19,8 @@
 #include "GameCommands.h"
 #include "LevelLoader.h"
 #include "SpriteAnimatorComponent.h"
+#include "SoundServiceLocator.h"
+#include "SDLSoundSystem.h"
 
 void load() 
 {
@@ -220,6 +222,10 @@ void LoadGame()
 	auto& scene = dae::SceneManager::GetInstance().CreateScene("DiggerLevel1");
 	dae::ResourceManager::GetInstance().Init("../Data");
 
+	auto soundSystem = new dae::SDLSoundSystem();
+
+	dae::SoundServiceLocator::Provide(soundSystem);
+
 	const float playerSpeed = 2.5f;
 
 	auto& input = dae::InputManager::GetInstance();
@@ -242,6 +248,12 @@ void LoadGame()
 
 	scene.Add(player);
 
+	auto infoDisplay = std::make_shared<dae::GameObject>();
+	auto infoText = infoDisplay->AddComponent<dae::TextComponent>("Press the A-button on a XBOX gamepad to play sound effect.", "Lingua.otf", 14);
+	infoDisplay->GetTransform()->SetPosition(0, 10, 0);
+
+	scene.Add(infoDisplay);
+
 	input.BindCommandController(0, dae::GameController::DPAD_UP, dae::InputType::Pressed,
 		std::make_unique<dae::MoveCommand>(player.get(), glm::vec3(0, -1, 0), playerSpeed, animator.get(), dae::AnimationState::WalkUp));
 	input.BindCommandController(0, dae::GameController::DPAD_UP, dae::InputType::Released,
@@ -261,6 +273,13 @@ void LoadGame()
 		std::make_unique<dae::MoveCommand>(player.get(), glm::vec3(1, 0, 0), playerSpeed, animator.get(), dae::AnimationState::WalkRight));
 	input.BindCommandController(0, dae::GameController::DPAD_RIGHT, dae::InputType::Released,
 		std::make_unique<dae::StopAnimationCommand>(animator.get()));
+
+	input.BindCommandController(
+		0,
+		dae::GameController::A,
+		dae::InputType::Released,
+		std::make_unique<dae::PlaySoundCommand>("C:/Users/steen/Documents/GitHub/ExamProjectProgramming4/Data/Explosion Sound Effect.wav")  // Replace with a valid file
+	);
 
 }
 

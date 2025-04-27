@@ -51,6 +51,9 @@ void dae::SpriteAnimatorComponent::PlayAnimation(int startFrame, int frameCount)
 void dae::SpriteAnimatorComponent::Stop()
 {
 	m_IsPlaying = false;
+
+	//m_CurrentFrameIndex = 0;
+	//UpdateTextureClip();
 }
 
 void dae::SpriteAnimatorComponent::Play(AnimationState state)

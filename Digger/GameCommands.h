@@ -5,7 +5,8 @@
 #include "ScoreComponent.h"
 #include "SpriteAnimatorComponent.h"
 #include "AnimationState.h"
-
+#include "SoundServiceLocator.h"
+#include "ISoundSystem.h"
 
 namespace dae
 {
@@ -84,6 +85,7 @@ namespace dae
 
         void Execute() override
         {
+            //std::cout << "Release animation" << std::endl;
             if (m_pAnimator)
             {
                 //std::cout << "Stop animation" << std::endl;
@@ -133,5 +135,22 @@ namespace dae
     private:
         ScoreComponent* m_pScoreComponent;
         int m_Points;
+    };
+
+    class PlaySoundCommand : public Command
+    {
+    public:
+        explicit PlaySoundCommand(const std::string& soundFilePath)
+            : m_SoundFile(soundFilePath) {}
+
+        void Execute() override
+        {
+            ISoundSystem& soundSystem = SoundServiceLocator::Get();
+            std::cout << "Trying to play sound" << std::endl;
+            soundSystem.PlaySound(m_SoundFile);
+        }
+
+    private:
+        std::string m_SoundFile;
     };
 }
