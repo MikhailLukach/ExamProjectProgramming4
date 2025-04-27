@@ -49,6 +49,11 @@ std::shared_ptr<dae::Font> dae::ResourceManager::LoadFont(const std::string& fil
 	return m_loadedFonts.at(key);
 }
 
+std::string dae::ResourceManager::GetFullPath(const std::string& relativePath) const
+{
+	return (m_dataPath / relativePath).string();
+}
+
 void dae::ResourceManager::UnloadUnusedResources()
 {
 	for (auto it = m_loadedTextures.begin(); it != m_loadedTextures.end();)

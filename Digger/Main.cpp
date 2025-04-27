@@ -278,7 +278,7 @@ void LoadGame()
 		0,
 		dae::GameController::A,
 		dae::InputType::Released,
-		std::make_unique<dae::PlaySoundCommand>("C:/Users/steen/Documents/GitHub/ExamProjectProgramming4/Data/Explosion Sound Effect.wav")  // Replace with a valid file
+		std::make_unique<dae::PlaySoundCommand>(dae::ResourceManager::GetInstance().GetFullPath("Explosion Sound Effect.wav"))  // Replace with a valid file
 	);
 
 }
