@@ -84,6 +84,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="GridOutlineComponent.cpp" />
     <ClCompile Include="HealthComponent.cpp" />
     <ClCompile Include="HUDDisplay.cpp" />
     <ClCompile Include="LevelLoader.cpp" />
@@ -96,6 +97,7 @@
   <ItemGroup>
     <ClInclude Include="AnimationState.h" />
     <ClInclude Include="GameCommands.h" />
+    <ClInclude Include="GridOutlineComponent.h" />
     <ClInclude Include="HealthComponent.h" />
     <ClInclude Include="HUDDisplay.h" />
     <ClInclude Include="LevelLoader.h" />
