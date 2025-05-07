@@ -33,8 +33,8 @@ namespace dae
 		glm::vec3 position = GetOwner()->GetTransform()->GetLocalPosition();
 
 		SDL_Rect dst{};
-		dst.x = static_cast<int>(position.x);
-		dst.y = static_cast<int>(position.y);
+		dst.x = static_cast<int>(position.x + m_RenderOffset.x);
+		dst.y = static_cast<int>(position.y + m_RenderOffset.y);
 		dst.w = static_cast<int>(m_Width);
 		dst.h = static_cast<int>(m_Height);
 
@@ -70,5 +70,15 @@ namespace dae
 	void RenderComponent::ClearSourceRect()
 	{
 		m_UseSourceRect = false;
+	}
+
+	void RenderComponent::SetRenderOffset(const glm::vec2& offset)
+	{
+		m_RenderOffset = offset;
+	}
+
+	void RenderComponent::ResetRenderOffset()
+	{
+		m_RenderOffset = { 0.f, 0.f };
 	}
 }

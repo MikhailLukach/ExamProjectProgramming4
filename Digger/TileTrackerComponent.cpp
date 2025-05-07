@@ -19,5 +19,5 @@ void dae::TileTrackerComponent::Update(float deltaTime)
 
 	m_CurrentTile = { col, row };
 
-	std::cout << "[TileTrackerComponent]: The current tile is y: " << col << " and x: " << row << std::endl;
+	//std::cout << "[TileTrackerComponent]: The current tile is y: " << col << " and x: " << row << std::endl;
 }

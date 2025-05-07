@@ -49,52 +49,101 @@ namespace dae
             glm::vec3 pos = transform->GetWorldPosition();
             glm::ivec2 tile = tracker->GetTileCoords();
 
-            // Predict which tile we would move to
+            // Compute center of current tile
+            float centerX = tile.x * GridSettings::TileWidth + GridSettings::TileWidth / 2.0f + GridSettings::GridOffsetX;
+            float centerY = tile.y * GridSettings::TileHeight + GridSettings::TileHeight / 2.0f + GridSettings::GridOffsetY;
+            glm::vec3 center{ centerX + 5.0f, centerY + 5.0f, 0.0f }; // 5px sprite visual adjustment
+
+            glm::vec3 toCenter = center - pos;
+            float threshold = 1.0f;
+
             glm::vec3 desiredDir = glm::normalize(m_Direction);
-            glm::vec3 predictedPosition = pos + desiredDir * m_Speed;
+            glm::vec3 orientedPos{pos};
+            if(desiredDir.x < 0 || desiredDir.y < 0)
+            {
+                orientedPos = glm::vec3{ pos.x - 25, pos.y - 25, pos.z };
+            }
+            if(desiredDir.x > 0)
+            {
+                orientedPos = glm::vec3{ pos.x + 15, pos.y, pos.z };
+            }
+            if(desiredDir.y > 0)
+            {
+                orientedPos = glm::vec3{ pos.x, pos.y + 15, pos.z };
+            }
+            glm::vec3 predictedPosition = orientedPos + desiredDir * m_Speed;
 
             // Convert predicted position to tile coordinates
             int predictedTileX = static_cast<int>(std::floor((predictedPosition.x - GridSettings::GridOffsetX) / GridSettings::TileWidth));
             int predictedTileY = static_cast<int>(std::floor((predictedPosition.y - GridSettings::GridOffsetY) / GridSettings::TileHeight));
 
-            // Clamp movement within grid
-            if (predictedTileX < 0 || predictedTileX >= GridSettings::NumCols ||
-                predictedTileY < 0 || predictedTileY >= GridSettings::NumRows)
-            {
-                return;
-            }
+            // Check if predicted tile is outside the grid
+            bool nextTileIsOutOfBounds =
+                predictedTileX < 0 || predictedTileX >= GridSettings::NumCols ||
+                predictedTileY < 0 || predictedTileY >= GridSettings::NumRows;
 
-            // Calculate center of current tile
-            float centerX = tile.x * GridSettings::TileWidth + GridSettings::TileWidth / 2.0f + GridSettings::GridOffsetX;
-            float centerY = tile.y * GridSettings::TileHeight + GridSettings::TileHeight / 2.0f + GridSettings::GridOffsetY;
-            glm::vec3 center{ centerX + 5.0f, centerY + 5.0f, 0.0f }; 
-
-            glm::vec3 toCenter = center - pos;
-            float threshold = 1.0f;
-
-            desiredDir = glm::normalize(m_Direction);
             glm::vec3 velocity{};
 
-            if (desiredDir.x != 0.f && std::abs(toCenter.y) > threshold)
+            if (nextTileIsOutOfBounds)
             {
-                velocity = glm::normalize(glm::vec3(0, toCenter.y, 0)) * m_Speed;
-            }
-            else if (desiredDir.y != 0.f && std::abs(toCenter.x) > threshold)
-            {
-                velocity = glm::normalize(glm::vec3(toCenter.x, 0, 0)) * m_Speed;
+                // If already centered and trying to move out of bounds  don't move
+                if (glm::length(toCenter) < threshold)
+                {
+                    return;
+                }
+
+                // If not centered, align to center first on perpendicular axis
+                if (desiredDir.x != 0.f && std::abs(toCenter.y) > threshold)
+                {
+                    velocity = glm::normalize(glm::vec3(0, toCenter.y, 0)) * m_Speed;
+                }
+                else if (desiredDir.y != 0.f && std::abs(toCenter.x) > threshold)
+                {
+                    velocity = glm::normalize(glm::vec3(toCenter.x, 0, 0)) * m_Speed;
+                }
+                else
+                {
+                    /*if (auto render = m_Character->GetComponent<RenderComponent>())
+                    {
+                        glm::vec2 offset{};
+                        if (m_Direction.x < 0) offset.x = 20;
+                        if (m_Direction.x > 0) offset.x = -20;
+                        if (m_Direction.y < 0) offset.y = 20;
+                        if (m_Direction.y > 0) offset.y = -20;
+
+                        render->SetRenderOffset(offset);
+                    }*/
+                    return;
+                }
             }
             else
             {
-                velocity = desiredDir * m_Speed;
-
-                if (m_pAnimator)
+                if (auto render = m_Character->GetComponent<RenderComponent>())
                 {
-                    switch (m_AnimState)
+                    render->ResetRenderOffset();
+                }
+                // Movement allowed within bounds
+                if (desiredDir.x != 0.f && std::abs(toCenter.y) > threshold)
+                {
+                    velocity = glm::normalize(glm::vec3(0, toCenter.y, 0)) * m_Speed;
+                }
+                else if (desiredDir.y != 0.f && std::abs(toCenter.x) > threshold)
+                {
+                    velocity = glm::normalize(glm::vec3(toCenter.x, 0, 0)) * m_Speed;
+                }
+                else
+                {
+                    velocity = desiredDir * m_Speed;
+
+                    if (m_pAnimator)
                     {
-                    case AnimationState::WalkRight: m_pAnimator->PlayAnimation(0, 3); break;
-                    case AnimationState::WalkDown:  m_pAnimator->PlayAnimation(3, 3); break;
-                    case AnimationState::WalkLeft:  m_pAnimator->PlayAnimation(6, 3); break;
-                    case AnimationState::WalkUp:    m_pAnimator->PlayAnimation(9, 3); break;
+                        switch (m_AnimState)
+                        {
+                        case AnimationState::WalkRight: m_pAnimator->PlayAnimation(0, 3); break;
+                        case AnimationState::WalkDown:  m_pAnimator->PlayAnimation(3, 3); break;
+                        case AnimationState::WalkLeft:  m_pAnimator->PlayAnimation(6, 3); break;
+                        case AnimationState::WalkUp:    m_pAnimator->PlayAnimation(9, 3); break;
+                        }
                     }
                 }
             }
