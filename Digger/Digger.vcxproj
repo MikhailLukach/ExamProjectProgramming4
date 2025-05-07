@@ -99,6 +99,7 @@
     <ClInclude Include="AnimationState.h" />
     <ClInclude Include="GameCommands.h" />
     <ClInclude Include="GridOutlineComponent.h" />
+    <ClInclude Include="GridSettings.h" />
     <ClInclude Include="HealthComponent.h" />
     <ClInclude Include="HUDDisplay.h" />
     <ClInclude Include="LevelLoader.h" />

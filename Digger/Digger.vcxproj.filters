@@ -83,5 +83,8 @@
     <ClInclude Include="TileTrackerComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GridSettings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

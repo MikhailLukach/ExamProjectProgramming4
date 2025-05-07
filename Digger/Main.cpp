@@ -25,6 +25,8 @@
 #include "SoundServiceLocator.h"
 #include "SDLSoundSystem.h"
 
+//exercise Game Scene
+/*
 void load() 
 {
 	auto& scene = dae::SceneManager::GetInstance().CreateScene("Demo");
@@ -35,11 +37,11 @@ void load()
 	const float char1Speed{ 5.f };
 	const float char2Speed{ 10.f };
 
-	/*input.BindCommandKeyboard(SDLK_w, dae::InputType::Pressed, std::make_unique<dae::JumpCommand>());
+	input.BindCommandKeyboard(SDLK_w, dae::InputType::Pressed, std::make_unique<dae::JumpCommand>());
 	input.BindCommandKeyboard(SDLK_SPACE, dae::InputType::Down, std::make_unique<dae::FireCommand>());
 
 	input.BindCommandController(0, XINPUT_GAMEPAD_DPAD_UP, dae::InputType::Down, std::make_unique<dae::JumpCommand>());
-	input.BindCommandController(0, XINPUT_GAMEPAD_DPAD_DOWN, dae::InputType::Pressed, std::make_unique<dae::FireCommand>());*/
+	input.BindCommandController(0, XINPUT_GAMEPAD_DPAD_DOWN, dae::InputType::Pressed, std::make_unique<dae::FireCommand>());
 
 	std::cout << "input commands have been set\n";
 
@@ -173,7 +175,7 @@ void load()
 	//scene.Add(go5);
 
 	//parent and child
-	/*auto mainGameObject = std::make_shared<dae::GameObject>();
+	auto mainGameObject = std::make_shared<dae::GameObject>();
 	mainGameObject->GetTransform()->SetPosition(300, 300, 0);
 	mainGameObject->AddComponent<dae::RenderComponent>("Mr!DoClown.png");
 	mainGameObject->AddComponent<dae::RotatorComponent>(50.0f, 90.0f, glm::vec3(300, 300, 0));
@@ -191,21 +193,21 @@ void load()
 	}
 
 	scene.Add(mainGameObject);
-	scene.Add(childGameObject);*/
+	scene.Add(childGameObject);
 
 	//testing stuff
-	/*if (go->GetComponent<dae::RenderComponent>()->GetOwner() == go.get())
+	if (go->GetComponent<dae::RenderComponent>()->GetOwner() == go.get())
 	{
 		std::cout << "GetOwner() correctly returns the GameObject!\n";
 	}
 	else
 	{
 		std::cerr << "Error: GetOwner() does not match the original GameObject!\n";
-	}*/
+	}
 
 	//std::cout << "X:" << childGameObject->GetComponent<dae::Transform>()->GetPosition().x << std::endl;
 	//std::cout << "Y:" << childGameObject->GetComponent<dae::Transform>()->GetPosition().y << std::endl;
-	/*if (go->HasComponent<dae::Transform>())
+	if (go->HasComponent<dae::Transform>())
 	{
 		std::cout << "Transform component successfully added!\n";
 
@@ -217,8 +219,10 @@ void load()
 	else
 	{
 		std::cout << "Error: Transform component not found!\n";
-	}*/
+	}
 }
+*/
+
 
 void LoadGame()
 {
@@ -251,10 +255,10 @@ void LoadGame()
 
 	constexpr int TileWidth = 42;
 	constexpr int TileHeight = 43;
-	constexpr int HorizontalOffset = (640 - (TileWidth * 15)) / 2; // = 5
-	constexpr int TopMargin = 48;
+	constexpr int OffsetX = (640 - (TileWidth * 15)) / 2; // = 5
+	constexpr int OffsetY = 48;
 
-	player->AddComponent<dae::TileTrackerComponent>(TileWidth, TileHeight, HorizontalOffset, TopMargin);
+	player->AddComponent<dae::TileTrackerComponent>(TileWidth, TileHeight, OffsetX, OffsetY);
 
 	scene.Add(player);
 
@@ -265,22 +269,26 @@ void LoadGame()
 	scene.Add(infoDisplay);
 
 	input.BindCommandController(0, dae::GameController::DPAD_UP, dae::InputType::Pressed,
-		std::make_unique<dae::MoveCommand>(player.get(), glm::vec3(0, -1, 0), playerSpeed, animator.get(), dae::AnimationState::WalkUp));
+		std::make_unique<dae::MoveCommand>(player.get(), glm::vec3(0, -1, 0), playerSpeed,
+			 animator.get(), dae::AnimationState::WalkUp));
 	input.BindCommandController(0, dae::GameController::DPAD_UP, dae::InputType::Released,
 		std::make_unique<dae::StopAnimationCommand>(animator.get()));
 
 	input.BindCommandController(0, dae::GameController::DPAD_DOWN, dae::InputType::Pressed,
-		std::make_unique<dae::MoveCommand>(player.get(), glm::vec3(0, 1, 0), playerSpeed, animator.get(), dae::AnimationState::WalkDown));
+		std::make_unique<dae::MoveCommand>(player.get(), glm::vec3(0, 1, 0), playerSpeed,
+			 animator.get(), dae::AnimationState::WalkDown));
 	input.BindCommandController(0, dae::GameController::DPAD_DOWN, dae::InputType::Released,
 		std::make_unique<dae::StopAnimationCommand>(animator.get()));
 
 	input.BindCommandController(0, dae::GameController::DPAD_LEFT, dae::InputType::Pressed,
-		std::make_unique<dae::MoveCommand>(player.get(), glm::vec3(-1, 0, 0), playerSpeed, animator.get(), dae::AnimationState::WalkLeft));
+		std::make_unique<dae::MoveCommand>(player.get(), glm::vec3(-1, 0, 0), playerSpeed,
+			 animator.get(), dae::AnimationState::WalkLeft));
 	input.BindCommandController(0, dae::GameController::DPAD_LEFT, dae::InputType::Released,
 		std::make_unique<dae::StopAnimationCommand>(animator.get()));
 
 	input.BindCommandController(0, dae::GameController::DPAD_RIGHT, dae::InputType::Pressed,
-		std::make_unique<dae::MoveCommand>(player.get(), glm::vec3(1, 0, 0), playerSpeed, animator.get(), dae::AnimationState::WalkRight));
+		std::make_unique<dae::MoveCommand>(player.get(), glm::vec3(1, 0, 0), playerSpeed,
+			 animator.get(), dae::AnimationState::WalkRight));
 	input.BindCommandController(0, dae::GameController::DPAD_RIGHT, dae::InputType::Released,
 		std::make_unique<dae::StopAnimationCommand>(animator.get()));
 
