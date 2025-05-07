@@ -13,12 +13,15 @@
 #include "Command.h"
 #include "HUDDisplay.h"
 
+//components
 #include "RotatorComponent.h"
 #include "HealthComponent.h"
 #include "ScoreComponent.h"
+#include "SpriteAnimatorComponent.h"
+#include "TileTrackerComponent.h"
+
 #include "GameCommands.h"
 #include "LevelLoader.h"
-#include "SpriteAnimatorComponent.h"
 #include "SoundServiceLocator.h"
 #include "SDLSoundSystem.h"
 
@@ -245,6 +248,13 @@ void LoadGame()
 	auto animator = player->AddComponent<dae::SpriteAnimatorComponent>(render.get(), 16, 16, 0.2f);
 
 	animator->PlayAnimation(3, 3);
+
+	constexpr int TileWidth = 42;
+	constexpr int TileHeight = 43;
+	constexpr int HorizontalOffset = (640 - (TileWidth * 15)) / 2; // = 5
+	constexpr int TopMargin = 48;
+
+	player->AddComponent<dae::TileTrackerComponent>(TileWidth, TileHeight, HorizontalOffset, TopMargin);
 
 	scene.Add(player);
 
