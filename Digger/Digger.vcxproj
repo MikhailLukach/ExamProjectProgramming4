@@ -84,11 +84,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BreakingState.cpp" />
+    <ClCompile Include="CollectableState.cpp" />
+    <ClCompile Include="FallingState.cpp" />
     <ClCompile Include="GridOutlineComponent.cpp" />
     <ClCompile Include="HealthComponent.cpp" />
     <ClCompile Include="HUDDisplay.cpp" />
+    <ClCompile Include="IdleState.cpp" />
     <ClCompile Include="LevelLoader.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="MoneyBagComponent.cpp" />
     <ClCompile Include="RotatorComponent.cpp" />
     <ClCompile Include="ScoreComponent.cpp" />
     <ClCompile Include="SpriteAnimatorComponent.cpp" />
@@ -98,12 +103,18 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationState.h" />
+    <ClInclude Include="BreakingState.h" />
+    <ClInclude Include="CollectableState.h" />
+    <ClInclude Include="FallingState.h" />
     <ClInclude Include="GameCommands.h" />
     <ClInclude Include="GridOutlineComponent.h" />
     <ClInclude Include="GridSettings.h" />
     <ClInclude Include="HealthComponent.h" />
     <ClInclude Include="HUDDisplay.h" />
+    <ClInclude Include="IdleState.h" />
     <ClInclude Include="LevelLoader.h" />
+    <ClInclude Include="MoneyBagComponent.h" />
+    <ClInclude Include="MoneyBagState.h" />
     <ClInclude Include="RotatorComponent.h" />
     <ClInclude Include="ScoreComponent.h" />
     <ClInclude Include="SpriteAnimatorComponent.h" />

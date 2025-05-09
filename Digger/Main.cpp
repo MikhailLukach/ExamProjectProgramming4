@@ -21,6 +21,13 @@
 #include "TileTrackerComponent.h"
 #include "TileManagerComponent.h"
 #include "TileComponent.h"
+#include "MoneyBagComponent.h"
+
+//states
+#include "IdleState.h"
+#include "FallingState.h"
+#include "CollectableState.h"
+#include "BreakingState.h"
 
 #include "GameCommands.h"
 #include "LevelLoader.h"
@@ -250,25 +257,6 @@ void LoadGame()
 	levelManager->InitWithTileGrid(std::move(tileGrid));
 	scene.Add(levelManagerObj);
 
-	/*auto tile = levelManager->GetTileAt(5, 3);  // column 5, row 3
-	if (tile)
-	{
-		std::cout << "[DEBUG] Digging tile at (5, 3)\n";
-		auto tileComp = tile->GetComponent<dae::TileComponent>();
-		if (tileComp)
-		{
-			tileComp->Dig();
-		}
-		else
-		{
-			std::cout << "[DEBUG] No TileComponent on tile at (5, 3)\n";
-		}
-	}
-	else
-	{
-		std::cout << "[DEBUG] No tile at (5, 3)\n";
-	}*/
-
 	auto player = std::make_shared<dae::GameObject>();
 	int spawnX = 0;
 	int spawnY = 0;
@@ -295,7 +283,12 @@ void LoadGame()
 	auto infoText = infoDisplay->AddComponent<dae::TextComponent>("Press the A-button on a XBOX gamepad to play sound effect.", "Lingua.otf", 14);
 	infoDisplay->GetTransform()->SetPosition(0, 10, 0);
 
+	auto infoDisplay2 = std::make_shared<dae::GameObject>();
+	auto infoText2 = infoDisplay2->AddComponent<dae::TextComponent>("Press the B-button to make the apple switch between its states.", "Lingua.otf", 14);
+	infoDisplay2->GetTransform()->SetPosition(0, 25, 0);
+
 	scene.Add(infoDisplay);
+	scene.Add(infoDisplay2);
 
 	input.BindCommandController(0, dae::GameController::DPAD_UP, dae::InputType::Pressed,
 		std::make_unique<dae::MoveCommand>(player.get(), glm::vec3(0, -1, 0), playerSpeed, 
@@ -327,6 +320,20 @@ void LoadGame()
 		dae::InputType::Released,
 		std::make_unique<dae::PlaySoundCommand>(dae::ResourceManager::GetInstance().GetFullPath("Explosion Sound Effect.wav"))  // Replace with a valid file
 	);
+
+	auto appleObj = std::make_shared<dae::GameObject>();
+
+	auto appleRender = appleObj->AddComponent<dae::RenderComponent>("Apple1.png");
+	appleRender->SetSize(32, 32);
+
+	auto spawnPosApple1 = loader.GetWorldCenterForTile(5, 5);
+	appleObj->GetTransform()->SetPosition(spawnPosApple1);
+	auto moneyBag = appleObj->AddComponent<dae::MoneyBagComponent>();
+	moneyBag->SetState(std::make_unique<dae::IdleState>());
+	scene.Add(appleObj);
+
+	input.BindCommandController(0, dae::GameController::B, dae::InputType::Released,
+		std::make_unique<dae::CycleMoneyBagStateCommand>(moneyBag.get()));
 
 }
 

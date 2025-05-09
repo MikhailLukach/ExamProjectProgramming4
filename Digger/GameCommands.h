@@ -271,4 +271,45 @@ namespace dae
     private:
         std::string m_SoundFile;
     };
+
+    class CycleMoneyBagStateCommand : public Command
+    {
+    public:
+        explicit CycleMoneyBagStateCommand(MoneyBagComponent* moneyBag)
+            : m_MoneyBag(moneyBag) {}
+
+        void Execute() override
+        {
+            if (!m_MoneyBag)
+                return;
+
+            m_CurrentState = (m_CurrentState + 1) % 4;
+
+            switch (m_CurrentState)
+            {
+            case 0:
+                std::cout << "[Debug] Switching to IdleState\n";
+                m_MoneyBag->SetState(std::make_unique<IdleState>());
+                break;
+            case 1:
+                std::cout << "[Debug] Switching to FallingState\n";
+                m_MoneyBag->SetState(std::make_unique<FallingState>());
+                break;
+            case 2:
+                std::cout << "[Debug] Switching to BreakingState\n";
+                m_MoneyBag->SetState(std::make_unique<BreakingState>());
+                break;
+            case 3:
+                std::cout << "[Debug] Switching to CollectableState\n";
+                m_MoneyBag->SetState(std::make_unique<CollectableState>());
+                break;
+            default:
+                break;
+            }
+        }
+
+    private:
+        MoneyBagComponent* m_MoneyBag;
+        int m_CurrentState{ -1 };
+    };
 }
