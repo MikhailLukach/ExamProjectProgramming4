@@ -4,6 +4,7 @@
 #include "HealthComponent.h"
 #include "ScoreComponent.h"
 #include "SpriteAnimatorComponent.h"
+#include "TileManagerComponent.h"
 #include "AnimationState.h"
 #include "SoundServiceLocator.h"
 #include "ISoundSystem.h"
@@ -33,9 +34,9 @@ namespace dae
     {
     public:
         MoveCommand(GameObject* character, const glm::vec3& direction, float speed,
-            
+            TileManagerComponent* tileManager = nullptr,
             SpriteAnimatorComponent* animator = nullptr, AnimationState state = AnimationState::WalkDown)
-            : m_Character(character), m_Direction(direction), m_Speed(speed),
+            : m_Character(character), m_Direction(direction), m_Speed(speed), m_pTileManager(tileManager),
             m_pAnimator(animator), m_AnimState(state) {}
 
         void Execute() override
@@ -149,6 +150,39 @@ namespace dae
             }
 
             transform->SetPosition(pos + velocity);
+
+            if (!m_pTileManager)
+            {
+                std::cout << "[MoveCommand] No LevelManager assigned, skipping dig check.\n";
+                return;
+            }
+
+            if (tracker = m_Character->GetComponent<TileTrackerComponent>())
+            {
+                glm::ivec2 coords = tracker->GetTileCoords();
+                int col = coords.x;
+                int row = coords.y;
+
+                //std::cout << "[MoveCommand] Player is at tile: (" << col << ", " << row << ")\n";
+
+                auto tileObj = m_pTileManager->GetTileAt(col, row);
+                if (tileObj)
+                {
+                    auto tileComp = tileObj->GetComponent<TileComponent>();
+                    if (tileComp)
+                    {
+                        tileComp->Dig();
+                    }
+                    else
+                    {
+                        std::cout << "[MoveCommand] Tile at (" << col << ", " << row << ") has no TileComponent!\n";
+                    }
+                }
+                //else
+                //{
+                    //std::cout << "[MoveCommand] No tile at (" << col << ", " << row << ")\n";
+                //}
+            }
         }
 
     private:
@@ -157,6 +191,7 @@ namespace dae
         float m_Speed;
 
         SpriteAnimatorComponent* m_pAnimator{};
+        TileManagerComponent* m_pTileManager{};
         AnimationState m_AnimState{ AnimationState::WalkDown };
     };
 

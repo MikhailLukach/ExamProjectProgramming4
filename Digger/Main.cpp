@@ -19,6 +19,8 @@
 #include "ScoreComponent.h"
 #include "SpriteAnimatorComponent.h"
 #include "TileTrackerComponent.h"
+#include "TileManagerComponent.h"
+#include "TileComponent.h"
 
 #include "GameCommands.h"
 #include "LevelLoader.h"
@@ -237,8 +239,35 @@ void LoadGame()
 
 	auto& input = dae::InputManager::GetInstance();
 
+	auto levelManagerObj = std::make_shared<dae::GameObject>();
+	auto levelManager = levelManagerObj->AddComponent<dae::TileManagerComponent>();
+
+	std::vector<std::vector<std::shared_ptr<dae::GameObject>>> tileGrid;
+
 	dae::LevelLoader loader;
-	loader.LoadLevel(scene);
+	loader.LoadLevel(scene, tileGrid);
+
+	levelManager->InitWithTileGrid(std::move(tileGrid));
+	scene.Add(levelManagerObj);
+
+	/*auto tile = levelManager->GetTileAt(5, 3);  // column 5, row 3
+	if (tile)
+	{
+		std::cout << "[DEBUG] Digging tile at (5, 3)\n";
+		auto tileComp = tile->GetComponent<dae::TileComponent>();
+		if (tileComp)
+		{
+			tileComp->Dig();
+		}
+		else
+		{
+			std::cout << "[DEBUG] No TileComponent on tile at (5, 3)\n";
+		}
+	}
+	else
+	{
+		std::cout << "[DEBUG] No tile at (5, 3)\n";
+	}*/
 
 	auto player = std::make_shared<dae::GameObject>();
 	int spawnX = 0;
@@ -269,26 +298,26 @@ void LoadGame()
 	scene.Add(infoDisplay);
 
 	input.BindCommandController(0, dae::GameController::DPAD_UP, dae::InputType::Pressed,
-		std::make_unique<dae::MoveCommand>(player.get(), glm::vec3(0, -1, 0), playerSpeed,
-			 animator.get(), dae::AnimationState::WalkUp));
+		std::make_unique<dae::MoveCommand>(player.get(), glm::vec3(0, -1, 0), playerSpeed, 
+			 levelManager.get(), animator.get(), dae::AnimationState::WalkUp));
 	input.BindCommandController(0, dae::GameController::DPAD_UP, dae::InputType::Released,
 		std::make_unique<dae::StopAnimationCommand>(animator.get()));
 
 	input.BindCommandController(0, dae::GameController::DPAD_DOWN, dae::InputType::Pressed,
 		std::make_unique<dae::MoveCommand>(player.get(), glm::vec3(0, 1, 0), playerSpeed,
-			 animator.get(), dae::AnimationState::WalkDown));
+			levelManager.get(), animator.get(), dae::AnimationState::WalkDown));
 	input.BindCommandController(0, dae::GameController::DPAD_DOWN, dae::InputType::Released,
 		std::make_unique<dae::StopAnimationCommand>(animator.get()));
 
 	input.BindCommandController(0, dae::GameController::DPAD_LEFT, dae::InputType::Pressed,
 		std::make_unique<dae::MoveCommand>(player.get(), glm::vec3(-1, 0, 0), playerSpeed,
-			 animator.get(), dae::AnimationState::WalkLeft));
+			 levelManager.get(), animator.get(), dae::AnimationState::WalkLeft));
 	input.BindCommandController(0, dae::GameController::DPAD_LEFT, dae::InputType::Released,
 		std::make_unique<dae::StopAnimationCommand>(animator.get()));
 
 	input.BindCommandController(0, dae::GameController::DPAD_RIGHT, dae::InputType::Pressed,
 		std::make_unique<dae::MoveCommand>(player.get(), glm::vec3(1, 0, 0), playerSpeed,
-			 animator.get(), dae::AnimationState::WalkRight));
+			 levelManager.get(), animator.get(), dae::AnimationState::WalkRight));
 	input.BindCommandController(0, dae::GameController::DPAD_RIGHT, dae::InputType::Released,
 		std::make_unique<dae::StopAnimationCommand>(animator.get()));
 

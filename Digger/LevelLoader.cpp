@@ -18,7 +18,7 @@ constexpr int HorOffset = 10;
 constexpr int TileWidth = ScreenWidth / NumCols;           // 640 / 15 = 42.6 => 42 (int)
 constexpr int TileHeight = (ScreenHeight - TopMargin) / NumRows; // (480 - 48) / 10 = 43.2 => 43
 
-void dae::LevelLoader::LoadLevel(Scene& scene)
+void dae::LevelLoader::LoadLevel(Scene& scene, std::vector<std::vector<std::shared_ptr<dae::GameObject>>>& outTileGrid)
 {
 	InitLevelLayout();
 
@@ -27,6 +27,8 @@ void dae::LevelLoader::LoadLevel(Scene& scene)
 
 	const int HorizontalOffset = (ScreenWidth - LevelPixelWidth) / 2; // ~5
 	const int VerticalOffset = TopMargin; // Leave space for UI
+
+	outTileGrid.resize(m_LevelHeight, std::vector<std::shared_ptr<GameObject>>(m_LevelWidth));
 
 	for (int y = 0; y < m_LevelHeight; ++y)
 	{
@@ -50,6 +52,8 @@ void dae::LevelLoader::LoadLevel(Scene& scene)
 			tile->AddComponent<GridOutlineComponent>(TileWidth, TileHeight);
 
 			scene.Add(tile);
+
+			outTileGrid[y][x] = tile;
 		}
 	}
 }

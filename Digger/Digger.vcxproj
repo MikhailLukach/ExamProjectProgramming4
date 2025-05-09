@@ -93,6 +93,7 @@
     <ClCompile Include="ScoreComponent.cpp" />
     <ClCompile Include="SpriteAnimatorComponent.cpp" />
     <ClCompile Include="TileComponent.cpp" />
+    <ClCompile Include="TileManagerComponent.cpp" />
     <ClCompile Include="TileTrackerComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -107,6 +108,7 @@
     <ClInclude Include="ScoreComponent.h" />
     <ClInclude Include="SpriteAnimatorComponent.h" />
     <ClInclude Include="TileComponent.h" />
+    <ClInclude Include="TileManagerComponent.h" />
     <ClInclude Include="TileTrackerComponent.h" />
     <ClInclude Include="TileTypes.h" />
   </ItemGroup>

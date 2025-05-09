@@ -13,7 +13,7 @@ namespace dae
 	{
 	public:
 		LevelLoader() = default;
-		void LoadLevel(Scene& scene);
+		void LoadLevel(Scene& scene, std::vector<std::vector<std::shared_ptr<dae::GameObject>>>& outTileGrid);
 		glm::vec3 GetWorldCenterForTile(int tileX, int tileY) const;
 	private:
 		const int m_LevelWidth = 15;

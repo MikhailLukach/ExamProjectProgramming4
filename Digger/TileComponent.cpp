@@ -42,7 +42,26 @@ void dae::TileComponent::UpdateTexture()
         texturePath = "Tiles/TileFilled.png"; 
         break;
     case TileVisualType::Dug_Spot: 
-        texturePath = "Tiles/TileEmpty.png"; 
+        texturePath = "Tiles/TileBlack.png"; 
         break;
+    default:
+        std::cout << "[TileComponent] Unknown TileVisualType!\n";
+        return;
     }
+
+    //std::cout << "[TileComponent] Applying texture: " << texturePath << '\n';
+    m_pRenderComponent->SetTexture(texturePath);
+}
+
+void dae::TileComponent::Dig()
+{
+    if (m_Type == TileVisualType::Undug)
+    {
+        //std::cout << "[TileComponent] Digging tile...\n";
+        SetType(TileVisualType::Dug_Spot);
+    }
+    //else
+    //{
+       //std::cout << "[TileComponent] Tile already dug.\n";
+    //}
 }

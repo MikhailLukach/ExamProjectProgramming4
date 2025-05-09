@@ -45,6 +45,9 @@
     <ClCompile Include="TileTrackerComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TileManagerComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="HealthComponent.h">
@@ -84,6 +87,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GridSettings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TileManagerComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

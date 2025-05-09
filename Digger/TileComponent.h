@@ -17,6 +17,8 @@ namespace dae
 
 		void SetRenderComponent(RenderComponent* renderComponent);
 		void UpdateTexture();
+
+		void Dig();
 	private:
 		TileVisualType m_Type;
 		RenderComponent* m_pRenderComponent{};
