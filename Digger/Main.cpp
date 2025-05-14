@@ -321,7 +321,7 @@ void LoadGame()
 		std::make_unique<dae::PlaySoundCommand>(dae::ResourceManager::GetInstance().GetFullPath("Explosion Sound Effect.wav"))  // Replace with a valid file
 	);
 
-	auto appleObj = std::make_shared<dae::GameObject>();
+	/*auto appleObj = std::make_shared<dae::GameObject>();
 
 	auto appleRender = appleObj->AddComponent<dae::RenderComponent>("Apple1.png");
 	appleRender->SetSize(32, 32);
@@ -333,7 +333,29 @@ void LoadGame()
 	scene.Add(appleObj);
 
 	input.BindCommandController(0, dae::GameController::B, dae::InputType::Released,
-		std::make_unique<dae::CycleMoneyBagStateCommand>(moneyBag.get()));
+		std::make_unique<dae::CycleMoneyBagStateCommand>(moneyBag.get()));*/
+
+	auto bagObj = std::make_shared<dae::GameObject>();
+
+	auto renderBag = bagObj->AddComponent<dae::RenderComponent>("Apple1.png");
+	renderBag->SetSize(32, 32);
+
+	renderBag->SetRenderOffset(glm::vec2{ 0, -16 });
+
+	auto tracker = bagObj->AddComponent<dae::TileTrackerComponent>(
+		dae::GridSettings::TileWidth,
+		dae::GridSettings::TileHeight,
+		dae::GridSettings::GridOffsetX,
+		dae::GridSettings::GridOffsetY);
+
+	auto moneyBagComp = bagObj->AddComponent<dae::MoneyBagComponent>();
+	moneyBagComp->SetState(std::make_unique<dae::IdleState>());
+
+	scene.Add(bagObj);
+
+	// Place it in tile (5, 3)
+	auto pos = loader.GetWorldCenterForTile(5, 3);
+	bagObj->GetTransform()->SetPosition(pos);
 
 }
 
