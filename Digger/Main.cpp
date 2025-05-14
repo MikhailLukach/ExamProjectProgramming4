@@ -328,10 +328,27 @@ void LoadGame()
 
 	auto bagObj = std::make_shared<dae::GameObject>();
 
-	auto renderBag = bagObj->AddComponent<dae::RenderComponent>("Apple1.png");
+	auto renderBag = bagObj->AddComponent<dae::RenderComponent>("WarningAppleSpritesheet.png");
 	renderBag->SetSize(32, 32);
 
 	renderBag->SetRenderOffset(glm::vec2{ 0, -16 });
+
+	auto animatorBag = bagObj->AddComponent<dae::SpriteAnimatorComponent>(
+		renderBag.get(),
+		16,       // Frame width
+		15,       // Frame height
+		0.2f      // Frame duration (adjust for speed)
+	);
+
+	// Force idle frame to frame 1 (middle)
+	SDL_Rect idleRect{};
+	idleRect.x = 15; // Frame index 1
+	idleRect.y = 0;
+	idleRect.w = 15;
+	idleRect.h = 15;
+
+	renderBag->SetSourceRect(idleRect);
+
 
 	auto tracker = bagObj->AddComponent<dae::TileTrackerComponent>(
 		dae::GridSettings::TileWidth,
