@@ -35,9 +35,10 @@ namespace dae
     public:
         MoveCommand(GameObject* character, const glm::vec3& direction, float speed,
             TileManagerComponent* tileManager = nullptr,
+            LevelManagerComponent* levelManager = nullptr,
             SpriteAnimatorComponent* animator = nullptr, AnimationState state = AnimationState::WalkDown)
             : m_Character(character), m_Direction(direction), m_Speed(speed), m_pTileManager(tileManager),
-            m_pAnimator(animator), m_AnimState(state) {}
+             m_pLevelManager(levelManager), m_pAnimator(animator), m_AnimState(state) {}
 
         void Execute() override
         {
@@ -104,16 +105,6 @@ namespace dae
                 }
                 else
                 {
-                    /*if (auto render = m_Character->GetComponent<RenderComponent>())
-                    {
-                        glm::vec2 offset{};
-                        if (m_Direction.x < 0) offset.x = 20;
-                        if (m_Direction.x > 0) offset.x = -20;
-                        if (m_Direction.y < 0) offset.y = 20;
-                        if (m_Direction.y > 0) offset.y = -20;
-
-                        render->SetRenderOffset(offset);
-                    }*/
                     return;
                 }
             }
@@ -145,6 +136,25 @@ namespace dae
                         case AnimationState::WalkLeft:  m_pAnimator->PlayAnimation(6, 3); break;
                         case AnimationState::WalkUp:    m_pAnimator->PlayAnimation(9, 3); break;
                         }
+                    }
+                }
+            }
+
+            if (m_pLevelManager && desiredDir.y == 0.f && desiredDir.x != 0.f)
+            {
+                int pushDir = static_cast<int>(glm::sign(desiredDir.x)); // -1 = left, 1 = right
+
+                glm::ivec2 playerTile = tracker->GetTileCoords();
+                glm::ivec2 targetTile = playerTile + glm::ivec2{ pushDir, 0 };
+
+                auto bagObj = m_pLevelManager->GetMoneyBagAt(targetTile.x, targetTile.y);
+                if (bagObj)
+                {
+                    std::cout << "[MoveCommand] Player attempting to push MoneyBag at (" << targetTile.x << ", " << targetTile.y << ")\n";
+                    auto bagComp = bagObj->GetComponent<MoneyBagComponent>();
+                    if (bagComp)
+                    {
+                        bagComp->TryPushHorizontally(pushDir, m_pTileManager);
                     }
                 }
             }
@@ -192,6 +202,7 @@ namespace dae
 
         SpriteAnimatorComponent* m_pAnimator{};
         TileManagerComponent* m_pTileManager{};
+        LevelManagerComponent* m_pLevelManager{};
         AnimationState m_AnimState{ AnimationState::WalkDown };
     };
 

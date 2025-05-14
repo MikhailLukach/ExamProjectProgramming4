@@ -22,6 +22,7 @@
 #include "TileManagerComponent.h"
 #include "TileComponent.h"
 #include "MoneyBagComponent.h"
+#include "LevelManagerComponent.h"
 
 //states
 #include "IdleState.h"
@@ -246,16 +247,20 @@ void LoadGame()
 
 	auto& input = dae::InputManager::GetInstance();
 
+	auto tileManagerObj = std::make_shared<dae::GameObject>();
+	auto tileManager = tileManagerObj->AddComponent<dae::TileManagerComponent>();
+
 	auto levelManagerObj = std::make_shared<dae::GameObject>();
-	auto levelManager = levelManagerObj->AddComponent<dae::TileManagerComponent>();
+	auto levelManager = levelManagerObj->AddComponent<dae::LevelManagerComponent>();
+	scene.Add(levelManagerObj);
 
 	std::vector<std::vector<std::shared_ptr<dae::GameObject>>> tileGrid;
 
 	dae::LevelLoader loader;
 	loader.LoadLevel(scene, tileGrid);
 
-	levelManager->InitWithTileGrid(std::move(tileGrid));
-	scene.Add(levelManagerObj);
+	tileManager->InitWithTileGrid(std::move(tileGrid));
+	scene.Add(tileManagerObj);
 
 	auto player = std::make_shared<dae::GameObject>();
 	int spawnX = 0;
@@ -292,25 +297,25 @@ void LoadGame()
 
 	input.BindCommandController(0, dae::GameController::DPAD_UP, dae::InputType::Pressed,
 		std::make_unique<dae::MoveCommand>(player.get(), glm::vec3(0, -1, 0), playerSpeed, 
-			 levelManager.get(), animator.get(), dae::AnimationState::WalkUp));
+			 tileManager.get(), levelManager.get(), animator.get(), dae::AnimationState::WalkUp));
 	input.BindCommandController(0, dae::GameController::DPAD_UP, dae::InputType::Released,
 		std::make_unique<dae::StopAnimationCommand>(animator.get()));
 
 	input.BindCommandController(0, dae::GameController::DPAD_DOWN, dae::InputType::Pressed,
 		std::make_unique<dae::MoveCommand>(player.get(), glm::vec3(0, 1, 0), playerSpeed,
-			levelManager.get(), animator.get(), dae::AnimationState::WalkDown));
+			tileManager.get(), levelManager.get(), animator.get(), dae::AnimationState::WalkDown));
 	input.BindCommandController(0, dae::GameController::DPAD_DOWN, dae::InputType::Released,
 		std::make_unique<dae::StopAnimationCommand>(animator.get()));
 
 	input.BindCommandController(0, dae::GameController::DPAD_LEFT, dae::InputType::Pressed,
 		std::make_unique<dae::MoveCommand>(player.get(), glm::vec3(-1, 0, 0), playerSpeed,
-			 levelManager.get(), animator.get(), dae::AnimationState::WalkLeft));
+			 tileManager.get(), levelManager.get(), animator.get(), dae::AnimationState::WalkLeft));
 	input.BindCommandController(0, dae::GameController::DPAD_LEFT, dae::InputType::Released,
 		std::make_unique<dae::StopAnimationCommand>(animator.get()));
 
 	input.BindCommandController(0, dae::GameController::DPAD_RIGHT, dae::InputType::Pressed,
 		std::make_unique<dae::MoveCommand>(player.get(), glm::vec3(1, 0, 0), playerSpeed,
-			 levelManager.get(), animator.get(), dae::AnimationState::WalkRight));
+			 tileManager.get(), levelManager.get(), animator.get(), dae::AnimationState::WalkRight));
 	input.BindCommandController(0, dae::GameController::DPAD_RIGHT, dae::InputType::Released,
 		std::make_unique<dae::StopAnimationCommand>(animator.get()));
 
@@ -320,20 +325,6 @@ void LoadGame()
 		dae::InputType::Released,
 		std::make_unique<dae::PlaySoundCommand>(dae::ResourceManager::GetInstance().GetFullPath("Explosion Sound Effect.wav"))  // Replace with a valid file
 	);
-
-	/*auto appleObj = std::make_shared<dae::GameObject>();
-
-	auto appleRender = appleObj->AddComponent<dae::RenderComponent>("Apple1.png");
-	appleRender->SetSize(32, 32);
-
-	auto spawnPosApple1 = loader.GetWorldCenterForTile(5, 5);
-	appleObj->GetTransform()->SetPosition(spawnPosApple1);
-	auto moneyBag = appleObj->AddComponent<dae::MoneyBagComponent>();
-	moneyBag->SetState(std::make_unique<dae::IdleState>());
-	scene.Add(appleObj);
-
-	input.BindCommandController(0, dae::GameController::B, dae::InputType::Released,
-		std::make_unique<dae::CycleMoneyBagStateCommand>(moneyBag.get()));*/
 
 	auto bagObj = std::make_shared<dae::GameObject>();
 
@@ -350,6 +341,8 @@ void LoadGame()
 
 	auto moneyBagComp = bagObj->AddComponent<dae::MoneyBagComponent>();
 	moneyBagComp->SetState(std::make_unique<dae::IdleState>());
+
+	levelManager->RegisterMoneyBag(bagObj);
 
 	scene.Add(bagObj);
 
