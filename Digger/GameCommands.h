@@ -161,6 +161,20 @@ namespace dae
 
             transform->SetPosition(pos + velocity);
 
+            if (m_pLevelManager)
+            {
+                auto playerTile = tracker->GetTileCoords();
+                auto bag = m_pLevelManager->GetMoneyBagAt(playerTile.x, playerTile.y - 1);
+                if (bag)
+                {
+                    auto bagComp = bag->GetComponent<MoneyBagComponent>();
+                    if (bagComp)
+                    {
+                        bagComp->SetPlayerBelow();
+                    }
+                }
+            }
+
             if (!m_pTileManager)
             {
                 std::cout << "[MoveCommand] No LevelManager assigned, skipping dig check.\n";

@@ -14,6 +14,8 @@ namespace dae
 		void OnExit(MoneyBagComponent& bag) override;
 
 		void TryPushHorizontally(MoneyBagComponent& bag, int direction, TileManagerComponent* tileManager) override;
+	private:
+		float m_FallDelayTimer{ -1.f };
 	};
 }
 

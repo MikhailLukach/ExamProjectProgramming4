@@ -8,6 +8,7 @@
 
 void dae::MoneyBagComponent::Update(float deltaTime)
 {
+	UpdatePlayerBelowTimer(deltaTime);
 	if (!m_IsMoving && m_State)
 	{
 		std::unique_ptr<MoneyBagState> newState = m_State->Update(*this, deltaTime);
@@ -64,4 +65,27 @@ void dae::MoneyBagComponent::StartMoveTo(const glm::vec3& targetPos, float durat
 	m_IsMoving = true;
 
 	std::cout << "[MoneyBag] Begin smooth move to target.\n";
+}
+
+void dae::MoneyBagComponent::SetPlayerBelow()
+{
+	m_WasPlayerBelowRecently = true;
+	m_PlayerBelowTimer = 2.f;
+}
+
+void dae::MoneyBagComponent::UpdatePlayerBelowTimer(float deltaTime)
+{
+	if (m_WasPlayerBelowRecently)
+	{
+		m_PlayerBelowTimer -= deltaTime;
+		if (m_PlayerBelowTimer <= 0.f)
+		{
+			m_WasPlayerBelowRecently = false;
+		}
+	}
+}
+
+bool dae::MoneyBagComponent::WasRecentlyAbovePlayer() const
+{
+	return m_WasPlayerBelowRecently;
 }

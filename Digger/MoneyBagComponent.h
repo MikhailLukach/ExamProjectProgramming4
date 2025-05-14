@@ -47,6 +47,10 @@ namespace dae
 		{
 			return m_IsMoving;
 		}
+
+		void SetPlayerBelow();
+		void UpdatePlayerBelowTimer(float deltaTime);
+		bool WasRecentlyAbovePlayer() const;
 	private:
 		TileManagerComponent* m_pTileManager{};
 
@@ -58,6 +62,9 @@ namespace dae
 		glm::vec3 m_TargetPosition{};
 		float m_MoveElapsed = 0.f;
 		float m_MoveDuration = 0.25f;
+
+		bool m_WasPlayerBelowRecently = false;
+		float m_PlayerBelowTimer = 0.f;
 	};
 }
 

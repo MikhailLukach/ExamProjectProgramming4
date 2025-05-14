@@ -15,7 +15,6 @@ void dae::IdleState::OnEnter(MoneyBagComponent& bag)
 
 std::unique_ptr<dae::MoneyBagState> dae::IdleState::Update(MoneyBagComponent& bag, float deltaTime)
 {
-    (void)deltaTime;
     auto tracker = bag.GetOwner()->GetComponent<TileTrackerComponent>();
     if (!tracker) return nullptr;
 
@@ -30,7 +29,29 @@ std::unique_ptr<dae::MoneyBagState> dae::IdleState::Update(MoneyBagComponent& ba
         auto tileComp = tileBelow->GetComponent<TileComponent>();
         if (tileComp && tileComp->GetType() == TileVisualType::Dug_Spot)
         {
-            return std::make_unique<FallingState>();
+            if (bag.WasRecentlyAbovePlayer())
+            {
+                if (m_FallDelayTimer < 0.f)
+                {
+                    m_FallDelayTimer = 2.f; // start the delay
+                }
+                else
+                {
+                    m_FallDelayTimer -= deltaTime;
+                    if (m_FallDelayTimer <= 0.f)
+                    {
+                        return std::make_unique<FallingState>();
+                    }
+                }
+            }
+            else
+            {
+                return std::make_unique<FallingState>(); // pushed into shaft, fall immediately
+            }
+        }
+        else
+        {
+            m_FallDelayTimer = -1.f; // reset if it's not dug
         }
     }
 
