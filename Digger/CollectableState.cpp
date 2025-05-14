@@ -11,7 +11,7 @@ std::unique_ptr<dae::MoneyBagState> dae::CollectableState::Update(MoneyBagCompon
 {
 	(void)bag;
 	(void)deltaTime;
-	std::cout << "[MoneyBag] Updating collectable.\n";
+	//std::cout << "[MoneyBag] Updating collectable.\n";
 	//detect collision with player
 	return nullptr;
 }

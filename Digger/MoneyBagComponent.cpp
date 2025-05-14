@@ -55,11 +55,12 @@ void dae::MoneyBagComponent::TryPushHorizontally(int direction, TileManagerCompo
 	}
 }
 
-void dae::MoneyBagComponent::StartMoveTo(const glm::vec3& targetPos)
+void dae::MoneyBagComponent::StartMoveTo(const glm::vec3& targetPos, float duration)
 {
 	m_StartPosition = GetOwner()->GetTransform()->GetWorldPosition();
 	m_TargetPosition = targetPos;
 	m_MoveElapsed = 0.f;
+	m_MoveDuration = duration;
 	m_IsMoving = true;
 
 	std::cout << "[MoneyBag] Begin smooth move to target.\n";

@@ -16,7 +16,7 @@ namespace dae
 
 		void TryPushHorizontally(int direction, TileManagerComponent* tileManager);
 
-		void StartMoveTo(const glm::vec3& targetPos);
+		void StartMoveTo(const glm::vec3& targetPos, float duration = 0.25f);
 
 		void AddFallDistance(int tiles) 
 		{
@@ -41,6 +41,11 @@ namespace dae
 		TileManagerComponent* GetTileManager() const 
 		{ 
 			return m_pTileManager; 
+		}
+
+		bool GetIsMoving()
+		{
+			return m_IsMoving;
 		}
 	private:
 		TileManagerComponent* m_pTileManager{};

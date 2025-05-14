@@ -9,7 +9,7 @@
 
 void dae::IdleState::OnEnter(MoneyBagComponent& bag)
 {
-    (void)bag;
+    bag.ResetFallDistance();
     std::cout << "[Debug] Entered IdleState\n";
 }
 
