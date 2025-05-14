@@ -341,6 +341,7 @@ void LoadGame()
 
 	auto moneyBagComp = bagObj->AddComponent<dae::MoneyBagComponent>();
 	moneyBagComp->SetState(std::make_unique<dae::IdleState>());
+	moneyBagComp->SetTileManager(tileManager.get());
 
 	levelManager->RegisterMoneyBag(bagObj);
 

@@ -5,6 +5,7 @@
 #include "GameObject.h"
 #include "TileTrackerComponent.h"
 #include "MoneyBagComponent.h"
+#include "TileComponent.h"
 
 void dae::IdleState::OnEnter(MoneyBagComponent& bag)
 {
@@ -14,13 +15,23 @@ void dae::IdleState::OnEnter(MoneyBagComponent& bag)
 
 std::unique_ptr<dae::MoneyBagState> dae::IdleState::Update(MoneyBagComponent& bag, float deltaTime)
 {
-    //std::cout << "[Debug] IdleState is running\n";
-    (void)bag;
     (void)deltaTime;
-    if (false) //check for tile below
+    auto tracker = bag.GetOwner()->GetComponent<TileTrackerComponent>();
+    if (!tracker) return nullptr;
+
+    glm::ivec2 currentTile = tracker->GetTileCoords();
+    glm::ivec2 belowTile = currentTile + glm::ivec2{ 0, 1 };
+
+    auto tileManager = bag.GetTileManager();
+    auto tileBelow = tileManager ? tileManager->GetTileAt(belowTile.x, belowTile.y) : nullptr;
+
+    if (tileBelow)
     {
-        std::cout << "[MoneyBag] Tile below is dug. Transition to Falling.\n";
-        return std::make_unique<FallingState>();
+        auto tileComp = tileBelow->GetComponent<TileComponent>();
+        if (tileComp && tileComp->GetType() == TileVisualType::Dug_Spot)
+        {
+            return std::make_unique<FallingState>();
+        }
     }
 
     return nullptr;
@@ -51,7 +62,7 @@ void dae::IdleState::TryPushHorizontally(MoneyBagComponent& bag, int direction, 
     }
 
     glm::vec3 tilePos = tile->GetTransform()->GetWorldPosition();
-    glm::vec3 worldPos = tilePos + glm::vec3{ 4.f, 20.f, 0.f };
+    glm::vec3 worldPos = tilePos + glm::vec3{ 6.f, 20.f, 0.f };
     bag.StartMoveTo(worldPos);
 
     std::cout << "[IdleState] MoneyBag pushed to tile: (" << target.x << ", " << target.y << ")\n";

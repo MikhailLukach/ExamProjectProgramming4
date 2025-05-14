@@ -32,7 +32,19 @@ namespace dae
 		{
 			m_FallDistance = 0;
 		}
+
+		void SetTileManager(TileManagerComponent* tileManager) 
+		{ 
+			m_pTileManager = tileManager; 
+		}
+
+		TileManagerComponent* GetTileManager() const 
+		{ 
+			return m_pTileManager; 
+		}
 	private:
+		TileManagerComponent* m_pTileManager{};
+
 		std::unique_ptr<MoneyBagState> m_State;
 		int m_FallDistance = 0;
 

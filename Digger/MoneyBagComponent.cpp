@@ -8,9 +8,9 @@
 
 void dae::MoneyBagComponent::Update(float deltaTime)
 {
-	if(m_State)
+	if (!m_IsMoving && m_State)
 	{
-		auto newState = m_State->Update(*this, deltaTime);
+		std::unique_ptr<MoneyBagState> newState = m_State->Update(*this, deltaTime);
 		if (newState)
 		{
 			SetState(std::move(newState));
