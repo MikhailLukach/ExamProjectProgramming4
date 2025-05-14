@@ -40,11 +40,11 @@ std::unique_ptr<dae::MoneyBagState> dae::IdleState::Update(MoneyBagComponent& ba
             {
                 if (m_FallDelayTimer < 0.f)
                 {
-                    m_FallDelayTimer = 2.f; // start the delay
+                    m_FallDelayTimer = 2.f; 
                     auto animator = bag.GetOwner()->GetComponent<SpriteAnimatorComponent>();
                     if (animator)
                     {
-                        animator->PlayAnimation(0, 3); // 3 frames, from frame 0
+                        animator->PlayAnimation(0, 3); 
                     }
                 }
                 else
@@ -58,18 +58,18 @@ std::unique_ptr<dae::MoneyBagState> dae::IdleState::Update(MoneyBagComponent& ba
             }
             else
             {
-                return std::make_unique<FallingState>(); // pushed into shaft, fall immediately
+                return std::make_unique<FallingState>();
             }
         }
         else
         {
-            m_FallDelayTimer = -1.f; // reset if it's not dug
+            m_FallDelayTimer = -1.f; 
             auto animator = bag.GetOwner()->GetComponent<SpriteAnimatorComponent>();
             if (animator)
             {
                 animator->Stop();
                 SDL_Rect idleRect{};
-                idleRect.x = 16; // middle frame
+                idleRect.x = 16; 
                 idleRect.y = 0;
                 idleRect.w = 16;
                 idleRect.h = 15;

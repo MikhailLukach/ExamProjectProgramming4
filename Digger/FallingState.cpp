@@ -11,7 +11,7 @@
 void dae::FallingState::OnEnter(MoneyBagComponent& bag)
 {
 	std::cout << "[MoneyBag] Entering FallingState\n";
-    bag.AddFallDistance(1); // first tile is implied
+    bag.AddFallDistance(1); 
     std::cout << "[FallingState] Entered. Initial tile fallen.\n";
 
     auto tracker = bag.GetOwner()->GetComponent<TileTrackerComponent>();
@@ -25,7 +25,6 @@ void dae::FallingState::OnEnter(MoneyBagComponent& bag)
 
     int maxFall = 0;
 
-    // Look downward until you hit a non-dug tile
     while (true)
     {
         next += glm::ivec2{ 0, 1 };
@@ -39,7 +38,7 @@ void dae::FallingState::OnEnter(MoneyBagComponent& bag)
         ++maxFall;
     }
 
-    bag.AddFallDistance(maxFall); // add how many more we're falling
+    bag.AddFallDistance(maxFall); 
     glm::ivec2 targetTile = current + glm::ivec2{ 0, maxFall };
 
     auto finalTile = tileManager->GetTileAt(targetTile.x, targetTile.y);
@@ -59,7 +58,6 @@ std::unique_ptr<dae::MoneyBagState> dae::FallingState::Update(MoneyBagComponent&
     (void)deltaTime;
     if (!bag.GetIsMoving())
     {
-        // Falling done
         const int fallDistance = bag.GetFallDistance();
         std::cout << "[FallingState] Landed after falling " << fallDistance << " tiles.\n";
 
@@ -73,7 +71,7 @@ std::unique_ptr<dae::MoneyBagState> dae::FallingState::Update(MoneyBagComponent&
         return std::make_unique<IdleState>();
     }
 
-    return nullptr; // still falling
+    return nullptr; 
 }
 
 void dae::FallingState::OnExit(MoneyBagComponent& bag)

@@ -16,10 +16,14 @@ namespace dae
 		SpriteAnimatorComponent(RenderComponent* renderComp, int frameWidth, int frameHeight, float frameDuration);
 
 		void Update(float deltaTime) override;
-		void PlayAnimation(int startFrame, int frameCount);
+		void PlayAnimation(int startFrame, int frameCount, bool loop = true);
 		void Stop();
 
 		void Play(AnimationState state);
+
+		void Configure(RenderComponent* render, int frameWidth, int frameHeight, float frameDuration);
+
+		bool IsPlaying() const { return m_IsPlaying; }
 	private:
 		RenderComponent* m_pRenderComponent;
 		std::vector<SDL_Rect> m_Frames;
@@ -32,6 +36,7 @@ namespace dae
 		float m_FrameDuration;
 
 		bool m_IsPlaying{ false };
+		bool m_Looping{ true };
 
 		int m_FrameWidth;
 		int m_FrameHeight;

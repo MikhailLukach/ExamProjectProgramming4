@@ -17,7 +17,7 @@ dae::SpriteAnimatorComponent::SpriteAnimatorComponent(RenderComponent* renderCom
 
 void dae::SpriteAnimatorComponent::Update(float deltaTime)
 {
-	if (!m_IsPlaying || !m_pRenderComponent) return;
+	/*if (!m_IsPlaying || !m_pRenderComponent) return;
 
 	m_FrameTimer += deltaTime;
 	if (m_FrameTimer >= m_FrameDuration)
@@ -25,14 +25,37 @@ void dae::SpriteAnimatorComponent::Update(float deltaTime)
 		m_FrameTimer -= m_FrameDuration;
 		m_CurrentFrameIndex = (m_CurrentFrameIndex + 1) % m_FrameCount;
 		UpdateTextureClip();
+	}*/
+
+	if (!m_IsPlaying || !m_pRenderComponent) return;
+
+	m_FrameTimer += deltaTime;
+	if (m_FrameTimer >= m_FrameDuration)
+	{
+		m_FrameTimer -= m_FrameDuration;
+
+		if (m_Looping)
+		{
+			m_CurrentFrameIndex = (m_CurrentFrameIndex + 1) % m_FrameCount;
+		}
+		else
+		{
+			if (m_CurrentFrameIndex < m_FrameCount - 1)
+				++m_CurrentFrameIndex;
+			else
+				m_IsPlaying = false; // stop at last frame
+		}
+
+		UpdateTextureClip();
 	}
 }
 
-void dae::SpriteAnimatorComponent::PlayAnimation(int startFrame, int frameCount)
+void dae::SpriteAnimatorComponent::PlayAnimation(int startFrame, int frameCount, bool loop)
 {
 	if (m_IsPlaying &&
 		m_StartFrame == startFrame &&
-		m_FrameCount == frameCount)
+		m_FrameCount == frameCount &&
+		m_Looping == loop)
 	{
 		return;
 	}
@@ -44,6 +67,7 @@ void dae::SpriteAnimatorComponent::PlayAnimation(int startFrame, int frameCount)
 	m_CurrentFrameIndex = 0;
 	m_FrameTimer = 0.f;
 	m_IsPlaying = true;
+	m_Looping = loop;
 
 	UpdateTextureClip();
 }
@@ -67,6 +91,14 @@ void dae::SpriteAnimatorComponent::Play(AnimationState state)
 
 	m_IsPlaying = true;
 	UpdateTextureClip();
+}
+
+void dae::SpriteAnimatorComponent::Configure(RenderComponent* render, int frameWidth, int frameHeight, float frameDuration)
+{
+	m_pRenderComponent = render;
+	m_FrameWidth = frameWidth;
+	m_FrameHeight = frameHeight;
+	m_FrameDuration = frameDuration;
 }
 
 void dae::SpriteAnimatorComponent::UpdateTextureClip()
