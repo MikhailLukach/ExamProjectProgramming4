@@ -9,6 +9,30 @@
 #include <SDL.h>
 #include <iostream>
 
+void dae::GemComponent::Render() const
+{
+	auto* owner = GetOwner();
+	if (!owner) return;
+
+	auto transform = owner->GetTransform();
+	if (!transform) return;
+
+	glm::vec3 gemPos = transform->GetWorldPosition();
+
+	SDL_Rect gemRect{
+		static_cast<int>(gemPos.x),
+		static_cast<int>(gemPos.y - 16),
+		32, 32 // match the size you used for collision
+	};
+
+	SDL_Renderer* renderer = dae::Renderer::GetInstance().GetSDLRenderer();
+	if (!renderer) return;
+
+	// Red debug box
+	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+	SDL_RenderDrawRect(renderer, &gemRect);
+}
+
 void dae::GemComponent::Update(float)
 {
 	auto* owner = GetOwner();
@@ -17,7 +41,7 @@ void dae::GemComponent::Update(float)
 	if (!render) return;
 
 	glm::vec3 gemPos = transform->GetWorldPosition();
-	SDL_Rect gemRect{ static_cast<int>(gemPos.x), static_cast<int>(gemPos.y), 32, 32 };
+	SDL_Rect gemRect{ static_cast<int>(gemPos.x), static_cast<int>(gemPos.y - 16), 32, 32 };
 
 	auto* scene = dae::SceneManager::GetInstance().GetCurrentScene();
 	if (!scene) return;

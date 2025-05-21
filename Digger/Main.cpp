@@ -35,6 +35,7 @@
 #include "LevelLoader.h"
 #include "SoundServiceLocator.h"
 #include "SDLSoundSystem.h"
+#include "GameObjectFactory.h"
 
 //exercise Game Scene
 /*
@@ -355,55 +356,51 @@ void LoadGame()
 	//--
 
 	//-- MoneyBag Setup
-	auto bagObj = std::make_shared<dae::GameObject>();
-
-	auto renderBag = bagObj->AddComponent<dae::RenderComponent>("WarningAppleSpritesheet.png");
-	renderBag->SetSize(32, 32);
-
-	renderBag->SetRenderOffset(glm::vec2{ 0, -16 });
-
-	auto animatorBag = bagObj->AddComponent<dae::SpriteAnimatorComponent>(
-		renderBag.get(),
-		16,       // Frame width
-		15,       // Frame height
-		0.2f      // Frame duration (adjust for speed)
-	);
-
-	// Force idle frame to frame 1 (middle)
-	SDL_Rect idleRect{};
-	idleRect.x = 15; // Frame index 1
-	idleRect.y = 0;
-	idleRect.w = 15;
-	idleRect.h = 15;
-
-	renderBag->SetSourceRect(idleRect);
-
-	auto tracker = bagObj->AddComponent<dae::TileTrackerComponent>(
-		dae::GridSettings::TileWidth,
-		dae::GridSettings::TileHeight,
-		dae::GridSettings::GridOffsetX,
-		dae::GridSettings::GridOffsetY);
-
-	auto moneyBagComp = bagObj->AddComponent<dae::MoneyBagComponent>();
-	moneyBagComp->SetState(std::make_unique<dae::IdleState>());
-	moneyBagComp->SetTileManager(tileManager.get());
-
-	levelManager->RegisterMoneyBag(bagObj);
-
-	scene.Add(bagObj);
-
-	auto pos = loader.GetWorldCenterForTile(5, 3);
-	bagObj->GetTransform()->SetPosition(pos);
+	dae::CreateMoneyBag(scene, loader, 1, 2, tileManager.get(), levelManager.get());
+	dae::CreateMoneyBag(scene, loader, 4, 0, tileManager.get(), levelManager.get());
+	dae::CreateMoneyBag(scene, loader, 5, 3, tileManager.get(), levelManager.get());
+	dae::CreateMoneyBag(scene, loader, 8, 3, tileManager.get(), levelManager.get());
+	dae::CreateMoneyBag(scene, loader, 8, 6, tileManager.get(), levelManager.get());
+	dae::CreateMoneyBag(scene, loader, 12, 1, tileManager.get(), levelManager.get());
+	dae::CreateMoneyBag(scene, loader, 6, 6, tileManager.get(), levelManager.get());
 	//--
 
 	//-- Gem Setup
-	auto gem = std::make_shared<dae::GameObject>();
-	gem->GetTransform()->SetPosition(loader.GetWorldCenterForTile(8, 5)); // example position
-	auto gemRender = gem->AddComponent<dae::RenderComponent>("Cherry.png");
-	gemRender->SetSize(32, 32);
-	gemRender->SetRenderOffset(glm::vec2{ 0, -16 });
-	gem->AddComponent<dae::GemComponent>();
-	scene.Add(gem);
+	dae::CreateGem(scene, loader, 3, 1);
+	dae::CreateGem(scene, loader, 3, 2);
+	dae::CreateGem(scene, loader, 3, 3);
+	dae::CreateGem(scene, loader, 3, 4);
+	dae::CreateGem(scene, loader, 3, 5);
+
+	dae::CreateGem(scene, loader, 4, 1);
+	dae::CreateGem(scene, loader, 4, 2);
+	dae::CreateGem(scene, loader, 4, 3);
+	dae::CreateGem(scene, loader, 4, 4);
+	dae::CreateGem(scene, loader, 4, 5);
+
+	dae::CreateGem(scene, loader, 7, 1);
+	dae::CreateGem(scene, loader, 7, 2);
+	dae::CreateGem(scene, loader, 7, 3);
+	dae::CreateGem(scene, loader, 7, 4);
+	dae::CreateGem(scene, loader, 7, 5);
+
+	dae::CreateGem(scene, loader, 12, 3);
+	dae::CreateGem(scene, loader, 12, 4);
+	dae::CreateGem(scene, loader, 12, 5);
+	dae::CreateGem(scene, loader, 13, 3);
+	dae::CreateGem(scene, loader, 13, 4);
+	dae::CreateGem(scene, loader, 13, 5);
+	dae::CreateGem(scene, loader, 14, 3);
+	dae::CreateGem(scene, loader, 14, 4);
+	dae::CreateGem(scene, loader, 14, 5);
+
+	dae::CreateGem(scene, loader, 0, 8);
+	dae::CreateGem(scene, loader, 0, 9);
+	dae::CreateGem(scene, loader, 1, 9);
+
+	dae::CreateGem(scene, loader, 14, 8);
+	dae::CreateGem(scene, loader, 14, 9);
+	dae::CreateGem(scene, loader, 13, 9);
 	//--
 }
 
@@ -414,3 +411,4 @@ int main(int, char* [])
 	engine.Run(LoadGame);
 	return 0;
 }
+
