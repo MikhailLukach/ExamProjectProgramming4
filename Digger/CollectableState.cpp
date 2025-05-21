@@ -1,8 +1,11 @@
 #include "CollectableState.h"
 #include <iostream>
 #include "GameObject.h"
+#include "Scene.h"
+#include "SceneManager.h"
 #include "SpriteAnimatorComponent.h"
 #include "MoneyBagComponent.h"
+#include "ScoreComponent.h"
 
 void dae::CollectableState::OnEnter(MoneyBagComponent& bag)
 {
@@ -30,10 +33,58 @@ void dae::CollectableState::OnEnter(MoneyBagComponent& bag)
 
 std::unique_ptr<dae::MoneyBagState> dae::CollectableState::Update(MoneyBagComponent& bag, float deltaTime)
 {
-	(void)bag;
 	(void)deltaTime;
-	//std::cout << "[MoneyBag] Updating collectable.\n";
-	//detect collision with player
+
+	auto bagObj = bag.GetOwner();
+	auto bagTransform = bagObj->GetTransform();
+	auto bagRender = bagObj->GetComponent<RenderComponent>();
+
+	if (!bagRender) return nullptr;
+
+	glm::vec3 bagPos = bagTransform->GetWorldPosition();
+	float bagWidth = 32.f;  // consistent with SetSize in OnEnter
+	float bagHeight = 32.f;
+
+	// Simple AABB for the bag
+	SDL_Rect bagRect{
+		static_cast<int>(bagPos.x),
+		static_cast<int>(bagPos.y),
+		static_cast<int>(bagWidth),
+		static_cast<int>(bagHeight)
+	};
+
+	// Look through all GameObjects in the scene
+	auto* scene = dae::SceneManager::GetInstance().GetCurrentScene(); // optionally add a getter
+
+	if (!scene) return nullptr;
+
+	for (auto& obj : scene->GetObjects()) // you may need to expose GetObjects()
+	{
+		if (obj.get() == bagObj) continue;
+
+		auto scoreComp = obj->GetComponent<ScoreComponent>();
+		if (!scoreComp) continue; // Not a player
+
+		auto playerTransform = obj->GetTransform();
+		glm::vec3 playerPos = playerTransform->GetWorldPosition();
+
+		// Assuming player has similar size
+		SDL_Rect playerRect{
+			static_cast<int>(playerPos.x),
+			static_cast<int>(playerPos.y),
+			32, 32
+		};
+
+		// AABB collision
+		bool isOverlapping = SDL_HasIntersection(&bagRect, &playerRect);
+		if (isOverlapping)
+		{
+			//std::cout << "[CollectableState] Player overlapped with collectable!\n";
+			scoreComp->AddPoints(25);
+			bag.GetOwner()->MarkForDeletion();
+		}
+	}
+
 	return nullptr;
 }
 

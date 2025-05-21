@@ -10,14 +10,12 @@ namespace dae
     class HUDDisplay : public Component, public Observer
     {
     public:
-        HUDDisplay(TextComponent* healthText, TextComponent* scoreText, HealthComponent* health, ScoreComponent* score);
+        HUDDisplay(TextComponent* scoreText, ScoreComponent* score);
 
         void Notify(EventId event, GameObject* gameObject) override;
 
     private:
-        TextComponent* m_pHealthTextComponent;
         TextComponent* m_pScoreTextComponent;
-        HealthComponent* m_pHealthComponent;
         ScoreComponent* m_pScoreComponent;
     };
 }

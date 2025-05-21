@@ -84,7 +84,7 @@ namespace dae
 
 		if (m_components.find(typeIndex) != m_components.end())
 		{
-			std::cerr << "Warning: Component already exists!" << std::endl;
+			//std::cerr << "Warning: Component already exists!" << std::endl;
 			return std::static_pointer_cast<T>(m_components[typeIndex]);
 		}
 		auto component = std::make_shared<T>(std::forward<Args>(args)...);
@@ -116,7 +116,7 @@ namespace dae
 			return std::static_pointer_cast<T>(m_components[typeIndex]);
 		}
 		
-		std::cerr << "Warning: Unable to get component!" << std::endl;
+		//std::cerr << "Warning: Unable to get component!" << std::endl;
 		return nullptr;
 	}
 

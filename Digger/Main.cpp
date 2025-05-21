@@ -236,6 +236,7 @@ void load()
 
 void LoadGame()
 {
+	//-- Initial Setup
 	auto& scene = dae::SceneManager::GetInstance().CreateScene("DiggerLevel1");
 	dae::ResourceManager::GetInstance().Init("../Data");
 
@@ -246,7 +247,9 @@ void LoadGame()
 	const float playerSpeed = 2.5f;
 
 	auto& input = dae::InputManager::GetInstance();
+	//--
 
+	//-- Level Setup
 	auto tileManagerObj = std::make_shared<dae::GameObject>();
 	auto tileManager = tileManagerObj->AddComponent<dae::TileManagerComponent>();
 
@@ -261,12 +264,16 @@ void LoadGame()
 
 	tileManager->InitWithTileGrid(std::move(tileGrid));
 	scene.Add(tileManagerObj);
+	//--
 
+	//-- Player Setup
 	auto player = std::make_shared<dae::GameObject>();
 	int spawnX = 0;
 	int spawnY = 0;
 	auto spawnPos = loader.GetWorldCenterForTile(spawnX, spawnY);
 	player->GetTransform()->SetPosition(spawnPos);
+
+	auto score = player->AddComponent<dae::ScoreComponent>(0);
 
 	auto render = player->AddComponent<dae::RenderComponent>("CharacterSpriteSheetFilledBackground.png");
 	render->SetSize(32, 32);
@@ -283,8 +290,10 @@ void LoadGame()
 	player->AddComponent<dae::TileTrackerComponent>(TileWidth, TileHeight, OffsetX, OffsetY);
 
 	scene.Add(player);
+	//--
 
-	auto infoDisplay = std::make_shared<dae::GameObject>();
+	//-- UI Setup
+	/*auto infoDisplay = std::make_shared<dae::GameObject>();
 	auto infoText = infoDisplay->AddComponent<dae::TextComponent>("Press the A-button on a XBOX gamepad to play sound effect.", "Lingua.otf", 14);
 	infoDisplay->GetTransform()->SetPosition(0, 10, 0);
 
@@ -293,8 +302,25 @@ void LoadGame()
 	infoDisplay2->GetTransform()->SetPosition(0, 25, 0);
 
 	scene.Add(infoDisplay);
-	scene.Add(infoDisplay2);
+	scene.Add(infoDisplay2);*/
 
+	auto HUDObject = std::make_shared<dae::GameObject>();
+	HUDObject->GetTransform()->SetPosition(10, 50, 0);
+
+	auto scoreDisplay = std::make_shared<dae::GameObject>();
+	auto scoreText = scoreDisplay->AddComponent<dae::TextComponent>("# score: 0", "Lingua.otf", 24);
+	scoreDisplay->GetTransform()->SetPosition(0, 10, 0);
+	scoreDisplay->SetParent(HUDObject, false);
+
+	auto hud = HUDObject->AddComponent<dae::HUDDisplay>(scoreText.get(), score.get());
+
+	score->AddObserver(hud);
+
+	scene.Add(HUDObject);
+	scene.Add(scoreDisplay);
+	//--
+
+	//-- Player Controller Setup
 	input.BindCommandController(0, dae::GameController::DPAD_UP, dae::InputType::Pressed,
 		std::make_unique<dae::MoveCommand>(player.get(), glm::vec3(0, -1, 0), playerSpeed, 
 			 tileManager.get(), levelManager.get(), animator.get(), dae::AnimationState::WalkUp));
@@ -325,7 +351,9 @@ void LoadGame()
 		dae::InputType::Released,
 		std::make_unique<dae::PlaySoundCommand>(dae::ResourceManager::GetInstance().GetFullPath("Explosion Sound Effect.wav"))  // Replace with a valid file
 	);
+	//--
 
+	//-- MoneyBag Setup
 	auto bagObj = std::make_shared<dae::GameObject>();
 
 	auto renderBag = bagObj->AddComponent<dae::RenderComponent>("WarningAppleSpritesheet.png");
@@ -349,7 +377,6 @@ void LoadGame()
 
 	renderBag->SetSourceRect(idleRect);
 
-
 	auto tracker = bagObj->AddComponent<dae::TileTrackerComponent>(
 		dae::GridSettings::TileWidth,
 		dae::GridSettings::TileHeight,
@@ -364,9 +391,9 @@ void LoadGame()
 
 	scene.Add(bagObj);
 
-	// Place it in tile (5, 3)
 	auto pos = loader.GetWorldCenterForTile(5, 3);
 	bagObj->GetTransform()->SetPosition(pos);
+	//--
 
 }
 
