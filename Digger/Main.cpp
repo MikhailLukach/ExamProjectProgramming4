@@ -23,6 +23,7 @@
 #include "TileComponent.h"
 #include "MoneyBagComponent.h"
 #include "LevelManagerComponent.h"
+#include "GemComponent.h"
 
 //states
 #include "IdleState.h"
@@ -395,6 +396,15 @@ void LoadGame()
 	bagObj->GetTransform()->SetPosition(pos);
 	//--
 
+	//-- Gem Setup
+	auto gem = std::make_shared<dae::GameObject>();
+	gem->GetTransform()->SetPosition(loader.GetWorldCenterForTile(8, 5)); // example position
+	auto gemRender = gem->AddComponent<dae::RenderComponent>("Cherry.png");
+	gemRender->SetSize(32, 32);
+	gemRender->SetRenderOffset(glm::vec2{ 0, -16 });
+	gem->AddComponent<dae::GemComponent>();
+	scene.Add(gem);
+	//--
 }
 
 int main(int, char* [])

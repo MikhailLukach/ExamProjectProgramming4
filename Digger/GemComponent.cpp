@@ -1,0 +1,43 @@
+#include "GemComponent.h"
+#include "GameObject.h"
+#include "Transform.h"
+#include "ScoreComponent.h"
+#include "RenderComponent.h"
+#include "SceneManager.h"
+#include "Scene.h"
+
+#include <SDL.h>
+#include <iostream>
+
+void dae::GemComponent::Update(float)
+{
+	auto* owner = GetOwner();
+	auto transform = owner->GetTransform();
+	auto render = owner->GetComponent<RenderComponent>();
+	if (!render) return;
+
+	glm::vec3 gemPos = transform->GetWorldPosition();
+	SDL_Rect gemRect{ static_cast<int>(gemPos.x), static_cast<int>(gemPos.y), 32, 32 };
+
+	auto* scene = dae::SceneManager::GetInstance().GetCurrentScene();
+	if (!scene) return;
+
+	for (const auto& obj : scene->GetObjects())
+	{
+		if (obj.get() == owner) continue;
+
+		auto score = obj->GetComponent<ScoreComponent>();
+		if (!score) continue;
+
+		auto playerTransform = obj->GetTransform();
+		SDL_Rect playerRect{ static_cast<int>(playerTransform->GetWorldPosition().x), static_cast<int>(playerTransform->GetWorldPosition().y), 32, 32 };
+
+		if (SDL_HasIntersection(&gemRect, &playerRect))
+		{
+			std::cout << "[GemComponent] Player collected a gem!\n";
+			score->AddPoints(25);
+			owner->MarkForDeletion();
+			break;
+		}
+	}
+}
