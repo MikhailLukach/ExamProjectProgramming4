@@ -24,6 +24,9 @@
 #include "MoneyBagComponent.h"
 #include "LevelManagerComponent.h"
 #include "GemComponent.h"
+#include "NobbinControllerComponent.h"
+#include "GridOutlineComponent.h"
+#include "NobbinComponent.h"
 
 //states
 #include "IdleState.h"
@@ -320,6 +323,23 @@ void LoadGame()
 
 	scene.Add(HUDObject);
 	scene.Add(scoreDisplay);
+	//--
+
+	//-- Enemies Setup
+	auto nobbin = std::make_shared<dae::GameObject>();
+	auto nobbinPos = loader.GetWorldCenterForTile(12, 0);
+	nobbin->GetTransform()->SetPosition(nobbinPos);
+
+	auto nobRender = nobbin->AddComponent<dae::RenderComponent>("MrDo!Enemy.png");
+	nobRender->SetSize(32, 32);
+	nobRender->SetRenderOffset(glm::vec2{ 0.f, -16.f });
+
+	nobbin->AddComponent<dae::TileTrackerComponent>(TileWidth, TileHeight, OffsetX, OffsetY);
+
+	nobbin->AddComponent<dae::NobbinComponent>();
+	nobbin->AddComponent<dae::NobbinControllerComponent>(player.get(), tileManager.get(), &loader, 0.05f, 100.f);
+
+	scene.Add(nobbin);
 	//--
 
 	//-- Player Controller Setup

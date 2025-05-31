@@ -84,6 +84,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AIUtils.cpp" />
     <ClCompile Include="BreakingState.cpp" />
     <ClCompile Include="CollectableState.cpp" />
     <ClCompile Include="FallingState.cpp" />
@@ -97,6 +98,8 @@
     <ClCompile Include="LevelManagerComponent.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MoneyBagComponent.cpp" />
+    <ClCompile Include="NobbinComponent.cpp" />
+    <ClCompile Include="NobbinControllerComponent.cpp" />
     <ClCompile Include="RotatorComponent.cpp" />
     <ClCompile Include="ScoreComponent.cpp" />
     <ClCompile Include="SpriteAnimatorComponent.cpp" />
@@ -105,6 +108,7 @@
     <ClCompile Include="TileTrackerComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AIUtils.h" />
     <ClInclude Include="AnimationState.h" />
     <ClInclude Include="BreakingState.h" />
     <ClInclude Include="CollectableState.h" />
@@ -121,6 +125,8 @@
     <ClInclude Include="LevelManagerComponent.h" />
     <ClInclude Include="MoneyBagComponent.h" />
     <ClInclude Include="MoneyBagState.h" />
+    <ClInclude Include="NobbinComponent.h" />
+    <ClInclude Include="NobbinControllerComponent.h" />
     <ClInclude Include="RotatorComponent.h" />
     <ClInclude Include="ScoreComponent.h" />
     <ClInclude Include="SpriteAnimatorComponent.h" />
