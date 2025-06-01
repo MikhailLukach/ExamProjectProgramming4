@@ -20,7 +20,7 @@ void dae::AIUtils::MoveTowards(GameObject* agent, const glm::ivec2& direction, f
 	auto currentTile = tracker->GetTileCoords();
 	auto nextTile = currentTile + direction;
 
-	std::cout << "[Nobbin] Trying to move to: (" << nextTile.x << ", " << nextTile.y << ")\n";
+	//std::cout << "[Nobbin] Trying to move to: (" << nextTile.x << ", " << nextTile.y << ")\n";
 
 	auto tileObj = tileManager->GetTileAt(nextTile.x, nextTile.y);
 	if (!tileObj) return;
@@ -28,11 +28,11 @@ void dae::AIUtils::MoveTowards(GameObject* agent, const glm::ivec2& direction, f
 	auto tileComp = tileObj->GetComponent<TileComponent>();
 	if (!tileComp || tileComp->GetType() != TileVisualType::Dug_Spot) 
 	{
-		std::cout << "[Nobbin] Tile is not dug — cannot move.\n";
+		//std::cout << "[Nobbin] Tile is not dug — cannot move.\n";
 		return; 
 	}
 
-	std::cout << "[Nobbin] Moving in direction: (" << direction.x << ", " << direction.y << ")\n";
+	//std::cout << "[Nobbin] Moving in direction: (" << direction.x << ", " << direction.y << ")\n";
 	// Valid tile: apply movement
 	glm::vec3 worldDir = glm::normalize(glm::vec3(direction.x, direction.y, 0.0f));
 	auto currentPos = agent->GetTransform()->GetWorldPosition();

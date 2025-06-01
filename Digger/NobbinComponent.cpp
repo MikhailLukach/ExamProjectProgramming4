@@ -16,7 +16,7 @@ void dae::NobbinComponent::Update(float deltaTime)
 		m_IsMoving = false;
 		m_MoveElapsed -= m_MoveDuration; //preserve excess time for next move
 
-		std::cout << "[Nobbin] Move complete to tile.\n";
+		//std::cout << "[Nobbin] Move complete to tile.\n";
 		return;
 	}
 
@@ -32,8 +32,8 @@ void dae::NobbinComponent::NobbinStartMoveTo(const glm::vec3& targetPos, float d
 	m_MoveDuration = duration;
 	m_IsMoving = true;
 
-	std::cout << "[Nobbin] Begin smooth move to ("
-		<< targetPos.x << ", " << targetPos.y << ")\n";
+	//std::cout << "[Nobbin] Begin smooth move to ("
+		//<< targetPos.x << ", " << targetPos.y << ")\n";
 }
 
 bool dae::NobbinComponent::NobbinIsMoving() const

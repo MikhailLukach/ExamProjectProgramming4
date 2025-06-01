@@ -36,8 +36,6 @@ void dae::NobbinControllerComponent::Update(float deltaTime)
 	auto mover = GetOwner()->GetComponent<NobbinComponent>();
 	if (!mover || mover->NobbinIsMoving()) return;
 
-	if (mover->NobbinIsMoving()) return;
-
 	const auto myTile = m_pTracker->GetTileCoords();
 	const auto playerTracker = m_pPlayer->GetComponent<TileTrackerComponent>();
 	if (!playerTracker) return;
@@ -76,7 +74,7 @@ void dae::NobbinControllerComponent::Update(float deltaTime)
 		// Skip if we're backtracking
 		if (nextTile == m_PreviousTile)
 		{
-			std::cout << "[DEBUG] Skipping backtracking to (" << nextTile.x << ", " << nextTile.y << ")\n";
+			//std::cout << "[DEBUG] Skipping backtracking to (" << nextTile.x << ", " << nextTile.y << ")\n";
 			continue;
 		}
 
@@ -88,7 +86,7 @@ void dae::NobbinControllerComponent::Update(float deltaTime)
 		}
 	}
 
-	std::cout << "[Nobbin] No valid move found from tile (" << myTile.x << ", " << myTile.y << ")\n";
+	//std::cout << "[Nobbin] No valid move found from tile (" << myTile.x << ", " << myTile.y << ")\n";
 }
 
 void dae::NobbinControllerComponent::TryMoveInDirection(const glm::ivec2& direction)
@@ -96,6 +94,8 @@ void dae::NobbinControllerComponent::TryMoveInDirection(const glm::ivec2& direct
 	auto tracker = GetOwner()->GetComponent<TileTrackerComponent>();
 	auto nobbinMover = GetOwner()->GetComponent<NobbinComponent>();
 	if (!tracker || !nobbinMover || nobbinMover->NobbinIsMoving()) return;
+
+	std::cout << "[DEBUG] Attempting move while moving? " << nobbinMover->NobbinIsMoving() << "\n";
 
 	auto currentTile = tracker->GetTileCoords();
 	glm::ivec2 nextTile = currentTile + direction;
@@ -109,8 +109,8 @@ void dae::NobbinControllerComponent::TryMoveInDirection(const glm::ivec2& direct
 
 	nobbinMover->NobbinStartMoveTo(worldPos, duration);
 
-	std::cout << "[Nobbin] Moving from (" << currentTile.x << "," << currentTile.y
-		<< ") to (" << nextTile.x << "," << nextTile.y << ")\n";
+	//std::cout << "[Nobbin] Moving from (" << currentTile.x << "," << currentTile.y
+		//<< ") to (" << nextTile.x << "," << nextTile.y << ")\n";
 
 	m_PreviousTile = currentTile;
 }
