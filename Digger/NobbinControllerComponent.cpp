@@ -37,45 +37,6 @@ void dae::NobbinControllerComponent::Update(float deltaTime)
 	if (m_pCurrentState)
 		m_pCurrentState->Update(*this, deltaTime);
 
-	/*if (!m_pPlayer || !m_pTileManager || !m_pTracker) return;
-
-	auto mover = GetOwner()->GetComponent<NobbinComponent>();
-	if (!mover || mover->NobbinIsMoving())
-	{
-		return;
-	}
-
-	const auto myTile = m_pTracker->GetTileCoords();
-	const auto playerTracker = m_pPlayer->GetComponent<TileTrackerComponent>();
-	if (!playerTracker) return;
-
-	const auto playerTile = playerTracker->GetTileCoords();
-
-	std::vector<glm::ivec2> directions = {
-		{1, 0}, {-1, 0}, {0, 1}, {0, -1}
-	};
-
-	// Sort directions by increasing Manhattan distance to player
-	std::sort(directions.begin(), directions.end(), [&](const glm::ivec2& a, const glm::ivec2& b) {
-		glm::ivec2 posA = myTile + a;
-		glm::ivec2 posB = myTile + b;
-		int distA = glm::abs(posA.x - playerTile.x) + glm::abs(posA.y - playerTile.y);
-		int distB = glm::abs(posB.x - playerTile.x) + glm::abs(posB.y - playerTile.y);
-		return distA < distB;
-		});
-
-	for (const auto& dir : directions)
-	{
-		glm::ivec2 nextTile = myTile + dir;
-
-		if (nextTile == m_PreviousTile) continue;
-
-		if (IsDugTile(nextTile))
-		{
-			TryMoveInDirection(dir); // This will now reset the timer
-			return;
-		}
-	}*/
 }
 
 void dae::NobbinControllerComponent::ChangeState(std::unique_ptr<NobbinState> newState)

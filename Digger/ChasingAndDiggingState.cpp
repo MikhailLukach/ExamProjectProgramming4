@@ -15,12 +15,19 @@ void dae::ChasingAndDiggingState::OnEnter(dae::NobbinControllerComponent& contro
 {
     std::cout << "[ChasingAndDiggingState] Nobbin is now a Hobbin!\n";
 
+    auto* owner = controller.GetOwner();
+    if (!owner)
+    {
+        std::cerr << "[ChasingAndDiggingState] ERROR: Controller's GameObject is null!\n";
+        return;
+    }
+
     auto render = controller.GetOwner()->GetComponent<dae::RenderComponent>();
     auto animator = controller.GetOwner()->GetComponent<dae::SpriteAnimatorComponent>();
 
     if (render)
     {
-        render->SetTexture("HobbinSpritesheet.png"); // Swap the sprite sheet
+        render->SetTexture("HobbinSpriteSheetVer2.png"); // Swap the sprite sheet
         render->SetSize(32, 32);                     // Ensure it matches Hobbin frames
         render->SetRenderOffset({ 0.f, -16.f });       // Optional: adjust if needed
     }
@@ -29,7 +36,7 @@ void dae::ChasingAndDiggingState::OnEnter(dae::NobbinControllerComponent& contro
     {
         // Reconfigure if Hobbin sheet has different frame size or timing
         animator->Configure(render.get(), 16, 16, 0.12f); // Adjust values as needed
-        animator->PlayAnimation(0, 3); // Start with default anim
+        animator->PlayAnimation(6, 3); // Start with default anim
     }
 }
 

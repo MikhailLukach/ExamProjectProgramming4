@@ -12,13 +12,12 @@
 void dae::ChasingState::OnEnter(NobbinControllerComponent& controller)
 {
 	(void)controller;
-	m_AngerTimer = 0.f;
 }
 
 void dae::ChasingState::Update(NobbinControllerComponent& controller, float deltaTime)
 {
 	m_AngerTimer += deltaTime;
-
+	std::cout << "[ChasingTime] AngerTime = " << m_AngerTimer << std::endl;
 	if (m_AngerTimer > m_AngerThreshold)
 	{
 		std::cout << "[ChasingState] Getting angry, switching to ChasingAndDiggingState.\n";
@@ -63,7 +62,6 @@ void dae::ChasingState::Update(NobbinControllerComponent& controller, float delt
 		if (controller.IsDugTile(nextTile))
 		{
 			controller.TryMoveInDirection(dir);
-			m_AngerTimer = 0.f; // reset if successful
 			return;
 		}
 	}

@@ -66,6 +66,8 @@ namespace dae
 		float m_DecisionInterval;
 		float m_Speed;
 
+		bool m_Initialized = false;
+
 		void UpdateAnimationState();
 	};
 }
