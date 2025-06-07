@@ -1,5 +1,4 @@
 #include "NobbinControllerComponent.h"
-#include "GameObject.h"
 #include "TileManagerComponent.h"
 #include "TileTrackerComponent.h"
 #include "SpriteAnimatorComponent.h"
@@ -8,6 +7,10 @@
 #include "AIUtils.h"
 #include "TileTypes.h"
 #include "LevelLoader.h"
+#include "NobbinState.h"
+#include "ChasingState.h"
+#include "ChasingAndDiggingState.h"
+
 #include <glm.hpp>
 #include <memory>
 
@@ -21,10 +24,8 @@ dae::NobbinControllerComponent::NobbinControllerComponent(GameObject* player,
 	, m_DecisionInterval(decisionInterval)
 	, m_Speed(speed)
 {
+	ChangeState(std::make_unique<ChasingState>());
 }
-
-float m_PostMoveDelay = 0.025f;
-float m_PostMoveTimer = 0.f;
 
 void dae::NobbinControllerComponent::Update(float deltaTime)
 {
@@ -33,20 +34,16 @@ void dae::NobbinControllerComponent::Update(float deltaTime)
 	if (!m_pTracker)
 		m_pTracker = GetOwner()->GetComponent<TileTrackerComponent>().get();
 
-	if (!m_pPlayer || !m_pTileManager || !m_pTracker) return;
+	if (m_pCurrentState)
+		m_pCurrentState->Update(*this, deltaTime);
+
+	/*if (!m_pPlayer || !m_pTileManager || !m_pTracker) return;
 
 	auto mover = GetOwner()->GetComponent<NobbinComponent>();
 	if (!mover || mover->NobbinIsMoving())
 	{
 		return;
 	}
-
-	// Wait if still in post-move cooldown
-	/*if (m_PostMoveTimer > 0.f)
-	{
-		m_PostMoveTimer -= deltaTime;
-		return;
-	}*/
 
 	const auto myTile = m_pTracker->GetTileCoords();
 	const auto playerTracker = m_pPlayer->GetComponent<TileTrackerComponent>();
@@ -78,6 +75,21 @@ void dae::NobbinControllerComponent::Update(float deltaTime)
 			TryMoveInDirection(dir); // This will now reset the timer
 			return;
 		}
+	}*/
+}
+
+void dae::NobbinControllerComponent::ChangeState(std::unique_ptr<NobbinState> newState)
+{
+	if (m_pCurrentState)
+	{
+		m_pCurrentState->OnExit(*this);
+	}
+
+	m_pCurrentState = std::move(newState);
+
+	if (m_pCurrentState)
+	{
+		m_pCurrentState->OnEnter(*this);
 	}
 }
 

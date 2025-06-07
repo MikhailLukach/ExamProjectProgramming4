@@ -86,6 +86,8 @@
   <ItemGroup>
     <ClCompile Include="AIUtils.cpp" />
     <ClCompile Include="BreakingState.cpp" />
+    <ClCompile Include="ChasingAndDiggingState.cpp" />
+    <ClCompile Include="ChasingState.cpp" />
     <ClCompile Include="CollectableState.cpp" />
     <ClCompile Include="FallingState.cpp" />
     <ClCompile Include="GameObjectFactory.cpp" />
@@ -111,6 +113,8 @@
     <ClInclude Include="AIUtils.h" />
     <ClInclude Include="AnimationState.h" />
     <ClInclude Include="BreakingState.h" />
+    <ClInclude Include="ChasingAndDiggingState.h" />
+    <ClInclude Include="ChasingState.h" />
     <ClInclude Include="CollectableState.h" />
     <ClInclude Include="FallingState.h" />
     <ClInclude Include="GameCommands.h" />
@@ -127,6 +131,7 @@
     <ClInclude Include="MoneyBagState.h" />
     <ClInclude Include="NobbinComponent.h" />
     <ClInclude Include="NobbinControllerComponent.h" />
+    <ClInclude Include="NobbinState.h" />
     <ClInclude Include="RotatorComponent.h" />
     <ClInclude Include="ScoreComponent.h" />
     <ClInclude Include="SpriteAnimatorComponent.h" />

@@ -29,6 +29,7 @@
 #include "NobbinComponent.h"
 
 //states
+#include "NobbinState.h"
 #include "IdleState.h"
 #include "FallingState.h"
 #include "CollectableState.h"
