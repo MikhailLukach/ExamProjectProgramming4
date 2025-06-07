@@ -28,6 +28,8 @@ float m_PostMoveTimer = 0.f;
 
 void dae::NobbinControllerComponent::Update(float deltaTime)
 {
+	(void)deltaTime;
+
 	if (!m_pTracker)
 		m_pTracker = GetOwner()->GetComponent<TileTrackerComponent>().get();
 
@@ -40,11 +42,11 @@ void dae::NobbinControllerComponent::Update(float deltaTime)
 	}
 
 	// Wait if still in post-move cooldown
-	if (m_PostMoveTimer > 0.f)
+	/*if (m_PostMoveTimer > 0.f)
 	{
 		m_PostMoveTimer -= deltaTime;
 		return;
-	}
+	}*/
 
 	const auto myTile = m_pTracker->GetTileCoords();
 	const auto playerTracker = m_pPlayer->GetComponent<TileTrackerComponent>();
@@ -110,7 +112,7 @@ void dae::NobbinControllerComponent::TryMoveInDirection(const glm::ivec2& direct
 
 	m_PreviousTile = currentTile;
 
-	m_PostMoveTimer = m_PostMoveDelay;
+	//m_PostMoveTimer = m_PostMoveDelay;
 }
 
 bool dae::NobbinControllerComponent::IsDugTile(const glm::ivec2& tile) const

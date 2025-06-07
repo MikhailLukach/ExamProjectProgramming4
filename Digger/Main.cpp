@@ -335,7 +335,7 @@ void LoadGame()
 	nobRender->SetRenderOffset(glm::vec2{ 0.f, -16.f });
 
 	auto animatorNobbin = nobbin->AddComponent<dae::SpriteAnimatorComponent>(nobRender.get(), 16, 16, 0.15f);
-	animatorNobbin->PlayAnimation(0, 3); // Start with right-facing animation as default
+	animatorNobbin->PlayAnimation(6, 3); // Start with left-facing animation as default
 
 	nobbin->AddComponent<dae::TileTrackerComponent>(TileWidth, TileHeight, OffsetX, OffsetY);
 
