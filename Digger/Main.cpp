@@ -330,9 +330,12 @@ void LoadGame()
 	auto nobbinPos = loader.GetWorldCenterForTile(12, 0);
 	nobbin->GetTransform()->SetPosition(nobbinPos);
 
-	auto nobRender = nobbin->AddComponent<dae::RenderComponent>("MrDo!Enemy.png");
+	auto nobRender = nobbin->AddComponent<dae::RenderComponent>("NormalNobbinSpritesheet.png");
 	nobRender->SetSize(32, 32);
 	nobRender->SetRenderOffset(glm::vec2{ 0.f, -16.f });
+
+	auto animatorNobbin = nobbin->AddComponent<dae::SpriteAnimatorComponent>(nobRender.get(), 16, 16, 0.15f);
+	animatorNobbin->PlayAnimation(0, 3); // Start with right-facing animation as default
 
 	nobbin->AddComponent<dae::TileTrackerComponent>(TileWidth, TileHeight, OffsetX, OffsetY);
 

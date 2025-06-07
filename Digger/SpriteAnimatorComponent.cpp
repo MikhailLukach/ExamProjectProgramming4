@@ -17,17 +17,9 @@ dae::SpriteAnimatorComponent::SpriteAnimatorComponent(RenderComponent* renderCom
 
 void dae::SpriteAnimatorComponent::Update(float deltaTime)
 {
-	/*if (!m_IsPlaying || !m_pRenderComponent) return;
-
-	m_FrameTimer += deltaTime;
-	if (m_FrameTimer >= m_FrameDuration)
-	{
-		m_FrameTimer -= m_FrameDuration;
-		m_CurrentFrameIndex = (m_CurrentFrameIndex + 1) % m_FrameCount;
-		UpdateTextureClip();
-	}*/
-
 	if (!m_IsPlaying || !m_pRenderComponent) return;
+
+	//std::cout << "[SpriteAnimator] Updating: " << m_CurrentFrameIndex << std::endl;
 
 	m_FrameTimer += deltaTime;
 	if (m_FrameTimer >= m_FrameDuration)

@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "TileManagerComponent.h"
 #include "TileTrackerComponent.h"
+#include "SpriteAnimatorComponent.h"
 #include "NobbinComponent.h"
 #include "TileComponent.h"
 #include "AIUtils.h"
@@ -22,19 +23,28 @@ dae::NobbinControllerComponent::NobbinControllerComponent(GameObject* player,
 {
 }
 
-float m_PostMoveDelay = 0.05f;
+float m_PostMoveDelay = 0.025f;
 float m_PostMoveTimer = 0.f;
 
 void dae::NobbinControllerComponent::Update(float deltaTime)
 {
-	(void)deltaTime;
 	if (!m_pTracker)
 		m_pTracker = GetOwner()->GetComponent<TileTrackerComponent>().get();
 
 	if (!m_pPlayer || !m_pTileManager || !m_pTracker) return;
 
 	auto mover = GetOwner()->GetComponent<NobbinComponent>();
-	if (!mover || mover->NobbinIsMoving()) return;
+	if (!mover || mover->NobbinIsMoving())
+	{
+		return;
+	}
+
+	// Wait if still in post-move cooldown
+	if (m_PostMoveTimer > 0.f)
+	{
+		m_PostMoveTimer -= deltaTime;
+		return;
+	}
 
 	const auto myTile = m_pTracker->GetTileCoords();
 	const auto playerTracker = m_pPlayer->GetComponent<TileTrackerComponent>();
@@ -45,18 +55,6 @@ void dae::NobbinControllerComponent::Update(float deltaTime)
 	std::vector<glm::ivec2> directions = {
 		{1, 0}, {-1, 0}, {0, 1}, {0, -1}
 	};
-
-	if (mover->NobbinIsMoving())
-	{
-		m_PostMoveTimer = m_PostMoveDelay; // reset
-		return;
-	}
-
-	if (m_PostMoveTimer > 0.f)
-	{
-		m_PostMoveTimer -= deltaTime;
-		return;
-	}
 
 	// Sort directions by increasing Manhattan distance to player
 	std::sort(directions.begin(), directions.end(), [&](const glm::ivec2& a, const glm::ivec2& b) {
@@ -71,22 +69,14 @@ void dae::NobbinControllerComponent::Update(float deltaTime)
 	{
 		glm::ivec2 nextTile = myTile + dir;
 
-		// Skip if we're backtracking
-		if (nextTile == m_PreviousTile)
-		{
-			//std::cout << "[DEBUG] Skipping backtracking to (" << nextTile.x << ", " << nextTile.y << ")\n";
-			continue;
-		}
+		if (nextTile == m_PreviousTile) continue;
 
-		// Move if it's a dug tile
 		if (IsDugTile(nextTile))
 		{
-			TryMoveInDirection(dir);
+			TryMoveInDirection(dir); // This will now reset the timer
 			return;
 		}
 	}
-
-	//std::cout << "[Nobbin] No valid move found from tile (" << myTile.x << ", " << myTile.y << ")\n";
 }
 
 void dae::NobbinControllerComponent::TryMoveInDirection(const glm::ivec2& direction)
@@ -95,10 +85,19 @@ void dae::NobbinControllerComponent::TryMoveInDirection(const glm::ivec2& direct
 	auto nobbinMover = GetOwner()->GetComponent<NobbinComponent>();
 	if (!tracker || !nobbinMover || nobbinMover->NobbinIsMoving()) return;
 
-	std::cout << "[DEBUG] Attempting move while moving? " << nobbinMover->NobbinIsMoving() << "\n";
+	//std::cout << "[DEBUG] Attempting move while moving? " << nobbinMover->NobbinIsMoving() << "\n";
 
 	auto currentTile = tracker->GetTileCoords();
 	glm::ivec2 nextTile = currentTile + direction;
+
+	glm::ivec2 dir = nextTile - currentTile;
+
+	if (dir.x > 0) m_AnimState = NobbinAnimationState::WalkRight;
+	else if (dir.x < 0) m_AnimState = NobbinAnimationState::WalkLeft;
+	else if (dir.y > 0) m_AnimState = NobbinAnimationState::WalkDown;
+	else if (dir.y < 0) m_AnimState = NobbinAnimationState::WalkUp;
+
+	UpdateAnimationState();
 
 	if (!IsDugTile(nextTile)) return;
 
@@ -109,10 +108,9 @@ void dae::NobbinControllerComponent::TryMoveInDirection(const glm::ivec2& direct
 
 	nobbinMover->NobbinStartMoveTo(worldPos, duration);
 
-	//std::cout << "[Nobbin] Moving from (" << currentTile.x << "," << currentTile.y
-		//<< ") to (" << nextTile.x << "," << nextTile.y << ")\n";
-
 	m_PreviousTile = currentTile;
+
+	m_PostMoveTimer = m_PostMoveDelay;
 }
 
 bool dae::NobbinControllerComponent::IsDugTile(const glm::ivec2& tile) const
@@ -126,4 +124,35 @@ bool dae::NobbinControllerComponent::IsDugTile(const glm::ivec2& tile) const
 	if (!tileComp) return false;
 
 	return tileComp->GetType() == TileVisualType::Dug_Spot;
+}
+
+void dae::NobbinControllerComponent::UpdateAnimationState()
+{
+	if (m_AnimState != m_LastAnimState)
+	{
+		if (auto animator = GetOwner()->GetComponent<SpriteAnimatorComponent>())
+		{
+			switch (m_AnimState)
+			{
+			case NobbinAnimationState::WalkRight:
+				std::cout << "[NobbinControllerComponent] actually updating animstate." << std::endl;
+				animator->PlayAnimation(0, 3); 
+				break;
+			case NobbinAnimationState::WalkDown:
+				std::cout << "[NobbinControllerComponent] actually updating animstate." << std::endl;
+				animator->PlayAnimation(3, 3); 
+				break;
+			case NobbinAnimationState::WalkLeft:
+				std::cout << "[NobbinControllerComponent] actually updating animstate." << std::endl;
+				animator->PlayAnimation(6, 3); 
+				break;
+			case NobbinAnimationState::WalkUp:
+				std::cout << "[NobbinControllerComponent] actually updating animstate." << std::endl;
+				animator->PlayAnimation(9, 3); 
+				break;
+			}
+		}
+
+		m_LastAnimState = m_AnimState;
+	}
 }

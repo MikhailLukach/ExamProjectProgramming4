@@ -33,8 +33,8 @@ namespace dae
 		glm::vec3 position = GetOwner()->GetTransform()->GetLocalPosition();
 
 		SDL_Rect dst{};
-		dst.x = static_cast<int>(position.x + m_RenderOffset.x);
-		dst.y = static_cast<int>(position.y + m_RenderOffset.y);
+		dst.x = static_cast<int>(std::round(position.x + m_RenderOffset.x));
+		dst.y = static_cast<int>(std::round(position.y + m_RenderOffset.y));
 		dst.w = static_cast<int>(m_Width);
 		dst.h = static_cast<int>(m_Height);
 
