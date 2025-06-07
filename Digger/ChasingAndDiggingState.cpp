@@ -5,7 +5,11 @@
 #include "TileTrackerComponent.h"
 #include "TileComponent.h"
 #include "TileManagerComponent.h"
+#include "MoneyBagComponent.h"
+#include "GemComponent.h"
 #include "GameObject.h"
+#include "Scene.h"
+#include "SceneManager.h"
 
 #include <glm.hpp>
 #include <algorithm>
@@ -43,6 +47,73 @@ void dae::ChasingAndDiggingState::OnEnter(dae::NobbinControllerComponent& contro
 void dae::ChasingAndDiggingState::Update(dae::NobbinControllerComponent& controller, float deltaTime)
 {
     (void)deltaTime;
+    auto pOwner = controller.GetOwner();
+    if (pOwner)
+    {
+        auto transform = pOwner->GetTransform();
+        glm::vec3 pos = transform->GetWorldPosition();
+
+        SDL_Rect nobbinRect{
+            static_cast<int>(pos.x),
+            static_cast<int>(pos.y),
+            32, 32
+        };
+
+        auto* scene = dae::SceneManager::GetInstance().GetCurrentScene();
+        if (scene)
+        {
+            for (auto& obj : scene->GetObjects())
+            {
+                if (obj.get() == pOwner) continue;
+
+                auto gem = obj->GetComponent<dae::GemComponent>();
+                if (gem)
+                {
+                    auto objTransform = obj->GetTransform();
+                    glm::vec3 objPos = objTransform->GetWorldPosition();
+
+                    SDL_Rect objRect{
+                        static_cast<int>(objPos.x),
+                        static_cast<int>(objPos.y),
+                        32, 32
+                    };
+
+                    if (SDL_HasIntersection(&nobbinRect, &objRect))
+                    {
+                        std::cout << "[ChasingAndDiggingState] Destroyed Gem!\n";
+                        obj->MarkForDeletion();
+                    }
+
+                    continue; // don't try to also treat gem as moneybag
+                }
+
+                // Check for MoneyBag next
+                auto moneyBag = obj->GetComponent<dae::MoneyBagComponent>();
+                if (moneyBag)
+                {
+                    // Check state: must not be FallingState
+                    if (!moneyBag->IsFalling()) // You'll need this helper
+                    {
+                        auto objTransform = obj->GetTransform();
+                        glm::vec3 objPos = objTransform->GetWorldPosition();
+
+                        SDL_Rect objRect{
+                            static_cast<int>(objPos.x),
+                            static_cast<int>(objPos.y),
+                            32, 32
+                        };
+
+                        if (SDL_HasIntersection(&nobbinRect, &objRect))
+                        {
+                            std::cout << "[ChasingAndDiggingState] Destroyed MoneyBag!\n";
+                            obj->MarkForDeletion();
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     auto tracker = controller.GetTracker();
     auto player = controller.GetPlayer();
     auto tileManager = controller.GetTileManager();
