@@ -13,6 +13,7 @@ namespace dae
 	{
 	public:
 		LevelLoader() = default;
+		void LoadLevelFromFile(const std::string& levelFile);
 		void LoadLevel(Scene& scene, std::vector<std::vector<std::shared_ptr<dae::GameObject>>>& outTileGrid);
 		glm::vec3 GetWorldCenterForTile(int tileX, int tileY) const;
 	private:
@@ -20,8 +21,6 @@ namespace dae
 		const int m_LevelHeight = 10;
 
 		std::vector<std::vector<TileVisualType>> m_InitialLayout;
-
-		void InitLevelLayout();
 	};
 }
 

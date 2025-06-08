@@ -5,6 +5,8 @@
 #include "RenderComponent.h"
 #include "GridOutlineComponent.h"
 #include "Transform.h"
+#include <fstream>
+#include <sstream> 
 
 constexpr int ScreenWidth = 640;
 constexpr int ScreenHeight = 480;
@@ -18,9 +20,44 @@ constexpr int HorOffset = 10;
 constexpr int TileWidth = ScreenWidth / NumCols;           // 640 / 15 = 42.6 => 42 (int)
 constexpr int TileHeight = (ScreenHeight - TopMargin) / NumRows; // (480 - 48) / 10 = 43.2 => 43
 
+void dae::LevelLoader::LoadLevelFromFile(const std::string& levelFile)
+{
+	std::string fullPath = ResourceManager::GetInstance().GetFullPath(levelFile);
+	std::ifstream file(fullPath);
+
+	if (!file.is_open())
+	{
+		std::cerr << "[LevelLoader] Failed to open level file: " << fullPath << std::endl;
+		return;
+	}
+
+	m_InitialLayout.clear();
+	std::string line;
+	while (std::getline(file, line))
+	{
+		std::istringstream ss(line);
+		std::string token;
+		std::vector<TileVisualType> row;
+
+		while (ss >> token)
+		{
+			if (token == "D")
+				row.push_back(TileVisualType::Dug_Spot);
+			else if (token == "U")
+				row.push_back(TileVisualType::Undug);
+			else
+				std::cerr << "[LevelLoader] Unknown tile type: " << token << std::endl;
+		}
+
+		m_InitialLayout.push_back(row);
+	}
+
+	std::cout << "[LevelLoader] Loaded level from file: " << fullPath << std::endl;
+}
+
 void dae::LevelLoader::LoadLevel(Scene& scene, std::vector<std::vector<std::shared_ptr<dae::GameObject>>>& outTileGrid)
 {
-	InitLevelLayout();
+	LoadLevelFromFile("Level1.txt");
 
 	const int LevelPixelWidth = TileWidth * NumCols;
 	//const int LevelPixelHeight = TileHeight * NumRows;
@@ -63,50 +100,4 @@ glm::vec3 dae::LevelLoader::GetWorldCenterForTile(int tileX, int tileY) const
 	float x = static_cast<float>(tileX * TileWidth + HorOffset);
 	float y = static_cast<float>(tileY * TileHeight + TileHeight / 2 + TopMargin);
 	return { x, y, 0.0f };
-}
-
-void dae::LevelLoader::InitLevelLayout()
-{
-	m_InitialLayout =
-	{
-		{ TileVisualType::Dug_Spot, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug,
-		TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug,
-		TileVisualType::Dug_Spot, TileVisualType::Dug_Spot, TileVisualType::Dug_Spot, TileVisualType::Dug_Spot, TileVisualType::Dug_Spot },
-
-		{TileVisualType::Dug_Spot, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug,
-		TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug,
-		TileVisualType::Dug_Spot, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug },
-
-		{TileVisualType::Dug_Spot, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug,
-		TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug,
-		TileVisualType::Dug_Spot, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug },
-
-		{TileVisualType::Dug_Spot, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug,
-		TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug,
-		TileVisualType::Dug_Spot, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug },
-
-		{TileVisualType::Dug_Spot, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug,
-		TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug,
-		TileVisualType::Dug_Spot, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug },
-
-		{TileVisualType::Dug_Spot, TileVisualType::Dug_Spot, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug,
-		TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug,
-		TileVisualType::Dug_Spot, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug },
-
-		{TileVisualType::Undug, TileVisualType::Dug_Spot, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug,
-		TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug,
-		TileVisualType::Dug_Spot, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug },
-
-		{TileVisualType::Undug, TileVisualType::Dug_Spot, TileVisualType::Dug_Spot, TileVisualType::Dug_Spot, TileVisualType::Dug_Spot,
-		TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug,
-		TileVisualType::Dug_Spot, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug },
-
-		{TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Dug_Spot,
-		TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug,
-		TileVisualType::Dug_Spot, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug },
-
-		{TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Dug_Spot,
-		TileVisualType::Dug_Spot, TileVisualType::Dug_Spot, TileVisualType::Dug_Spot, TileVisualType::Dug_Spot, TileVisualType::Dug_Spot,
-		TileVisualType::Dug_Spot, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug, TileVisualType::Undug },
-	};
 }
