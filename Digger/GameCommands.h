@@ -69,7 +69,7 @@ namespace dae
             if(desiredDir.x > 0)
             {
                 //std::cout << "2" << std::endl;
-                orientedPos = glm::vec3{ pos.x - 25, pos.y, pos.z };
+                orientedPos = glm::vec3{ pos.x + 15, pos.y, pos.z };
             }
             if(desiredDir.y > 0)
             {
