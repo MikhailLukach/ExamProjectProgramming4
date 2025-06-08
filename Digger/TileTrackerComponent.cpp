@@ -10,14 +10,34 @@ dae::TileTrackerComponent::TileTrackerComponent(int tileWidth, int tileHeight, i
 void dae::TileTrackerComponent::Update(float deltaTime)
 {
 	(void)deltaTime;
-	if (!GetOwner()) return;
+    if (!GetOwner()) return;
+    auto pos = GetOwner()->GetTransform()->GetWorldPosition();
 
-	auto pos = GetOwner()->GetTransform()->GetWorldPosition();
+    float x = pos.x;
+    float y = pos.y;
 
-	int col = static_cast<int>((pos.x - m_OffsetX) / m_TileWidth);
-	int row = static_cast<int>((pos.y - m_OffsetY) / m_TileHeight);
+    if (m_TrackingMode == TrackingMode::Center)
+    {
+        x += 16.0f;
+        y += 16.0f;
+    }
 
-	m_CurrentTile = { col, row };
+    int col = static_cast<int>((x - m_OffsetX) / m_TileWidth);
+    int row = static_cast<int>((y - m_OffsetY) / m_TileHeight);
+
+    m_CurrentTile = { col, row };
 
 	//std::cout << "[TileTrackerComponent]: The current tile is y: " << col << " and x: " << row << std::endl;
+}
+
+glm::ivec2 dae::TileTrackerComponent::GetCenterTileCoords() const
+{
+    if (!GetOwner()) return { -1, -1 };
+    auto pos = GetOwner()->GetTransform()->GetWorldPosition();
+    float centerX = pos.x + 16.0f;
+    float centerY = pos.y + 16.0f;
+
+    int col = static_cast<int>((centerX - m_OffsetX) / m_TileWidth);
+    int row = static_cast<int>((centerY - m_OffsetY) / m_TileHeight);
+    return { col, row };
 }

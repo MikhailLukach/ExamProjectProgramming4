@@ -61,16 +61,19 @@ namespace dae
 
             glm::vec3 desiredDir = glm::normalize(m_Direction);
             glm::vec3 orientedPos{pos};
-            if(desiredDir.x < 0 || desiredDir.y < 0)
+            if (desiredDir.x < 0 || desiredDir.y < 0)
             {
+                //std::cout << "1" << std::endl;
                 orientedPos = glm::vec3{ pos.x - 25, pos.y - 25, pos.z };
             }
             if(desiredDir.x > 0)
             {
-                orientedPos = glm::vec3{ pos.x + 15, pos.y, pos.z };
+                //std::cout << "2" << std::endl;
+                orientedPos = glm::vec3{ pos.x - 25, pos.y, pos.z };
             }
             if(desiredDir.y > 0)
             {
+                //std::cout << "3" << std::endl;
                 orientedPos = glm::vec3{ pos.x, pos.y + 15, pos.z };
             }
             glm::vec3 predictedPosition = orientedPos + desiredDir * m_Speed;
@@ -144,17 +147,30 @@ namespace dae
             {
                 int pushDir = static_cast<int>(glm::sign(desiredDir.x)); // -1 = left, 1 = right
 
-                glm::ivec2 playerTile = tracker->GetTileCoords();
+                glm::ivec2 playerTile = tracker->GetTileCoords(); // <- keep using top-left here
                 glm::ivec2 targetTile = playerTile + glm::ivec2{ pushDir, 0 };
 
                 auto bagObj = m_pLevelManager->GetMoneyBagAt(targetTile.x, targetTile.y);
                 if (bagObj)
                 {
-                    std::cout << "[MoveCommand] Player attempting to push MoneyBag at (" << targetTile.x << ", " << targetTile.y << ")\n";
-                    auto bagComp = bagObj->GetComponent<MoneyBagComponent>();
-                    if (bagComp)
+                    // Optional sanity check based on world position to avoid premature push
+                    glm::vec3 playerPos = transform->GetWorldPosition();
+                    glm::vec3 bagPos = bagObj->GetTransform()->GetWorldPosition();
+                    float distance = std::abs(playerPos.x - bagPos.x);
+
+                    // Only push if really next to it (adjust the threshold if needed)
+                    if (distance < 34.0f) // Slightly more than one tile width
                     {
-                        bagComp->TryPushHorizontally(pushDir, m_pTileManager);
+                        std::cout << "[MoveCommand] Player attempting to push MoneyBag at (" << targetTile.x << ", " << targetTile.y << ")\n";
+                        auto bagComp = bagObj->GetComponent<MoneyBagComponent>();
+                        if (bagComp)
+                        {
+                            bagComp->TryPushHorizontally(pushDir, m_pTileManager);
+                        }
+                    }
+                    else
+                    {
+                        std::cout << "[MoveCommand] Skipped push: player too far (distance: " << distance << ")\n";
                     }
                 }
             }

@@ -27,6 +27,7 @@
 #include "NobbinControllerComponent.h"
 #include "GridOutlineComponent.h"
 #include "NobbinComponent.h"
+#include "PlayerDebugComponent.h"
 
 //states
 #include "NobbinState.h"
@@ -284,6 +285,8 @@ void LoadGame()
 	auto render = player->AddComponent<dae::RenderComponent>("CharacterSpriteSheetFilledBackground.png");
 	render->SetSize(32, 32);
 
+	player->AddComponent<dae::PlayerDebugComponent>();
+
 	auto animator = player->AddComponent<dae::SpriteAnimatorComponent>(render.get(), 16, 16, 0.2f);
 
 	animator->PlayAnimation(3, 3);
@@ -293,7 +296,8 @@ void LoadGame()
 	constexpr int OffsetX = (640 - (TileWidth * 15)) / 2; // = 5
 	constexpr int OffsetY = 48;
 
-	player->AddComponent<dae::TileTrackerComponent>(TileWidth, TileHeight, OffsetX, OffsetY);
+	auto tracker = player->AddComponent<dae::TileTrackerComponent>(TileWidth, TileHeight, OffsetX, OffsetY);
+	tracker->SetTrackingMode(dae::TrackingMode::Center);
 
 	scene.Add(player);
 	//--
@@ -327,7 +331,7 @@ void LoadGame()
 	//--
 
 	//-- Enemies Setup
-	auto nobbin = std::make_shared<dae::GameObject>();
+	/*auto nobbin = std::make_shared<dae::GameObject>();
 	auto nobbinPos = loader.GetWorldCenterForTile(12, 0);
 	nobbin->GetTransform()->SetPosition(nobbinPos);
 
@@ -343,7 +347,7 @@ void LoadGame()
 	nobbin->AddComponent<dae::NobbinComponent>();
 	nobbin->AddComponent<dae::NobbinControllerComponent>(player.get(), tileManager.get(), &loader, 0.05f, 100.f);
 
-	scene.Add(nobbin);
+	scene.Add(nobbin);*/
 	//--
 
 	//-- Player Controller Setup
