@@ -318,8 +318,8 @@ void LoadGame()
 	HUDObject->GetTransform()->SetPosition(10, 50, 0);
 
 	auto scoreDisplay = std::make_shared<dae::GameObject>();
-	auto scoreText = scoreDisplay->AddComponent<dae::TextComponent>("# score: 0", "Lingua.otf", 24);
-	scoreDisplay->GetTransform()->SetPosition(0, 10, 0);
+	auto scoreText = scoreDisplay->AddComponent<dae::TextComponent>("00000", "ArcadeFont.otf", 24);
+	scoreDisplay->GetTransform()->SetPosition(25, 10, 0);
 	scoreDisplay->SetParent(HUDObject, false);
 
 	auto hud = HUDObject->AddComponent<dae::HUDDisplay>(scoreText.get(), score.get());
