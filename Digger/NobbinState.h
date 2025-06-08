@@ -11,5 +11,7 @@ namespace dae
 		virtual void OnEnter(NobbinControllerComponent& controller) = 0;
 		virtual void Update(NobbinControllerComponent& controller, float deltaTime) = 0;
 		virtual void OnExit(NobbinControllerComponent& controller) = 0;
+
+		virtual const char* GetID() const = 0;
 	};
 }

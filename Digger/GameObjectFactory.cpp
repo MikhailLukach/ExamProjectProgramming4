@@ -33,7 +33,7 @@ std::shared_ptr<dae::GameObject> dae::CreateMoneyBag(Scene& scene, LevelLoader& 
 		GridSettings::GridOffsetX, GridSettings::GridOffsetY);
 	tracker->SetTrackingMode(TrackingMode::TopLeft);
 
-	auto moneyBag = bagObj->AddComponent<MoneyBagComponent>();
+	auto moneyBag = bagObj->AddComponent<MoneyBagComponent>(levelManager);
 	moneyBag->SetState(std::make_unique<IdleState>());
 	moneyBag->SetTileManager(tileManager);
 

@@ -15,6 +15,7 @@ namespace dae
 	};
 
 	class TileManagerComponent;
+	class LevelManagerComponent;
 	class TileTrackerComponent;
 	class SpriteAnimatorComponent;
 	class LevelLoader;
@@ -25,6 +26,7 @@ namespace dae
 	public:
 		NobbinControllerComponent(GameObject* player,
 			TileManagerComponent* tileManager,
+			LevelManagerComponent* levelManager,
 			LevelLoader* levelLoader,
 			float decisionInterval = 0.4f, float speed = 2.5f);
 
@@ -47,11 +49,15 @@ namespace dae
 
 		LevelLoader* GetLevelLoader() const { return m_pLevelLoader; }
 
+		LevelManagerComponent* GetLevelManager() const { return m_pLevelManager; }
+
 		void TryMoveInDirection(const glm::ivec2& direction);
 		bool IsDugTile(const glm::ivec2& tile) const;
 	private:
 		GameObject* m_pPlayer;
 		TileManagerComponent* m_pTileManager;
+		LevelManagerComponent* m_pLevelManager = nullptr;
+
 		TileTrackerComponent* m_pTracker = nullptr;
 		SpriteAnimatorComponent* m_pAnimator = nullptr;
 		LevelLoader* m_pLevelLoader = nullptr;

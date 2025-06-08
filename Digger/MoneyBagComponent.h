@@ -1,9 +1,12 @@
 #pragma once
 #include "Component.h"
 #include "FallingState.h"
+#include "LevelManagerComponent.h"
 #include "IdleState.h"
 #include <memory>
 #include <glm.hpp>
+#include "BreakingState.h"
+#include "CollectableState.h"
 
 namespace dae
 {
@@ -12,7 +15,7 @@ namespace dae
 	class MoneyBagComponent : public Component
 	{
 	public:
-		MoneyBagComponent() = default;
+		MoneyBagComponent(LevelManagerComponent* levelManager);
 		void Update(float deltaTime) override;
 		void SetState(std::unique_ptr<MoneyBagState> newState);
 
@@ -40,9 +43,29 @@ namespace dae
 			m_pTileManager = tileManager; 
 		}
 
+		LevelManagerComponent* GetLevelManager() const 
+		{
+			return m_pLevelManager; 
+		}
+
 		TileManagerComponent* GetTileManager() const 
 		{ 
 			return m_pTileManager; 
+		}
+
+		glm::vec3 GetTargetPosition() const 
+		{ 
+			return m_TargetPosition; 
+		}
+
+		float GetMoveDuration() const 
+		{
+			return m_MoveDuration; 
+		}
+
+		float GetMoveElapsed() const
+		{
+			return m_MoveElapsed;
 		}
 
 		bool GetIsMoving()
@@ -60,11 +83,22 @@ namespace dae
 			return dynamic_cast<const IdleState*>(m_State.get()) != nullptr;
 		}
 
+		bool IsBreaking() const
+		{
+			return dynamic_cast<const BreakingState*>(m_State.get()) != nullptr;
+		}
+
+		bool IsCollectable() const
+		{
+			return dynamic_cast<const CollectableState*>(m_State.get()) != nullptr;
+		}
+
 		void SetPlayerBelow();
 		void UpdatePlayerBelowTimer(float deltaTime);
 		bool WasRecentlyAbovePlayer() const;
 	private:
 		TileManagerComponent* m_pTileManager{};
+		LevelManagerComponent* m_pLevelManager{};
 
 		std::unique_ptr<MoneyBagState> m_State;
 		int m_FallDistance = 0;

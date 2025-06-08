@@ -6,6 +6,11 @@
 #include "MoneyBagState.h"
 #include <iostream>
 
+dae::MoneyBagComponent::MoneyBagComponent(LevelManagerComponent* levelManager)
+	:m_pLevelManager(levelManager)
+{
+}
+
 void dae::MoneyBagComponent::Update(float deltaTime)
 {
 	UpdatePlayerBelowTimer(deltaTime);

@@ -1,7 +1,9 @@
 #include "NobbinControllerComponent.h"
 #include "TileManagerComponent.h"
+#include "LevelManagerComponent.h"
 #include "TileTrackerComponent.h"
 #include "SpriteAnimatorComponent.h"
+#include "MoneyBagComponent.h"
 #include "NobbinComponent.h"
 #include "TileComponent.h"
 #include "AIUtils.h"
@@ -10,16 +12,19 @@
 #include "NobbinState.h"
 #include "ChasingState.h"
 #include "ChasingAndDiggingState.h"
+#include "GettingCrushedState.h"
 
 #include <glm.hpp>
 #include <memory>
 
 dae::NobbinControllerComponent::NobbinControllerComponent(GameObject* player,
 	TileManagerComponent* tileManager,
+	LevelManagerComponent* levelManager,
 	LevelLoader* levelLoader,
 	float decisionInterval, float speed)
 	: m_pPlayer(player)
 	, m_pTileManager(tileManager)
+	, m_pLevelManager(levelManager)
 	, m_pLevelLoader(levelLoader)
 	, m_DecisionInterval(decisionInterval)
 	, m_Speed(speed)
@@ -30,6 +35,24 @@ dae::NobbinControllerComponent::NobbinControllerComponent(GameObject* player,
 void dae::NobbinControllerComponent::Update(float deltaTime)
 {
 	(void)deltaTime;
+	auto nobbinBounds = GetOwner()->GetTransform()->GetWorldPosition(); // center
+	for (const auto& bag : m_pLevelManager->GetAllMoneyBags())
+	{
+		if (!bag) continue;
+
+		auto bagComp = bag->GetComponent<MoneyBagComponent>();
+		if (!bagComp || !bagComp->IsFalling()) continue;
+
+		auto bagBounds = bag->GetTransform()->GetWorldPosition();
+
+		float overlapThreshold = 16.0f; // half tile width
+		if (abs(nobbinBounds.x - bagBounds.x) < overlapThreshold &&
+			abs(nobbinBounds.y - bagBounds.y) < overlapThreshold)
+		{
+			ChangeState(std::make_unique<GettingCrushedState>());
+			return;
+		}
+	}
 
 	if (!m_pTracker)
 		m_pTracker = GetOwner()->GetComponent<TileTrackerComponent>().get();
@@ -41,6 +64,13 @@ void dae::NobbinControllerComponent::Update(float deltaTime)
 
 void dae::NobbinControllerComponent::ChangeState(std::unique_ptr<NobbinState> newState)
 {
+	if (m_pCurrentState && newState &&
+		std::string(m_pCurrentState->GetID()) == std::string(newState->GetID()))
+	{
+		// Avoid redundant switch
+		return;
+	}
+
 	if (m_pCurrentState)
 	{
 		m_pCurrentState->OnExit(*this);

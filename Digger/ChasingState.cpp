@@ -17,7 +17,7 @@ void dae::ChasingState::OnEnter(NobbinControllerComponent& controller)
 void dae::ChasingState::Update(NobbinControllerComponent& controller, float deltaTime)
 {
 	m_AngerTimer += deltaTime;
-	std::cout << "[ChasingTime] AngerTime = " << m_AngerTimer << std::endl;
+	//std::cout << "[ChasingTime] AngerTime = " << m_AngerTimer << std::endl;
 	if (m_AngerTimer > m_AngerThreshold)
 	{
 		std::cout << "[ChasingState] Getting angry, switching to ChasingAndDiggingState.\n";

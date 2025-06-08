@@ -331,8 +331,8 @@ void LoadGame()
 	//--
 
 	//-- Enemies Setup
-	/*auto nobbin = std::make_shared<dae::GameObject>();
-	auto nobbinPos = loader.GetWorldCenterForTile(12, 0);
+	auto nobbin = std::make_shared<dae::GameObject>();
+	auto nobbinPos = loader.GetWorldCenterForTile(0, 3);
 	nobbin->GetTransform()->SetPosition(nobbinPos);
 
 	auto nobRender = nobbin->AddComponent<dae::RenderComponent>("NormalNobbinSpritesheet.png");
@@ -345,9 +345,11 @@ void LoadGame()
 	nobbin->AddComponent<dae::TileTrackerComponent>(TileWidth, TileHeight, OffsetX, OffsetY);
 
 	nobbin->AddComponent<dae::NobbinComponent>();
-	nobbin->AddComponent<dae::NobbinControllerComponent>(player.get(), tileManager.get(), &loader, 0.05f, 100.f);
+	nobbin->AddComponent<dae::NobbinControllerComponent>(player.get(), tileManager.get(), levelManager.get(), &loader, 0.05f, 100.f);
 
-	scene.Add(nobbin);*/
+	levelManager->RegisterNobbin(nobbin);
+
+	scene.Add(nobbin);
 	//--
 
 	//-- Player Controller Setup

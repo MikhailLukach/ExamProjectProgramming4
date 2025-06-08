@@ -4,9 +4,11 @@
 #include "BreakingState.h"
 #include "IdleState.h"
 #include "TileManagerComponent.h"
+#include "NobbinControllerComponent.h"
 #include "TileComponent.h"
 #include "GameObject.h"
 #include "TileTrackerComponent.h"
+#include "GettingCrushedState.h"
 
 void dae::FallingState::OnEnter(MoneyBagComponent& bag)
 {

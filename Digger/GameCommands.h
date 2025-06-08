@@ -63,26 +63,21 @@ namespace dae
             glm::vec3 orientedPos{pos};
             if (desiredDir.x < 0 || desiredDir.y < 0)
             {
-                //std::cout << "1" << std::endl;
                 orientedPos = glm::vec3{ pos.x - 25, pos.y - 25, pos.z };
             }
             if(desiredDir.x > 0)
             {
-                //std::cout << "2" << std::endl;
                 orientedPos = glm::vec3{ pos.x + 15, pos.y, pos.z };
             }
             if(desiredDir.y > 0)
             {
-                //std::cout << "3" << std::endl;
                 orientedPos = glm::vec3{ pos.x, pos.y + 15, pos.z };
             }
             glm::vec3 predictedPosition = orientedPos + desiredDir * m_Speed;
 
-            // Convert predicted position to tile coordinates
             int predictedTileX = static_cast<int>(std::floor((predictedPosition.x - GridSettings::GridOffsetX) / GridSettings::TileWidth));
             int predictedTileY = static_cast<int>(std::floor((predictedPosition.y - GridSettings::GridOffsetY) / GridSettings::TileHeight));
 
-            // Check if predicted tile is outside the grid
             bool nextTileIsOutOfBounds =
                 predictedTileX < 0 || predictedTileX >= GridSettings::NumCols ||
                 predictedTileY < 0 || predictedTileY >= GridSettings::NumRows;
@@ -159,7 +154,6 @@ namespace dae
 
                     if (distance < 34.0f)
                     {
-                        std::cout << "[MoveCommand] Player attempting to push MoneyBag at (" << targetTile.x << ", " << targetTile.y << ")\n";
                         auto bagComp = bagObj->GetComponent<MoneyBagComponent>();
                         if (bagComp)
                         {
@@ -175,7 +169,6 @@ namespace dae
 
             if (m_pLevelManager && desiredDir.y != 0.f && desiredDir.x == 0.f)
             {
-                std::cout << "[MoveCommand] dir y: " << desiredDir.y << std::endl;
                 glm::vec3 offset;
                 if(desiredDir.y == 1.f)
                 {

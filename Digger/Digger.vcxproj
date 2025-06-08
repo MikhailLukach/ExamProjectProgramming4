@@ -92,6 +92,7 @@
     <ClCompile Include="FallingState.cpp" />
     <ClCompile Include="GameObjectFactory.cpp" />
     <ClCompile Include="GemComponent.cpp" />
+    <ClCompile Include="GettingCrushedState.cpp" />
     <ClCompile Include="GridOutlineComponent.cpp" />
     <ClCompile Include="HealthComponent.cpp" />
     <ClCompile Include="HUDDisplay.cpp" />
@@ -121,6 +122,7 @@
     <ClInclude Include="GameCommands.h" />
     <ClInclude Include="GameObjectFactory.h" />
     <ClInclude Include="GemComponent.h" />
+    <ClInclude Include="GettingCrushedState.h" />
     <ClInclude Include="GridOutlineComponent.h" />
     <ClInclude Include="GridSettings.h" />
     <ClInclude Include="HealthComponent.h" />
