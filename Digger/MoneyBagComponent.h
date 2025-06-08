@@ -1,6 +1,7 @@
 #pragma once
 #include "Component.h"
 #include "FallingState.h"
+#include "IdleState.h"
 #include <memory>
 #include <glm.hpp>
 
@@ -52,6 +53,11 @@ namespace dae
 		bool IsFalling() const
 		{
 			return dynamic_cast<const FallingState*>(m_State.get()) != nullptr;
+		}
+
+		bool IsIdle() const
+		{
+			return dynamic_cast<const IdleState*>(m_State.get()) != nullptr;
 		}
 
 		void SetPlayerBelow();

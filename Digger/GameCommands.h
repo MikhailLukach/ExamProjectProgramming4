@@ -145,21 +145,19 @@ namespace dae
 
             if (m_pLevelManager && desiredDir.y == 0.f && desiredDir.x != 0.f)
             {
-                int pushDir = static_cast<int>(glm::sign(desiredDir.x)); // -1 = left, 1 = right
+                int pushDir = static_cast<int>(glm::sign(desiredDir.x));
 
-                glm::ivec2 playerTile = tracker->GetTileCoords(); // <- keep using top-left here
+                glm::ivec2 playerTile = tracker->GetTileCoords();
                 glm::ivec2 targetTile = playerTile + glm::ivec2{ pushDir, 0 };
 
                 auto bagObj = m_pLevelManager->GetMoneyBagAt(targetTile.x, targetTile.y);
                 if (bagObj)
                 {
-                    // Optional sanity check based on world position to avoid premature push
                     glm::vec3 playerPos = transform->GetWorldPosition();
                     glm::vec3 bagPos = bagObj->GetTransform()->GetWorldPosition();
                     float distance = std::abs(playerPos.x - bagPos.x);
 
-                    // Only push if really next to it (adjust the threshold if needed)
-                    if (distance < 34.0f) // Slightly more than one tile width
+                    if (distance < 34.0f)
                     {
                         std::cout << "[MoveCommand] Player attempting to push MoneyBag at (" << targetTile.x << ", " << targetTile.y << ")\n";
                         auto bagComp = bagObj->GetComponent<MoneyBagComponent>();
@@ -171,6 +169,34 @@ namespace dae
                     else
                     {
                         std::cout << "[MoveCommand] Skipped push: player too far (distance: " << distance << ")\n";
+                    }
+                }
+            }
+
+            if (m_pLevelManager && desiredDir.y != 0.f && desiredDir.x == 0.f)
+            {
+                std::cout << "[MoveCommand] dir y: " << desiredDir.y << std::endl;
+                glm::vec3 offset;
+                if(desiredDir.y == 1.f)
+                {
+                    offset = glm::vec3{ -16.f, 16.f, 0.f };
+                }
+                else
+                {
+                    offset = glm::vec3{ -16.f, -16.f, 0.f };
+                }
+                glm::vec3 predictedPosMoneyBag = pos + offset + desiredDir * m_Speed;
+                int predictedTileXMoneyBag = static_cast<int>((predictedPosMoneyBag.x - GridSettings::GridOffsetX + 16.0f) / GridSettings::TileWidth); 
+                int predictedTileYMoneyBag = static_cast<int>((predictedPosMoneyBag.y - GridSettings::GridOffsetY) / GridSettings::TileHeight);
+
+                auto blockingBag = m_pLevelManager->GetMoneyBagAt(predictedTileXMoneyBag, predictedTileYMoneyBag);
+                if (blockingBag)
+                {
+                    auto bagComp = blockingBag->GetComponent<MoneyBagComponent>();
+                    if (bagComp && bagComp->IsIdle())
+                    {
+                        std::cout << "[MoveCommand] Movement blocked by idle MoneyBag at (" << predictedTileX << ", " << predictedTileY << ")\n";
+                        return;
                     }
                 }
             }
@@ -203,8 +229,6 @@ namespace dae
                 int col = coords.x;
                 int row = coords.y;
 
-                //std::cout << "[MoveCommand] Player is at tile: (" << col << ", " << row << ")\n";
-
                 auto tileObj = m_pTileManager->GetTileAt(col, row);
                 if (tileObj)
                 {
@@ -218,10 +242,6 @@ namespace dae
                         std::cout << "[MoveCommand] Tile at (" << col << ", " << row << ") has no TileComponent!\n";
                     }
                 }
-                //else
-                //{
-                    //std::cout << "[MoveCommand] No tile at (" << col << ", " << row << ")\n";
-                //}
             }
         }
 
