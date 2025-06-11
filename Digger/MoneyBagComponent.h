@@ -16,6 +16,8 @@ namespace dae
 	{
 	public:
 		MoneyBagComponent(LevelManagerComponent* levelManager);
+		void Render() const override;
+
 		void Update(float deltaTime) override;
 		void SetState(std::unique_ptr<MoneyBagState> newState);
 
@@ -104,6 +106,8 @@ namespace dae
 		int m_FallDistance = 0;
 
 		bool m_IsMoving = false;
+		bool m_HasHitPlayer = false;
+
 		glm::vec3 m_StartPosition{};
 		glm::vec3 m_TargetPosition{};
 		float m_MoveElapsed = 0.f;

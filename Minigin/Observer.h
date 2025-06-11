@@ -6,8 +6,9 @@ namespace dae
     //event id should not be engine level
     enum class EventId
     {
-        PLAYER_DAMAGED,
         PLAYER_DIED,
+        PlAYER_HIT,
+        PLAYER_GAINEDLIVES,
         PLAYER_ADDSCORE,
         PLAYER_REACHED_500_POINTS
     };

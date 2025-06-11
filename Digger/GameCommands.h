@@ -269,25 +269,6 @@ namespace dae
         SpriteAnimatorComponent* m_pAnimator;
     };
 
-    class KillPlayerCommand : public Command
-    {
-    public:
-        explicit KillPlayerCommand(HealthComponent* health)
-            : m_Health(health) {}
-
-        void Execute() override
-        {
-            if (m_Health)
-            {
-                m_Health->TakeDamage(1);
-                std::cout << "[DEBUG] KillPlayerCommand Executed!\n";
-            }
-        }
-
-    private:
-        HealthComponent* m_Health;
-    };
-
     //needs to react to something, like pick up pellets, so make this a add pellets
     class AddScoreCommand : public Command
     {

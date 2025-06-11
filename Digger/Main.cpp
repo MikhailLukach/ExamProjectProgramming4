@@ -28,6 +28,7 @@
 #include "GridOutlineComponent.h"
 #include "NobbinComponent.h"
 #include "PlayerDebugComponent.h"
+#include "LivesComponent.h"
 
 //states
 #include "NobbinState.h"
@@ -281,6 +282,7 @@ void LoadGame()
 	player->GetTransform()->SetPosition(spawnPos);
 
 	auto score = player->AddComponent<dae::ScoreComponent>(0);
+	auto lives = player->AddComponent<dae::LivesComponent>(3);
 
 	auto render = player->AddComponent<dae::RenderComponent>("CharacterSpriteSheetFilledBackground.png");
 	render->SetSize(32, 32);
@@ -325,13 +327,14 @@ void LoadGame()
 	auto hud = HUDObject->AddComponent<dae::HUDDisplay>(scoreText.get(), score.get());
 
 	score->AddObserver(hud);
+	lives->AddObserver(hud);
 
 	scene.Add(HUDObject);
 	scene.Add(scoreDisplay);
 	//--
 
 	//-- Enemies Setup
-	auto nobbin = std::make_shared<dae::GameObject>();
+	/*auto nobbin = std::make_shared<dae::GameObject>();
 	auto nobbinPos = loader.GetWorldCenterForTile(0, 3);
 	nobbin->GetTransform()->SetPosition(nobbinPos);
 
@@ -349,7 +352,7 @@ void LoadGame()
 
 	levelManager->RegisterNobbin(nobbin);
 
-	scene.Add(nobbin);
+	scene.Add(nobbin);*/
 	//--
 
 	//-- Player Controller Setup

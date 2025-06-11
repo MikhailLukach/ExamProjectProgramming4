@@ -14,7 +14,7 @@ void dae::HUDDisplay::Notify(EventId event, GameObject* gameObject)
     int currentScore = m_pScoreComponent->GetScore();
     if (event == EventId::PLAYER_ADDSCORE)
     {
-        std::cout << "[DEBUG] HUD received PLAYER_ADDSCORE event! Updating text...\n";
+        std::cout << "[HUDDisplay] HUD received PLAYER_ADDSCORE event! Updating text...\n";
         //m_pScoreTextComponent->SetText("# score: " + std::to_string(currentScore));
 
         std::ostringstream ss;
@@ -22,11 +22,8 @@ void dae::HUDDisplay::Notify(EventId event, GameObject* gameObject)
 
         m_pScoreTextComponent->SetText(ss.str());
     }
-    else if(event == EventId::PLAYER_REACHED_500_POINTS)
+    else if(event == EventId::PlAYER_HIT)
     {
-        //check whether the player already has the acheivement
-        //remove yourself as an observer, since the achievement has been done
-        //SteamUserStats()->SetAchievement("ACH_WIN_ONE_GAME");
-        //SteamUserStats()->StoreStats();
+        std::cout << "[HUDDisplay] HUD received PLAYER_HIT event!\n";
     }
 }

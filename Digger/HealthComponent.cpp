@@ -1,4 +1,4 @@
-#include "HealthComponent.h"
+/*#include "HealthComponent.h"
 
 dae::HealthComponent::HealthComponent(int lives)
 	: m_Lives(lives)
@@ -28,4 +28,4 @@ void dae::HealthComponent::TakeDamage(int damage)
 int dae::HealthComponent::GetLives() const
 {
     return m_Lives;
-}
+}*/

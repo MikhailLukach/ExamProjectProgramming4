@@ -1,4 +1,4 @@
-#pragma once
+/*#pragma once
 #include "Component.h"
 #include "Subject.h"
 
@@ -14,4 +14,4 @@ namespace dae
     private:
         int m_Lives;
     };
-}
+}*/

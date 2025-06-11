@@ -4,11 +4,37 @@
 #include "GameObject.h"
 #include "TileManagerComponent.h"
 #include "MoneyBagState.h"
+#include "SceneManager.h"
+#include "Scene.h"
 #include <iostream>
+#include "LivesComponent.h"
 
 dae::MoneyBagComponent::MoneyBagComponent(LevelManagerComponent* levelManager)
 	:m_pLevelManager(levelManager)
 {
+}
+
+void dae::MoneyBagComponent::Render() const
+{
+#ifdef _DEBUG // Optional: only in debug builds
+	SDL_Renderer* renderer = dae::Renderer::GetInstance().GetSDLRenderer(); // Or your equivalent
+
+	if (renderer)
+	{
+		SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255); // Red for falling bag
+
+		int boxSize = 16; // Match your sprite/tile size
+		auto pos = GetOwner()->GetTransform()->GetWorldPosition();
+
+		SDL_Rect debugRect{};
+		debugRect.x = static_cast<int>(pos.x - boxSize / 2);
+		debugRect.y = static_cast<int>(pos.y - boxSize / 2);
+		debugRect.w = boxSize;
+		debugRect.h = boxSize;
+
+		SDL_RenderDrawRect(renderer, &debugRect);
+	}
+#endif
 }
 
 void dae::MoneyBagComponent::Update(float deltaTime)
@@ -35,6 +61,36 @@ void dae::MoneyBagComponent::Update(float deltaTime)
 	{
 		m_IsMoving = false;
 		std::cout << "[MoneyBag] Move complete\n";
+	}
+
+	if (IsFalling() && !m_HasHitPlayer)
+	{
+		auto bagPos = GetOwner()->GetTransform()->GetWorldPosition();
+
+		auto* scene = dae::SceneManager::GetInstance().GetCurrentScene();
+		if (scene)
+		{
+			for (auto& obj : scene->GetObjects())
+			{
+				if (!obj || obj.get() == GetOwner()) continue;
+
+				auto lives = obj->GetComponent<LivesComponent>();
+				if (!lives) continue;
+
+				auto playerPos = obj->GetTransform()->GetWorldPosition();
+				float overlapThreshold = 16.0f;
+
+				if (std::abs(playerPos.x - bagPos.x) < overlapThreshold &&
+					std::abs(playerPos.y - bagPos.y) < overlapThreshold)
+				{
+					std::cout << "[MoneyBag] Player hit mid-fall!\n";
+					lives->LoseLife();
+					m_HasHitPlayer = true;
+					// Optional: apply crushed behavior, animation, etc.
+					break;
+				}
+			}
+		}
 	}
 }
 
