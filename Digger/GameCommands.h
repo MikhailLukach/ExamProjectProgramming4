@@ -44,6 +44,9 @@ namespace dae
         {
             if (!m_Character) return;
 
+            if (!dae::InputManager::GetInstance().IsInputEnabled(m_Character))
+                return;
+
             auto transform = m_Character->GetTransform();
             auto tracker = m_Character->GetComponent<TileTrackerComponent>();
             if (!tracker) return;

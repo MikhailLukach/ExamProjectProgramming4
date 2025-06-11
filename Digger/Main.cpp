@@ -29,6 +29,7 @@
 #include "NobbinComponent.h"
 #include "PlayerDebugComponent.h"
 #include "LivesComponent.h"
+#include "PlayerRespawnComponent.h"
 
 //states
 #include "NobbinState.h"
@@ -301,6 +302,10 @@ void LoadGame()
 	auto tracker = player->AddComponent<dae::TileTrackerComponent>(TileWidth, TileHeight, OffsetX, OffsetY);
 	tracker->SetTrackingMode(dae::TrackingMode::Center);
 
+	auto respawn = player->AddComponent<dae::PlayerRespawnComponent>(spawnPos);
+	lives->AddObserver(respawn); 
+
+
 	scene.Add(player);
 	//--
 
@@ -351,7 +356,7 @@ void LoadGame()
 	//--
 
 	//-- Enemies Setup
-	/*auto nobbin = std::make_shared<dae::GameObject>();
+	auto nobbin = std::make_shared<dae::GameObject>();
 	auto nobbinPos = loader.GetWorldCenterForTile(0, 3);
 	nobbin->GetTransform()->SetPosition(nobbinPos);
 
@@ -369,7 +374,7 @@ void LoadGame()
 
 	levelManager->RegisterNobbin(nobbin);
 
-	scene.Add(nobbin);*/
+	scene.Add(nobbin);
 	//--
 
 	//-- Player Controller Setup

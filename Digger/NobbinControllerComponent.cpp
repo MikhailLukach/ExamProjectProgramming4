@@ -6,6 +6,9 @@
 #include "MoneyBagComponent.h"
 #include "NobbinComponent.h"
 #include "TileComponent.h"
+#include "SceneManager.h"
+#include "Scene.h"
+#include "LivesComponent.h"
 #include "AIUtils.h"
 #include "TileTypes.h"
 #include "LevelLoader.h"
@@ -51,6 +54,30 @@ void dae::NobbinControllerComponent::Update(float deltaTime)
 		{
 			ChangeState(std::make_unique<GettingCrushedState>());
 			return;
+		}
+	}
+
+	auto* scene = dae::SceneManager::GetInstance().GetCurrentScene();
+	if (!m_HasHitPlayer && scene)
+	{
+		for (auto& obj : scene->GetObjects())
+		{
+			if (!obj || obj.get() == GetOwner()) continue;
+
+			auto lives = obj->GetComponent<dae::LivesComponent>();
+			if (!lives) continue;
+
+			auto playerPos = obj->GetTransform()->GetWorldPosition();
+
+			float overlapThreshold = 16.0f;
+			if (abs(nobbinBounds.x - playerPos.x) < overlapThreshold &&
+				abs(nobbinBounds.y - playerPos.y) < overlapThreshold)
+			{
+				std::cout << "[Nobbin] Player hit!\n";
+				lives->LoseLife();
+				m_HasHitPlayer = true;
+				break;
+			}
 		}
 	}
 

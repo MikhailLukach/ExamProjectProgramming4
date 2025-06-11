@@ -21,7 +21,7 @@ namespace dae
 	class LevelLoader;
 	class NobbinState;
 
-	class NobbinControllerComponent final : public Component
+	class NobbinControllerComponent : public Component
 	{
 	public:
 		NobbinControllerComponent(GameObject* player,
@@ -73,6 +73,8 @@ namespace dae
 		float m_Speed;
 
 		bool m_Initialized = false;
+
+		bool m_HasHitPlayer = false;
 
 		void UpdateAnimationState();
 	};

@@ -105,6 +105,7 @@
     <ClCompile Include="NobbinComponent.cpp" />
     <ClCompile Include="NobbinControllerComponent.cpp" />
     <ClCompile Include="PlayerDebugComponent.cpp" />
+    <ClCompile Include="PlayerRespawnComponent.cpp" />
     <ClCompile Include="RotatorComponent.cpp" />
     <ClCompile Include="ScoreComponent.cpp" />
     <ClCompile Include="SpriteAnimatorComponent.cpp" />
@@ -138,6 +139,7 @@
     <ClInclude Include="NobbinControllerComponent.h" />
     <ClInclude Include="NobbinState.h" />
     <ClInclude Include="PlayerDebugComponent.h" />
+    <ClInclude Include="PlayerRespawnComponent.h" />
     <ClInclude Include="RotatorComponent.h" />
     <ClInclude Include="ScoreComponent.h" />
     <ClInclude Include="SpriteAnimatorComponent.h" />

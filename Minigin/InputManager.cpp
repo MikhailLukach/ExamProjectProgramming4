@@ -167,3 +167,18 @@ void dae::InputManager::BindCommandKeyboard(SDL_Keycode key, InputType state, st
 {
 	m_KeyboardCommands[key][state] = std::move(command);
 }
+
+void dae::InputManager::DisableInputFor(dae::GameObject* obj)
+{
+	m_DisabledObjects.insert(obj);
+}
+
+void dae::InputManager::EnableInputFor(dae::GameObject* obj)
+{
+	m_DisabledObjects.erase(obj);
+}
+
+bool dae::InputManager::IsInputEnabled(dae::GameObject* obj) const
+{
+	return m_DisabledObjects.find(obj) == m_DisabledObjects.end();
+}
