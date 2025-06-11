@@ -15,14 +15,7 @@ namespace dae
 
 	void dae::RenderComponent::Render() const
 	{
-		/*if (!m_texture)
-		{
-			std::cerr << "Warning: No texture set in RenderComponent!\n";
-			return;
-		}
-
-		glm::vec3 position = GetOwner()->GetTransform()->GetLocalPosition();
-		Renderer::GetInstance().RenderTexture(*m_texture, position.x, position.y, m_Width, m_Height);*/
+		if (!m_IsVisible) return;
 
 		if (!m_texture)
 		{

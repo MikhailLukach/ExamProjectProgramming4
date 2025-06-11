@@ -14,8 +14,11 @@ namespace dae
 
         void Notify(EventId event, GameObject* gameObject) override;
 
+        void SetLifeIcons(const std::vector<GameObject*>& icons);
     private:
         TextComponent* m_pScoreTextComponent;
         ScoreComponent* m_pScoreComponent;
+
+        std::vector<GameObject*> m_LifeIcons;
     };
 }

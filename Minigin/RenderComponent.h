@@ -20,11 +20,16 @@ namespace dae
 
 		void SetRenderOffset(const glm::vec2& offset);
 		void ResetRenderOffset();
+
+		void SetVisible(bool visible) { m_IsVisible = visible; }
+		bool IsVisible() const { return m_IsVisible; }
 	private:
 		std::shared_ptr<Texture2D> m_texture;
 
 		SDL_Rect m_SourceRect{};
 		bool m_UseSourceRect{ false };
+
+		bool m_IsVisible{ true };
 
 		//std::weak_ptr<Transform> m_pTransform;
 		float m_x{ 0 }, m_y{ 0 }, m_Width{ 0 }, m_Height{ 0 };

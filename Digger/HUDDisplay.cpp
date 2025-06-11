@@ -1,4 +1,6 @@
 #include "HUDDisplay.h"
+#include "Rendercomponent.h"
+#include "GameObject.h"
 #include <string>
 #include <iomanip>
 #include <sstream> 
@@ -25,5 +27,19 @@ void dae::HUDDisplay::Notify(EventId event, GameObject* gameObject)
     else if(event == EventId::PlAYER_HIT)
     {
         std::cout << "[HUDDisplay] HUD received PLAYER_HIT event!\n";
+        if (!m_LifeIcons.empty())
+        {
+            GameObject* icon = m_LifeIcons.back();
+            if (icon && icon->HasComponent<RenderComponent>())
+            {
+                icon->GetComponent<RenderComponent>()->SetVisible(false); // Hides the life icon
+            }
+            m_LifeIcons.pop_back();
+        }
     }
+}
+
+void dae::HUDDisplay::SetLifeIcons(const std::vector<GameObject*>& icons)
+{
+    m_LifeIcons = icons;
 }

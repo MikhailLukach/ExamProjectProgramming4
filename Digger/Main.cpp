@@ -326,6 +326,23 @@ void LoadGame()
 
 	auto hud = HUDObject->AddComponent<dae::HUDDisplay>(scoreText.get(), score.get());
 
+	std::vector<dae::GameObject*> lifeIcons;
+
+	for (int i = 0; i < 3; ++i)
+	{
+		auto icon = std::make_shared<dae::GameObject>();
+		icon->GetTransform()->SetWorldPosition(glm::vec3{ 175.f + i * 45.f, 10.f, 0.f });
+
+		auto renderIcon = icon->AddComponent<dae::RenderComponent>();
+		renderIcon->SetTexture("PlayerLifeIcon.png");
+		renderIcon->SetSize(32, 32);
+
+		scene.Add(icon);
+		lifeIcons.push_back(icon.get());
+	}
+
+	hud->SetLifeIcons(lifeIcons);
+
 	score->AddObserver(hud);
 	lives->AddObserver(hud);
 
