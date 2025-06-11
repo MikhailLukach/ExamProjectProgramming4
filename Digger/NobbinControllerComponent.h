@@ -14,6 +14,15 @@ namespace dae
 		WalkUp
 	};
 
+	struct AStarNode
+	{
+		glm::ivec2 tile;
+		float      gCost = 0.0f;
+		float      hCost = 0.0f;
+		int        parentIndex = -1;
+		float      fCost() const { return gCost + hCost; }
+	};
+
 	class TileManagerComponent;
 	class LevelManagerComponent;
 	class TileTrackerComponent;
@@ -53,6 +62,10 @@ namespace dae
 
 		void TryMoveInDirection(const glm::ivec2& direction);
 		bool IsDugTile(const glm::ivec2& tile) const;
+
+		int GetTileCost(const glm::ivec2& tile) const;
+
+		std::vector<glm::ivec2> FindPath(const glm::ivec2& start, const glm::ivec2& goal);
 	private:
 		GameObject* m_pPlayer;
 		TileManagerComponent* m_pTileManager;

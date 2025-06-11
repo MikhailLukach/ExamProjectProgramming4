@@ -133,11 +133,9 @@ void dae::ChasingAndDiggingState::Update(dae::NobbinControllerComponent& control
     };
 
     std::sort(directions.begin(), directions.end(), [&](const glm::ivec2& a, const glm::ivec2& b) {
-        glm::ivec2 posA = myTile + a;
-        glm::ivec2 posB = myTile + b;
-        int distA = glm::abs(posA.x - playerTile.x) + glm::abs(posA.y - playerTile.y);
-        int distB = glm::abs(posB.x - playerTile.x) + glm::abs(posB.y - playerTile.y);
-        return distA < distB;
+        auto costA = controller.GetTileCost(myTile + a);
+        auto costB = controller.GetTileCost(myTile + b);
+        return costA < costB;
         });
 
     bool moved = false;

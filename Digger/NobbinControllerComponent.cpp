@@ -17,6 +17,9 @@
 #include "ChasingAndDiggingState.h"
 #include "GettingCrushedState.h"
 
+#include <vector>
+#include <array>
+#include <algorithm>
 #include <glm.hpp>
 #include <memory>
 
@@ -154,6 +157,95 @@ bool dae::NobbinControllerComponent::IsDugTile(const glm::ivec2& tile) const
 	if (!tileComp) return false;
 
 	return tileComp->GetType() == TileVisualType::Dug_Spot;
+}
+
+int dae::NobbinControllerComponent::GetTileCost(const glm::ivec2& tile) const
+{
+	auto playerTracker = m_pPlayer->GetComponent<TileTrackerComponent>();
+	if (!playerTracker) return 999;
+
+	const glm::ivec2 playerTile = playerTracker->GetTileCoords();
+	int distanceCost = glm::abs(tile.x - playerTile.x) + glm::abs(tile.y - playerTile.y);
+
+	// Add digging penalty
+	int diggingPenalty = 0;
+	if (!IsDugTile(tile)) diggingPenalty = 5; // cost of digging
+
+	return distanceCost + diggingPenalty;
+}
+
+std::vector<glm::ivec2> dae::NobbinControllerComponent::FindPath(const glm::ivec2& start, const glm::ivec2& goal)
+{
+	std::vector<AStarNode> openList;
+	std::vector<AStarNode> closedList;
+
+	openList.push_back({ start,
+						 0.0f,
+						 static_cast<float>(glm::abs(start.x - goal.x) + glm::abs(start.y - goal.y)),
+						 -1 });
+
+	while (!openList.empty())
+	{
+		// 1) Pick lowest fCost in openList
+		int bestIdx = 0;
+		for (int i = 1; i < (int)openList.size(); ++i)
+			if (openList[i].fCost() < openList[bestIdx].fCost())
+				bestIdx = i;
+
+		AStarNode current = openList[bestIdx];
+		openList.erase(openList.begin() + bestIdx);
+
+		// 2) Add to closed
+		int closedIdx = (int)closedList.size();
+		closedList.push_back(current);
+
+		// 3) Check goal
+		if (current.tile == goal)
+		{
+			// Reconstruct path
+			std::vector<glm::ivec2> path;
+			for (int idx = closedIdx; idx != -1; idx = closedList[idx].parentIndex)
+				path.push_back(closedList[idx].tile);
+			std::reverse(path.begin(), path.end());
+			return path;
+		}
+
+		// 4) Explore neighbors
+		static const std::array<glm::ivec2, 4> dirs = { {
+			{1,0},{-1,0},{0,1},{0,-1}
+		} };
+		for (auto dir : dirs)
+		{
+			glm::ivec2 neighbor = current.tile + dir;
+
+			if (!IsDugTile(neighbor)) continue;
+
+			// Skip if in closedList
+			bool inClosed = std::any_of(closedList.begin(), closedList.end(),
+				[&](auto& n) { return n.tile == neighbor; });
+			if (inClosed) continue;
+
+			float tentativeG = current.gCost + 1.0f;
+			float h = static_cast<float>( glm::abs(neighbor.x - goal.x) + glm::abs(neighbor.y - goal.y));
+
+			// See if in openList
+			auto it = std::find_if(openList.begin(), openList.end(),
+				[&](auto& n) { return n.tile == neighbor; });
+
+			if (it == openList.end())
+			{
+				openList.push_back({ neighbor, tentativeG, h, closedIdx });
+			}
+			else if (tentativeG < it->gCost)
+			{
+				it->gCost = tentativeG;
+				it->parentIndex = closedIdx;
+			}
+		}
+	}
+
+	// No path
+	return {};
 }
 
 void dae::NobbinControllerComponent::UpdateAnimationState()
