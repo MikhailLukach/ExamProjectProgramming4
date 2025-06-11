@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "HealthComponent.h"
 #include "ScoreComponent.h"
+#include "FireBallComponent.h"
 #include "SpriteAnimatorComponent.h"
 #include "TileManagerComponent.h"
 #include "AnimationState.h"
@@ -12,24 +13,6 @@
 
 namespace dae
 {
-    class JumpCommand : public Command
-    {
-    public:
-        void Execute() override
-        {
-            std::cout << "Jump!\n";
-        }
-    };
-
-    class FireCommand : public Command
-    {
-    public:
-        void Execute() override
-        {
-            std::cout << "Fire!\n";
-        }
-    };
-    
     class MoveCommand : public Command
     {
     public:
@@ -63,6 +46,8 @@ namespace dae
             float threshold = 1.0f;
 
             glm::vec3 desiredDir = glm::normalize(m_Direction);
+            s_LastDirection = desiredDir;
+
             glm::vec3 orientedPos{pos};
             if (desiredDir.x < 0 || desiredDir.y < 0)
             {
@@ -241,6 +226,8 @@ namespace dae
             }
         }
 
+        static glm::vec3 GetLastDirection() { return s_LastDirection; }
+
     private:
         GameObject* m_Character;
         glm::vec3 m_Direction;
@@ -250,6 +237,8 @@ namespace dae
         TileManagerComponent* m_pTileManager{};
         LevelManagerComponent* m_pLevelManager{};
         AnimationState m_AnimState{ AnimationState::WalkDown };
+
+        inline static glm::vec3 s_LastDirection{ 1,0,0 };
     };
 
     class StopAnimationCommand : public Command
@@ -270,6 +259,48 @@ namespace dae
 
     private:
         SpriteAnimatorComponent* m_pAnimator;
+    };
+
+    class ShootFireballCommand : public Command
+    {
+    public:
+        ShootFireballCommand(GameObject* player, TileManagerComponent* tileManager, float cooldown = 10.f)
+            : m_Player(player), m_Cooldown(cooldown), m_pTileManager(tileManager)
+        {
+        }
+
+        void Execute() override
+        {
+            std::cout << "Fire!\n";
+            Uint32 now = SDL_GetTicks();
+            if (now < m_LastShotMs + (Uint32)(m_Cooldown * 1000)) return;
+            m_LastShotMs = now;
+
+            // **Pull the direction from MoveCommand’s static**
+            glm::vec3 dir3 = MoveCommand::GetLastDirection();
+            glm::vec2 dir{ dir3.x, dir3.y };
+
+            // Spawn the fireball in that direction…
+            auto fire = std::make_shared<GameObject>();
+            glm::vec3 spawnPos = m_Player->GetTransform()->GetWorldPosition();
+            fire->GetTransform()->SetWorldPosition(spawnPos + glm::vec3(dir * 16.0f, 0));
+
+            auto renderFireBall = fire->AddComponent<RenderComponent>("FireballAnim.png");
+            renderFireBall->SetSize(32, 32);
+
+            auto animator = fire->AddComponent<SpriteAnimatorComponent>(renderFireBall.get(), 16, 16, 0.1f);
+            animator->PlayAnimation(0, 2, true);
+
+            fire->AddComponent<FireBallComponent>(dir, 200.f, 2.f, m_pTileManager);
+
+            SceneManager::GetInstance().GetCurrentScene()->Add(fire);
+        }
+
+    private:
+        GameObject* m_Player;
+        TileManagerComponent* m_pTileManager;
+        float m_Cooldown;
+        Uint32 m_LastShotMs = 0;
     };
 
     //needs to react to something, like pick up pellets, so make this a add pellets

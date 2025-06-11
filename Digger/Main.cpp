@@ -392,8 +392,15 @@ void LoadGame()
 		0,
 		dae::GameController::A,
 		dae::InputType::Released,
-		std::make_unique<dae::PlaySoundCommand>(dae::ResourceManager::GetInstance().GetFullPath("Explosion Sound Effect.wav"))  // Replace with a valid file
+		std::make_unique<dae::ShootFireballCommand>(player.get(), tileManager.get(), 10.f)
 	);
+
+	/*input.BindCommandController(
+		0,
+		dae::GameController::A,
+		dae::InputType::Released,
+		std::make_unique<dae::PlaySoundCommand>(dae::ResourceManager::GetInstance().GetFullPath("Explosion Sound Effect.wav"))  // Replace with a valid file
+	);*/
 	//--
 
 	//-- MoneyBag Setup
