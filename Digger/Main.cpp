@@ -25,6 +25,7 @@
 #include "LevelManagerComponent.h"
 #include "GemComponent.h"
 #include "NobbinControllerComponent.h"
+#include "NobbinSpawnerComponent.h"
 #include "GridOutlineComponent.h"
 #include "NobbinComponent.h"
 #include "PlayerDebugComponent.h"
@@ -356,7 +357,7 @@ void LoadGame()
 	//--
 
 	//-- Enemies Setup
-	auto nobbin = std::make_shared<dae::GameObject>();
+	/*auto nobbin = std::make_shared<dae::GameObject>();
 	auto nobbinPos = loader.GetWorldCenterForTile(14, 0);
 	nobbin->GetTransform()->SetPosition(nobbinPos);
 
@@ -374,7 +375,13 @@ void LoadGame()
 
 	levelManager->RegisterNobbin(nobbin);
 
-	scene.Add(nobbin);
+	scene.Add(nobbin);*/
+	auto spawner = std::make_shared<dae::GameObject>();
+	auto spawnerComp = spawner->AddComponent<dae::NobbinSpawnerComponent>(
+		&scene, levelManager.get(), &loader, tileManager.get(), player.get(), 14, 0, 5.f, 3);
+
+	scene.Add(spawner);
+
 	//--
 
 	//-- Player Controller Setup

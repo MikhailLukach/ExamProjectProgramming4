@@ -104,6 +104,7 @@
     <ClCompile Include="MoneyBagComponent.cpp" />
     <ClCompile Include="NobbinComponent.cpp" />
     <ClCompile Include="NobbinControllerComponent.cpp" />
+    <ClCompile Include="NobbinSpawnerComponent.cpp" />
     <ClCompile Include="PlayerDebugComponent.cpp" />
     <ClCompile Include="PlayerRespawnComponent.cpp" />
     <ClCompile Include="RotatorComponent.cpp" />
@@ -137,6 +138,7 @@
     <ClInclude Include="MoneyBagState.h" />
     <ClInclude Include="NobbinComponent.h" />
     <ClInclude Include="NobbinControllerComponent.h" />
+    <ClInclude Include="NobbinSpawnerComponent.h" />
     <ClInclude Include="NobbinState.h" />
     <ClInclude Include="PlayerDebugComponent.h" />
     <ClInclude Include="PlayerRespawnComponent.h" />
