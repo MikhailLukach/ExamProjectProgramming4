@@ -65,6 +65,7 @@ namespace dae
 		std::unique_ptr<NobbinState> m_pCurrentState;
 
 		glm::ivec2 m_PreviousTile{};
+		glm::ivec2 m_LastMoveDir{};
 		NobbinAnimationState m_AnimState{ NobbinAnimationState::WalkLeft };
 		NobbinAnimationState m_LastAnimState{ NobbinAnimationState::WalkLeft };
 

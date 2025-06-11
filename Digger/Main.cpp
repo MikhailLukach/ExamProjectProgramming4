@@ -357,7 +357,7 @@ void LoadGame()
 
 	//-- Enemies Setup
 	auto nobbin = std::make_shared<dae::GameObject>();
-	auto nobbinPos = loader.GetWorldCenterForTile(0, 3);
+	auto nobbinPos = loader.GetWorldCenterForTile(14, 0);
 	nobbin->GetTransform()->SetPosition(nobbinPos);
 
 	auto nobRender = nobbin->AddComponent<dae::RenderComponent>("NormalNobbinSpritesheet.png");

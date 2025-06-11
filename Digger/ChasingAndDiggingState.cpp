@@ -140,6 +140,7 @@ void dae::ChasingAndDiggingState::Update(dae::NobbinControllerComponent& control
         return distA < distB;
         });
 
+    bool moved = false;
     for (const auto& dir : directions)
     {
         glm::ivec2 nextTile = myTile + dir;
@@ -158,7 +159,15 @@ void dae::ChasingAndDiggingState::Update(dae::NobbinControllerComponent& control
 
         controller.TryMoveInDirection(dir);
         m_LastMoveDir = dir;
-        return;
+        moved = true;
+        break;
+    }
+
+    if (!moved)
+    {
+        glm::ivec2 backtrackDir = controller.GetPreviousTile() - myTile;
+        controller.TryMoveInDirection(backtrackDir);
+        m_LastMoveDir = backtrackDir;
     }
 }
 

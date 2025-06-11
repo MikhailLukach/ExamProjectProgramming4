@@ -124,6 +124,8 @@ void dae::NobbinControllerComponent::TryMoveInDirection(const glm::ivec2& direct
 
 	glm::ivec2 dir = nextTile - currentTile;
 
+	m_PreviousTile = currentTile;
+
 	if (dir.x > 0) m_AnimState = NobbinAnimationState::WalkRight;
 	else if (dir.x < 0) m_AnimState = NobbinAnimationState::WalkLeft;
 	else if (dir.y > 0) m_AnimState = NobbinAnimationState::WalkDown;
@@ -139,10 +141,6 @@ void dae::NobbinControllerComponent::TryMoveInDirection(const glm::ivec2& direct
 	float duration = distance / m_Speed;
 
 	nobbinMover->NobbinStartMoveTo(worldPos, duration);
-
-	m_PreviousTile = currentTile;
-
-	//m_PostMoveTimer = m_PostMoveDelay;
 }
 
 bool dae::NobbinControllerComponent::IsDugTile(const glm::ivec2& tile) const

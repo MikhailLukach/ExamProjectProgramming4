@@ -52,18 +52,31 @@ void dae::ChasingState::Update(NobbinControllerComponent& controller, float delt
 		return distA < distB;
 		});
 
+	glm::ivec2 backtrackDir{};
+
+	bool foundMove = false;
 	for (const auto& dir : directions)
 	{
 		glm::ivec2 nextTile = myTile + dir;
 
-		if (nextTile == controller.GetPreviousTile()) continue;
+		if (nextTile == controller.GetPreviousTile())
+		{
+			backtrackDir = dir;
+			continue;
+		}
 
-		// IsDugTile is a helper in controller, we can use it:
 		if (controller.IsDugTile(nextTile))
 		{
 			controller.TryMoveInDirection(dir);
-			return;
+			foundMove = true;
+			break;
 		}
+	}
+
+	if (!foundMove && controller.IsDugTile(myTile + backtrackDir))
+	{
+		std::cout << "[ChasingState] No forward move possible, backtracking.\n";
+		controller.TryMoveInDirection(backtrackDir);
 	}
 }
 
