@@ -17,10 +17,10 @@ namespace dae
 	struct AStarNode
 	{
 		glm::ivec2 tile;
-		float      gCost = 0.0f;
-		float      hCost = 0.0f;
-		int        parentIndex = -1;
-		float      fCost() const { return gCost + hCost; }
+		float gCost = 0.0f;
+		float hCost = 0.0f;
+		int parentIndex = -1;
+		float fCost() const { return gCost + hCost; }
 	};
 
 	class TileManagerComponent;
@@ -55,6 +55,8 @@ namespace dae
 		glm::ivec2 GetPreviousTile() const { return m_PreviousTile; }
 
 		float GetSpeed() const { return m_Speed; }
+
+		void SetSpeed(float newSpeed) { m_Speed = newSpeed; }
 
 		LevelLoader* GetLevelLoader() const { return m_pLevelLoader; }
 

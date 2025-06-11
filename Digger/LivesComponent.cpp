@@ -2,7 +2,7 @@
 
 void dae::LivesComponent::LoseLife()
 {
-    if (--m_Lives <= 0)
+    if (--m_Lives <= -1)
     {
         NotifyObservers(EventId::PLAYER_DIED, GetOwner());
     }

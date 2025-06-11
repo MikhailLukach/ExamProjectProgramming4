@@ -31,6 +31,7 @@
 #include "PlayerDebugComponent.h"
 #include "LivesComponent.h"
 #include "PlayerRespawnComponent.h"
+#include "LevelResetComponent.h"
 
 //states
 #include "NobbinState.h"
@@ -246,13 +247,8 @@ void load()
 
 void LoadGame()
 {
-	//-- Initial Setup
+	//-- Initial Game Setup
 	auto& scene = dae::SceneManager::GetInstance().CreateScene("DiggerLevel1");
-	dae::ResourceManager::GetInstance().Init("../Data");
-
-	auto soundSystem = new dae::SDLSoundSystem();
-
-	dae::SoundServiceLocator::Provide(soundSystem);
 
 	const float playerSpeed = 2.5f;
 
@@ -334,7 +330,7 @@ void LoadGame()
 
 	std::vector<dae::GameObject*> lifeIcons;
 
-	for (int i = 0; i < 3; ++i)
+	for (int i = 0; i < lives->GetLives(); ++i)
 	{
 		auto icon = std::make_shared<dae::GameObject>();
 		icon->GetTransform()->SetWorldPosition(glm::vec3{ 175.f + i * 45.f, 10.f, 0.f });
@@ -357,28 +353,11 @@ void LoadGame()
 	//--
 
 	//-- Enemies Setup
-	/*auto nobbin = std::make_shared<dae::GameObject>();
-	auto nobbinPos = loader.GetWorldCenterForTile(14, 0);
-	nobbin->GetTransform()->SetPosition(nobbinPos);
-
-	auto nobRender = nobbin->AddComponent<dae::RenderComponent>("NormalNobbinSpritesheet.png");
-	nobRender->SetSize(32, 32);
-	nobRender->SetRenderOffset(glm::vec2{ 0.f, -16.f });
-
-	auto animatorNobbin = nobbin->AddComponent<dae::SpriteAnimatorComponent>(nobRender.get(), 16, 16, 0.15f);
-	animatorNobbin->PlayAnimation(6, 3); // Start with left-facing animation as default
-
-	nobbin->AddComponent<dae::TileTrackerComponent>(TileWidth, TileHeight, OffsetX, OffsetY);
-
-	nobbin->AddComponent<dae::NobbinComponent>();
-	nobbin->AddComponent<dae::NobbinControllerComponent>(player.get(), tileManager.get(), levelManager.get(), &loader, 0.05f, 100.f);
-
-	levelManager->RegisterNobbin(nobbin);
-
-	scene.Add(nobbin);*/
 	auto spawner = std::make_shared<dae::GameObject>();
 	auto spawnerComp = spawner->AddComponent<dae::NobbinSpawnerComponent>(
 		&scene, levelManager.get(), &loader, tileManager.get(), player.get(), 14, 0, 5.f, 3);
+
+	lives->AddObserver(spawnerComp);
 
 	scene.Add(spawner);
 
@@ -464,11 +443,23 @@ void LoadGame()
 	dae::CreateGem(scene, loader, 14, 9);
 	dae::CreateGem(scene, loader, 13, 9);
 	//--
+
+	//-- Game Logic Setup
+	auto resetGO = std::make_shared<dae::GameObject>();
+	auto resetComp = resetGO->AddComponent<dae::LevelResetComponent>(LoadGame);
+	lives->AddObserver(resetComp);
+	scene.Add(resetGO);
+	//--
 }
 
 int main(int, char* [])
 {
 	dae::Minigin engine("../Data/");
+	dae::ResourceManager::GetInstance().Init("../Data");
+
+	auto soundSystem = new dae::SDLSoundSystem();
+
+	dae::SoundServiceLocator::Provide(soundSystem);
 	//engine.Run(load);
 	engine.Run(LoadGame);
 	return 0;

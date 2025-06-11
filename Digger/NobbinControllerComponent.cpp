@@ -257,19 +257,15 @@ void dae::NobbinControllerComponent::UpdateAnimationState()
 			switch (m_AnimState)
 			{
 			case NobbinAnimationState::WalkRight:
-				std::cout << "[NobbinControllerComponent] actually updating animstate." << std::endl;
 				animator->PlayAnimation(0, 3); 
 				break;
 			case NobbinAnimationState::WalkDown:
-				std::cout << "[NobbinControllerComponent] actually updating animstate." << std::endl;
 				animator->PlayAnimation(3, 3); 
 				break;
 			case NobbinAnimationState::WalkLeft:
-				std::cout << "[NobbinControllerComponent] actually updating animstate." << std::endl;
 				animator->PlayAnimation(6, 3); 
 				break;
 			case NobbinAnimationState::WalkUp:
-				std::cout << "[NobbinControllerComponent] actually updating animstate." << std::endl;
 				animator->PlayAnimation(9, 3); 
 				break;
 			}

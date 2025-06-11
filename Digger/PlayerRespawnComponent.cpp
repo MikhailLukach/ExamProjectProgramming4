@@ -14,11 +14,16 @@ void dae::PlayerRespawnComponent::Notify(EventId event, GameObject* gameObject)
 		m_IsRespawning = true;
 		m_RespawnTimer = 0.f;
 
-		// Hide render
 		if (auto render = gameObject->GetComponent<RenderComponent>())
 			render->SetVisible(false);
 
-		// Disable input by deactivating GameObject (or better: flag in InputManager)
+		dae::InputManager::GetInstance().DisableInputFor(gameObject);
+	}
+	else if (event == EventId::PLAYER_DIED)
+	{
+		if (auto render = gameObject->GetComponent<RenderComponent>())
+			render->SetVisible(false);
+
 		dae::InputManager::GetInstance().DisableInputFor(gameObject);
 	}
 }

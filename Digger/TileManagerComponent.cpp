@@ -12,6 +12,6 @@ std::shared_ptr<dae::GameObject> dae::TileManagerComponent::GetTileAt(int col, i
 	{
 		return m_TileGrid[row][col];
 	}
-	std::cout << "[TileManagerComponent] Unable to get tile." << std::endl;
+	//std::cout << "[TileManagerComponent] Unable to get tile." << std::endl;
 	return nullptr;
 }

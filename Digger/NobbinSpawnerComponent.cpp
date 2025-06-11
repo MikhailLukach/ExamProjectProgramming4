@@ -11,6 +11,7 @@
 #include "LevelLoader.h"
 #include "LevelManagerComponent.h"
 #include "NobbinState.h"
+#include "LivesComponent.h"
 
 dae::NobbinSpawnerComponent::NobbinSpawnerComponent(Scene* scene, LevelManagerComponent* levelMgr, LevelLoader* loader
     , TileManagerComponent* tileManager, GameObject* player, int tileX, int tileY, float spawnDelay, int maxNobbins)
@@ -21,6 +22,18 @@ dae::NobbinSpawnerComponent::NobbinSpawnerComponent(Scene* scene, LevelManagerCo
 
 void dae::NobbinSpawnerComponent::Update(float deltaTime)
 {
+    if (m_IsPaused)
+    {
+        m_PauseTimer -= deltaTime;
+        if (m_PauseTimer <= 0.f)
+        {
+            KillAllNobbins();
+            m_IsPaused = false;
+            m_Timer = m_SpawnDelay; // ready to spawn immediately next frame
+        }
+        return;
+    }
+
     m_LiveNobbins.erase(std::remove_if(m_LiveNobbins.begin(), m_LiveNobbins.end(),
         [](const std::weak_ptr<GameObject>& wptr) { return wptr.expired(); }),
         m_LiveNobbins.end());
@@ -38,9 +51,25 @@ void dae::NobbinSpawnerComponent::Update(float deltaTime)
     }
 }
 
-//void dae::NobbinSpawnerComponent::OnNobbinDestroyed(GameObject* nobbin)
-//{
-//}
+void dae::NobbinSpawnerComponent::Notify(EventId event, GameObject*)
+{
+    if (event == EventId::PlAYER_HIT || event == EventId::PLAYER_DIED)
+    {
+        // Freeze and kill all current Nobbins
+        m_IsPaused = true;
+        m_PauseTimer = m_SpawnDelay;  // pause for same delay
+        for (auto& wptr : m_LiveNobbins)
+        {
+            if (auto sp = wptr.lock())
+            {
+                if (auto ctrl = sp->GetComponent<NobbinControllerComponent>())
+                {
+                    ctrl->SetSpeed(0.f);
+                }
+            }        
+        }
+    }
+}
 
 void dae::NobbinSpawnerComponent::SpawnNobbin()
 {
@@ -65,4 +94,17 @@ void dae::NobbinSpawnerComponent::SpawnNobbin()
     m_LiveNobbins.emplace_back(nobbin);
 
     std::cout << "[Spawner] Spawned Nobbin. Total: " << m_LiveNobbins.size() << "\n";
+}
+
+void dae::NobbinSpawnerComponent::KillAllNobbins()
+{
+    for (auto& wptr : m_LiveNobbins)
+    {
+        if (auto sp = wptr.lock())
+        {
+            sp->MarkForDeletion();
+        }
+    }
+
+    m_LiveNobbins.clear();
 }
