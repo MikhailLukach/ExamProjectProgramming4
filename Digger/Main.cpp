@@ -561,7 +561,7 @@ void LoadCoopGame()
 			tileManager.get(), score2.get(), kFireballCooldown));
 	//--
 
-		//-- HUD 1
+	//-- HUD 1
 	auto hudObj1 = std::make_shared<dae::GameObject>();
 	hudObj1->GetTransform()->SetPosition(10, 50, 0);
 	auto scoreDisplay1 = std::make_shared<dae::GameObject>();
@@ -643,6 +643,176 @@ void LoadCoopGame()
 	//--
 }
 
+void LoadVersusGame()
+{
+	auto& scene = dae::SceneManager::GetInstance().CreateScene("DiggerVersus");
+	const float playerSpeed = 2.f;
+	auto& input = dae::InputManager::GetInstance();
+
+	//-- Level setup 
+	auto tileManagerObj = std::make_shared<dae::GameObject>();
+	auto tileManager = tileManagerObj->AddComponent<dae::TileManagerComponent>();
+	scene.Add(tileManagerObj);
+
+	auto levelManagerObj = std::make_shared<dae::GameObject>();
+	auto levelManager = levelManagerObj->AddComponent<dae::LevelManagerComponent>();
+	scene.Add(levelManagerObj);
+
+	dae::LevelLoader loader;
+	std::vector<std::vector<std::shared_ptr<dae::GameObject>>> tileGrid;
+	loader.LoadLevelBinary("Level1.lvl", scene, tileGrid, levelManager.get(), tileManager.get());
+	tileManager->InitWithTileGrid(std::move(tileGrid));
+	//--
+
+	//-- Player Setup
+	auto player = std::make_shared<dae::GameObject>();
+	int spawnX = 0;
+	int spawnY = 0;
+	auto spawnPos = loader.GetWorldCenterForTile(spawnX, spawnY);
+	player->GetTransform()->SetPosition(spawnPos);
+
+	auto score = player->AddComponent<dae::ScoreComponent>(0);
+	auto lives = player->AddComponent<dae::LivesComponent>(3);
+
+	auto render = player->AddComponent<dae::RenderComponent>("CharacterSpriteSheetFilledBackground.png");
+	render->SetSize(32, 32);
+
+	player->AddComponent<dae::PlayerDebugComponent>();
+
+	auto animator = player->AddComponent<dae::SpriteAnimatorComponent>(render.get(), 16, 16, 0.2f);
+
+	animator->PlayAnimation(3, 3);
+
+	constexpr int TileWidth = 42;
+	constexpr int TileHeight = 43;
+	constexpr int OffsetX = (640 - (TileWidth * 15)) / 2; // = 5
+	constexpr int OffsetY = 48;
+
+	auto tracker = player->AddComponent<dae::TileTrackerComponent>(TileWidth, TileHeight, OffsetX, OffsetY);
+	tracker->SetTrackingMode(dae::TrackingMode::Center);
+
+	auto respawn = player->AddComponent<dae::PlayerRespawnComponent>(spawnPos, levelManager.get());
+	lives->AddObserver(respawn);
+
+	player->AddComponent<dae::GemTrackerComponent>();
+
+	scene.Add(player);
+	levelManager->RegisterPlayer(player.get());
+	//-- Player Controls Setup
+	input.BindCommandController(0, dae::GameController::DPAD_UP, dae::InputType::Pressed,
+		std::make_unique<dae::MoveCommand>(player.get(), glm::vec3(0, -1, 0), playerSpeed,
+			tileManager.get(), levelManager.get(), animator.get(), dae::AnimationState::WalkUp));
+	input.BindCommandController(0, dae::GameController::DPAD_UP, dae::InputType::Released,
+		std::make_unique<dae::StopAnimationCommand>(animator.get()));
+
+	input.BindCommandController(0, dae::GameController::DPAD_DOWN, dae::InputType::Pressed,
+		std::make_unique<dae::MoveCommand>(player.get(), glm::vec3(0, 1, 0), playerSpeed,
+			tileManager.get(), levelManager.get(), animator.get(), dae::AnimationState::WalkDown));
+	input.BindCommandController(0, dae::GameController::DPAD_DOWN, dae::InputType::Released,
+		std::make_unique<dae::StopAnimationCommand>(animator.get()));
+
+	input.BindCommandController(0, dae::GameController::DPAD_LEFT, dae::InputType::Pressed,
+		std::make_unique<dae::MoveCommand>(player.get(), glm::vec3(-1, 0, 0), playerSpeed,
+			tileManager.get(), levelManager.get(), animator.get(), dae::AnimationState::WalkLeft));
+	input.BindCommandController(0, dae::GameController::DPAD_LEFT, dae::InputType::Released,
+		std::make_unique<dae::StopAnimationCommand>(animator.get()));
+
+	input.BindCommandController(0, dae::GameController::DPAD_RIGHT, dae::InputType::Pressed,
+		std::make_unique<dae::MoveCommand>(player.get(), glm::vec3(1, 0, 0), playerSpeed,
+			tileManager.get(), levelManager.get(), animator.get(), dae::AnimationState::WalkRight));
+	input.BindCommandController(0, dae::GameController::DPAD_RIGHT, dae::InputType::Released,
+		std::make_unique<dae::StopAnimationCommand>(animator.get()));
+
+	constexpr float kFireballCooldown = 10.f;
+	input.BindCommandController(0, dae::GameController::A, dae::InputType::Released,
+		std::make_unique<dae::ShootFireballCommandIndividual>(player.get(),
+			tileManager.get(), score.get(), kFireballCooldown));
+	//--
+
+	//-- Hud Player
+	//-- HUD 1
+	auto hudObj1 = std::make_shared<dae::GameObject>();
+	hudObj1->GetTransform()->SetPosition(10, 50, 0);
+	auto scoreDisplay1 = std::make_shared<dae::GameObject>();
+	auto scoreText1 = scoreDisplay1->AddComponent<dae::TextComponent>("00000", "ArcadeFont.otf", 24);
+	scoreDisplay1->GetTransform()->SetPosition(25, 10, 0);
+	scoreDisplay1->SetParent(hudObj1, false);
+	auto hud1 = hudObj1->AddComponent<dae::HUDDisplay>(scoreText1.get(), score.get());
+
+	std::vector<dae::GameObject*> lifeIcons1;
+
+	for (int i = 0; i < lives->GetLives(); ++i)
+	{
+		auto icon = std::make_shared<dae::GameObject>();
+		icon->GetTransform()->SetWorldPosition(glm::vec3{ 175.f + i * 45.f, 10.f, 0.f });
+
+		auto renderIcon = icon->AddComponent<dae::RenderComponent>();
+		renderIcon->SetTexture("PlayerLifeIcon.png");
+		renderIcon->SetSize(32, 32);
+
+		scene.Add(icon);
+		lifeIcons1.push_back(icon.get());
+	}
+
+	hud1->SetLifeIcons(lifeIcons1);
+
+	scene.Add(hudObj1); scene.Add(scoreDisplay1);
+	score->AddObserver(hud1);
+	lives->AddObserver(hud1);
+	//--
+
+	//-- Nobbbin Player Setup
+	auto nobbinPlayer = std::make_shared<dae::GameObject>();
+	int nPSpawnX = 14;
+	int nPSpawnY = 0;
+	auto nPSpawnPos = loader.GetWorldCenterForTile(nPSpawnX, nPSpawnY);
+	nobbinPlayer->GetTransform()->SetPosition(nPSpawnPos);
+
+	auto nPRender = nobbinPlayer->AddComponent<dae::RenderComponent>("NormalNobbinSpritesheet.png");
+	nPRender->SetSize(32, 32);
+
+	nobbinPlayer->AddComponent<dae::PlayerDebugComponent>();
+
+	auto nPAnimator = nobbinPlayer->AddComponent<dae::SpriteAnimatorComponent>(nPRender.get(), 16, 16, 0.2f);
+
+	nPAnimator->PlayAnimation(3, 3);
+
+	auto nPTracker = nobbinPlayer->AddComponent<dae::TileTrackerComponent>(TileWidth, TileHeight, OffsetX, OffsetY);
+	nPTracker->SetTrackingMode(dae::TrackingMode::Center);
+
+	auto nPRespawn = nobbinPlayer->AddComponent<dae::PlayerRespawnComponent>(nPSpawnPos, levelManager.get());
+
+	nobbinPlayer->AddComponent<dae::GemTrackerComponent>();
+
+	scene.Add(nobbinPlayer);
+	//levelManager->RegisterPlayer(player.get());
+	 
+	input.BindCommandKeyboard(SDLK_w, dae::InputType::Pressed, std::make_unique<dae::MoveCommand>(nobbinPlayer.get(), glm::vec3(0, -1, 0), playerSpeed,
+		tileManager.get(), levelManager.get(), nPAnimator.get(), dae::AnimationState::WalkUp));
+	input.BindCommandKeyboard(SDLK_w, dae::InputType::Released, std::make_unique<dae::StopAnimationCommand>(nPAnimator.get()));
+
+	input.BindCommandKeyboard(SDLK_s, dae::InputType::Pressed, std::make_unique<dae::MoveCommand>(nobbinPlayer.get(), glm::vec3(0, 1, 0), playerSpeed,
+		tileManager.get(), levelManager.get(), nPAnimator.get(), dae::AnimationState::WalkDown));
+	input.BindCommandKeyboard(SDLK_s, dae::InputType::Released, std::make_unique<dae::StopAnimationCommand>(nPAnimator.get()));
+
+	input.BindCommandKeyboard(SDLK_a, dae::InputType::Pressed, std::make_unique<dae::MoveCommand>(nobbinPlayer.get(), glm::vec3(-1, 0, 0), playerSpeed,
+		tileManager.get(), levelManager.get(), nPAnimator.get(), dae::AnimationState::WalkLeft));
+	input.BindCommandKeyboard(SDLK_a, dae::InputType::Released, std::make_unique<dae::StopAnimationCommand>(nPAnimator.get()));
+
+	input.BindCommandKeyboard(SDLK_d, dae::InputType::Pressed, std::make_unique<dae::MoveCommand>(nobbinPlayer.get(), glm::vec3(1, 0, 0), playerSpeed,
+		tileManager.get(), levelManager.get(), nPAnimator.get(), dae::AnimationState::WalkRight));
+	input.BindCommandKeyboard(SDLK_d, dae::InputType::Released, std::make_unique<dae::StopAnimationCommand>(nPAnimator.get()));
+	//--
+
+	//-- Game Logic Setup
+	auto resetGO = std::make_shared<dae::GameObject>();
+	auto resetComp = resetGO->AddComponent<dae::LevelResetComponent>(LoadCoopGame, true);
+	lives->AddObserver(resetComp);
+	//lives2->AddObserver(resetComp);
+	scene.Add(resetGO);
+	//--
+}
+
 int main(int, char* [])
 {
 	dae::Minigin engine("../Data/");
@@ -652,7 +822,7 @@ int main(int, char* [])
 
 	dae::SoundServiceLocator::Provide(soundSystem);
 	//engine.Run(load);
-	engine.Run(LoadGame);
+	engine.Run(LoadVersusGame);
 	return 0;
 }
 
