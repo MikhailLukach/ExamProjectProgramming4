@@ -264,8 +264,8 @@ namespace dae
     class ShootFireballCommand : public Command
     {
     public:
-        ShootFireballCommand(GameObject* player, TileManagerComponent* tileManager, float cooldown = 10.f)
-            : m_Player(player), m_Cooldown(cooldown), m_pTileManager(tileManager)
+        ShootFireballCommand(GameObject* player, TileManagerComponent* tileManager, ScoreComponent* scoreComp, float cooldown = 10.f)
+            : m_Player(player), m_Cooldown(cooldown), m_pTileManager(tileManager), m_pScore(scoreComp)
         {
         }
 
@@ -291,7 +291,7 @@ namespace dae
             auto animator = fire->AddComponent<SpriteAnimatorComponent>(renderFireBall.get(), 16, 16, 0.1f);
             animator->PlayAnimation(0, 2, true);
 
-            fire->AddComponent<FireBallComponent>(dir, 200.f, 2.f, m_pTileManager);
+            fire->AddComponent<FireBallComponent>(dir, 200.f, 2.f, m_pTileManager, m_pScore);
 
             SceneManager::GetInstance().GetCurrentScene()->Add(fire);
         }
@@ -299,6 +299,7 @@ namespace dae
     private:
         GameObject* m_Player;
         TileManagerComponent* m_pTileManager;
+        ScoreComponent* m_pScore;
         float m_Cooldown;
         Uint32 m_LastShotMs = 0;
     };

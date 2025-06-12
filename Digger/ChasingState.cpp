@@ -33,7 +33,6 @@ void dae::ChasingState::Update(NobbinControllerComponent& controller, float delt
     const glm::ivec2 myTile = pTracker->GetTileCoords();
     const glm::ivec2 playerTile = pPlayer->GetComponent<TileTrackerComponent>()->GetTileCoords();
 
-    // 1) Try A* path
     auto path = controller.FindPath(myTile, playerTile);
     if (path.size() > 1)
     {
@@ -43,9 +42,8 @@ void dae::ChasingState::Update(NobbinControllerComponent& controller, float delt
         return;
     }
 
-    // 2) Fallback: digging or backtracking
     std::vector<glm::ivec2> directions = { {1,0},{-1,0},{0,1},{0,-1} };
-    // sort by our tile cost heuristic, so we still favor dug tunnels over dirt
+
     std::sort(directions.begin(), directions.end(), [&](auto a, auto b) {
         return controller.GetTileCost(myTile + a)
             < controller.GetTileCost(myTile + b);

@@ -10,7 +10,7 @@ namespace dae
         PlAYER_HIT,
         PLAYER_GAINEDLIVES,
         PLAYER_ADDSCORE,
-        PLAYER_REACHED_500_POINTS
+        PLAYER_REACHED_20000_POINTS
     };
 
     class Observer

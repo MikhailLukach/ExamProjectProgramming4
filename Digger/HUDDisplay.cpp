@@ -27,19 +27,35 @@ void dae::HUDDisplay::Notify(EventId event, GameObject* gameObject)
     else if(event == EventId::PlAYER_HIT)
     {
         std::cout << "[HUDDisplay] HUD received PLAYER_HIT event!\n";
-        if (!m_LifeIcons.empty())
+        if (!m_VisibleLifeIcons.empty())
         {
-            GameObject* icon = m_LifeIcons.back();
-            if (icon && icon->HasComponent<RenderComponent>())
+            GameObject* icon = m_VisibleLifeIcons.back();
+            if (auto render = icon->GetComponent<RenderComponent>())
             {
-                icon->GetComponent<RenderComponent>()->SetVisible(false); // Hides the life icon
+                render->SetVisible(false);
             }
-            m_LifeIcons.pop_back();
+            m_VisibleLifeIcons.pop_back();
+        }
+    }
+    else if (event == EventId::PLAYER_GAINEDLIVES)
+    {
+        std::cout << "[HUDDisplay] HUD received PLAYER_GAINEDLIVES event!\n";
+
+        if (m_VisibleLifeIcons.size() < m_AllLifeIcons.size())
+        {
+            GameObject* iconToShow = m_AllLifeIcons[m_VisibleLifeIcons.size()];
+
+            if (auto render = iconToShow->GetComponent<RenderComponent>())
+            {
+                render->SetVisible(true);
+            }
+            m_VisibleLifeIcons.push_back(iconToShow);
         }
     }
 }
 
 void dae::HUDDisplay::SetLifeIcons(const std::vector<GameObject*>& icons)
 {
-    m_LifeIcons = icons;
+    m_AllLifeIcons = icons;  // full set
+    m_VisibleLifeIcons = icons;  // all start out visible
 }

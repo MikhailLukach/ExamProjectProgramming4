@@ -7,6 +7,9 @@
 #include "Transform.h"
 #include "GameObject.h"
 #include "MoneyBagComponent.h"
+#include "ScoreComponent.h"
+#include "SceneManager.h"
+#include "Scene.h"
 #include "TileComponent.h"
 
 void dae::GettingCrushedState::OnEnter(NobbinControllerComponent& controller)
@@ -45,6 +48,20 @@ void dae::GettingCrushedState::Update(NobbinControllerComponent& controller, flo
     if (!belowTile)
     {
         std::cout << "[Nobbin] Fell off map. Destroying.\n";
+
+        if (auto scene = dae::SceneManager::GetInstance().GetCurrentScene())
+        {
+            for (auto& obj : scene->GetObjects())
+            {
+                auto score = obj->GetComponent<dae::ScoreComponent>();
+                if (score)
+                {
+                    score->AddPoints(250);
+                    break;
+                }
+            }
+        }
+
         nobbinObj->MarkForDeletion();
         return;
     }
@@ -53,6 +70,20 @@ void dae::GettingCrushedState::Update(NobbinControllerComponent& controller, flo
     if (!tileComp || tileComp->GetType() != TileVisualType::Dug_Spot)
     {
         std::cout << "[Nobbin] Crushed and landed. Destroying.\n";
+
+        if (auto scene = dae::SceneManager::GetInstance().GetCurrentScene())
+        {
+            for (auto& obj : scene->GetObjects())
+            {
+                auto score = obj->GetComponent<dae::ScoreComponent>();
+                if(score)
+                {
+                    score->AddPoints(250);
+                    break;
+                }
+            }
+        }
+
         nobbinObj->MarkForDeletion();
     }
 }

@@ -128,6 +128,7 @@
     <ClInclude Include="GameCommands.h" />
     <ClInclude Include="GameObjectFactory.h" />
     <ClInclude Include="GemComponent.h" />
+    <ClInclude Include="GemTrackerComponent.h" />
     <ClInclude Include="GettingCrushedState.h" />
     <ClInclude Include="GridOutlineComponent.h" />
     <ClInclude Include="GridSettings.h" />

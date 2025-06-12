@@ -11,6 +11,7 @@ namespace dae
         void AddPoints(int points);
         int GetScore() const;
 
+        int  m_NextExtraLifeScore = 20000;
     private:
         int m_Score;
 	};

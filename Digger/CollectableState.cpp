@@ -80,7 +80,7 @@ std::unique_ptr<dae::MoneyBagState> dae::CollectableState::Update(MoneyBagCompon
 		if (isOverlapping)
 		{
 			//std::cout << "[CollectableState] Player overlapped with collectable!\n";
-			scoreComp->AddPoints(25);
+			scoreComp->AddPoints(500);
 			bag.GetOwner()->MarkForDeletion();
 		}
 	}

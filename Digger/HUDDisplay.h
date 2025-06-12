@@ -19,6 +19,7 @@ namespace dae
         TextComponent* m_pScoreTextComponent;
         ScoreComponent* m_pScoreComponent;
 
-        std::vector<GameObject*> m_LifeIcons;
+        std::vector<GameObject*> m_AllLifeIcons;
+        std::vector<GameObject*> m_VisibleLifeIcons;
     };
 }

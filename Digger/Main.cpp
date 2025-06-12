@@ -32,6 +32,7 @@
 #include "LivesComponent.h"
 #include "PlayerRespawnComponent.h"
 #include "LevelResetComponent.h"
+#include "GemTrackerComponent.h"
 
 //states
 #include "NobbinState.h"
@@ -279,7 +280,7 @@ void LoadGame()
 	auto spawnPos = loader.GetWorldCenterForTile(spawnX, spawnY);
 	player->GetTransform()->SetPosition(spawnPos);
 
-	auto score = player->AddComponent<dae::ScoreComponent>(0);
+	auto score = player->AddComponent<dae::ScoreComponent>(19875);
 	auto lives = player->AddComponent<dae::LivesComponent>(3);
 
 	auto render = player->AddComponent<dae::RenderComponent>("CharacterSpriteSheetFilledBackground.png");
@@ -300,7 +301,9 @@ void LoadGame()
 	tracker->SetTrackingMode(dae::TrackingMode::Center);
 
 	auto respawn = player->AddComponent<dae::PlayerRespawnComponent>(spawnPos);
-	lives->AddObserver(respawn); 
+	lives->AddObserver(respawn);
+
+	player->AddComponent<dae::GemTrackerComponent>();
 
 
 	scene.Add(player);
@@ -355,7 +358,7 @@ void LoadGame()
 	//-- Enemies Setup
 	auto spawner = std::make_shared<dae::GameObject>();
 	auto spawnerComp = spawner->AddComponent<dae::NobbinSpawnerComponent>(
-		&scene, levelManager.get(), &loader, tileManager.get(), player.get(), 14, 0, 5.f, 3);
+		&scene, levelManager.get(), &loader, tileManager.get(), player.get(), 14, 0, 5.f, 1);
 
 	lives->AddObserver(spawnerComp);
 
@@ -392,7 +395,7 @@ void LoadGame()
 		0,
 		dae::GameController::A,
 		dae::InputType::Released,
-		std::make_unique<dae::ShootFireballCommand>(player.get(), tileManager.get(), 10.f)
+		std::make_unique<dae::ShootFireballCommand>(player.get(), tileManager.get(), score.get(), 10.f)
 	);
 
 	/*input.BindCommandController(

@@ -5,10 +5,12 @@
 namespace dae 
 {
     class TileManagerComponent;
+    class ScoreComponent;
+
 	class FireBallComponent : public Component
 	{
     public:
-        FireBallComponent(const glm::vec2& direction, float speed, float lifeSec, TileManagerComponent* tileManager);
+        FireBallComponent(const glm::vec2& direction, float speed, float lifeSec, TileManagerComponent* tileManager, ScoreComponent* scoreComp);
 
         void Render() const override;
 
@@ -19,6 +21,7 @@ namespace dae
         float m_Speed;
         float m_RemainingLife;
         TileManagerComponent* m_pTileManager;
+        ScoreComponent* m_pScore;
 	};
 }
 

@@ -218,5 +218,8 @@
     <ClInclude Include="FireBallComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GemTrackerComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -3,13 +3,15 @@
 #include "TileManagerComponent.h"
 #include "SceneManager.h"
 #include "NobbinControllerComponent.h"
+#include "ScoreComponent.h"
 #include "GameObject.h"
 #include "GridSettings.h"
 #include "Scene.h"
 #include "TileComponent.h"
 
-dae::FireBallComponent::FireBallComponent(const glm::vec2& direction, float speed, float lifeSec, TileManagerComponent* tileManager)
-	: m_Dir(direction), m_Speed(speed), m_RemainingLife(lifeSec), m_pTileManager(tileManager)
+dae::FireBallComponent::FireBallComponent(const glm::vec2& direction, float speed, float lifeSec, TileManagerComponent* tileManager
+    , ScoreComponent* scoreComp)
+	: m_Dir(direction), m_Speed(speed), m_RemainingLife(lifeSec), m_pTileManager(tileManager), m_pScore(scoreComp)
 {
 }
 
@@ -75,6 +77,8 @@ void dae::FireBallComponent::Update(float deltaTime)
                 if (SDL_HasIntersection(&fbR, &nbR))
                 {
                     std::cout << "[FireBallComponent] intersects with Nobbin" << std::endl;
+                    if (m_pScore)
+                        m_pScore->AddPoints(250);
                     obj->MarkForDeletion();         
                     GetOwner()->MarkForDeletion(); 
                     return;

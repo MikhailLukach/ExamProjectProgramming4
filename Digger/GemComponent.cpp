@@ -3,6 +3,7 @@
 #include "Transform.h"
 #include "ScoreComponent.h"
 #include "RenderComponent.h"
+#include "GemTrackerComponent.h"
 #include "SceneManager.h"
 #include "Scene.h"
 
@@ -59,7 +60,16 @@ void dae::GemComponent::Update(float)
 		if (SDL_HasIntersection(&gemRect, &playerRect))
 		{
 			std::cout << "[GemComponent] Player collected a gem!\n";
-			score->AddPoints(25);
+			auto gemTracker = obj->GetComponent<dae::GemTrackerComponent>();
+			if (gemTracker && gemTracker->Collect())
+			{
+				score->AddPoints(250);
+				std::cout << "[GemComponent] 8-in-a-row! special bonus!\n";
+			}
+			else
+			{
+				score->AddPoints(25);
+			}
 			owner->MarkForDeletion();
 			break;
 		}
