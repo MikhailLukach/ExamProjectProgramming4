@@ -12,6 +12,7 @@
 #include "Renderer.h"
 #include "ResourceManager.h"
 #include "SoundServiceLocator.h"
+#include "TimeService.h"
 //#include <steam_api.h>
 
 SDL_Window* g_window{};
@@ -104,6 +105,8 @@ void dae::Minigin::Run(const std::function<void()>& load)
 		const auto currentTime = high_resolution_clock::now();
 		const float deltaTime = duration<float>(currentTime - lastTime).count();
 		lastTime = currentTime;
+
+		dae::TimeService::SetDeltaTime(deltaTime);
 
 		doContinue = input.ProcessInput();
 		sceneManager.Update(deltaTime);

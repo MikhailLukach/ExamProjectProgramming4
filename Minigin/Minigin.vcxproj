@@ -148,6 +148,7 @@ xcopy /Y /D "$(SolutionDir)3rdParty\SDL2_ttf\lib\x64\SDL2_ttf.dll" "$(OutputPath
     <ClInclude Include="TextComponent.h" />
     <ClInclude Include="TextObject.h" />
     <ClInclude Include="Texture2D.h" />
+    <ClInclude Include="TimeService.h" />
     <ClInclude Include="Transform.h" />
   </ItemGroup>
   <ItemGroup>
@@ -176,6 +177,7 @@ xcopy /Y /D "$(SolutionDir)3rdParty\SDL2_ttf\lib\x64\SDL2_ttf.dll" "$(OutputPath
     <ClCompile Include="TextComponent.cpp" />
     <ClCompile Include="TextObject.cpp" />
     <ClCompile Include="Texture2D.cpp" />
+    <ClCompile Include="TimeService.cpp" />
     <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

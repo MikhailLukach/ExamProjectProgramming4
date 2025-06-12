@@ -408,8 +408,7 @@ namespace dae
             TileManagerComponent* tileManager,
             LevelManagerComponent* levelManager,
             SpriteAnimatorComponent* animator,
-            AnimationState state,
-            float unlockSeconds = 60.f)
+            AnimationState state)
             : m_Character(character)
             , m_Direction(direction)
             , m_Speed(speed)
@@ -417,8 +416,6 @@ namespace dae
             , m_pLevelManager(levelManager)
             , m_pAnimator(animator)
             , m_AnimState(state)
-            , m_UnlockDelayMs(static_cast<Uint32>(unlockSeconds * 1000))
-            , m_SpawnTimeMs(SDL_GetTicks())
         {
         }
 
@@ -428,29 +425,6 @@ namespace dae
 
             if (!dae::InputManager::GetInstance().IsInputEnabled(m_Character))
                 return;
-
-            Uint32 now = SDL_GetTicks();
-
-            // 1) Check unlock timer once
-            if (!m_CanDig && (now - m_SpawnTimeMs) >= m_UnlockDelayMs)
-            {
-                m_CanDig = true;
-
-                auto render = m_Character->GetComponent<RenderComponent>();
-                // swap out the sprite-sheet on the RenderComponent
-                if (render)
-                {
-                    render->SetTexture("HobbinSpriteSheetVer2.png"); // Swap the sprite sheet
-                    render->SetSize(32, 32);                     // Ensure it matches Hobbin frames
-                    render->SetRenderOffset({ 0.f, -16.f });       // Optional: adjust if needed
-                }
-                // also tell the animator to use the new sheet
-                if (m_pAnimator)
-                {
-                    m_pAnimator->Configure(render.get(), 16, 16, 0.12f); // Adjust values as needed
-                    m_pAnimator->PlayAnimation(6, 3); // Start with default anim
-                }
-            }
 
             auto transform = m_Character->GetTransform();
             auto tracker = m_Character->GetComponent<TileTrackerComponent>();
@@ -487,6 +461,11 @@ namespace dae
 
             int predictedTileX = static_cast<int>(std::floor((predictedPosition.x - GridSettings::GridOffsetX) / GridSettings::TileWidth));
             int predictedTileY = static_cast<int>(std::floor((predictedPosition.y - GridSettings::GridOffsetY) / GridSettings::TileHeight));
+
+            if (auto du = m_Character->GetComponent<DigUnlockComponent>())
+            {
+                m_CanDig = du->CanDig();
+            }
 
             glm::ivec2 nextTile{ predictedTileX, predictedTileY };
             if (m_pTileManager && !m_pTileManager->IsDugTile(nextTile) && !m_CanDig)
@@ -601,7 +580,69 @@ namespace dae
                         }
                         else
                         {
-                            std::cout << "[MoveCommandNobbin] Tile at (" << col << ", " << row << ") has no TileComponent!\n";
+                            std::cout << "[MoveCommand] Tile at (" << col << ", " << row << ") has no TileComponent!\n";
+                        }
+                    }
+                }
+            }
+
+            if (m_CanDig)
+            {
+                SDL_Rect nobbinRect{
+                    static_cast<int>(pos.x),
+                    static_cast<int>(pos.y),
+                    32, 32
+                };
+
+                auto* scene = dae::SceneManager::GetInstance().GetCurrentScene();
+                if (scene)
+                {
+                    for (auto& obj : scene->GetObjects())
+                    {
+                        if (obj.get() == m_Character) continue;
+
+                        auto gem = obj->GetComponent<dae::GemComponent>();
+                        if (gem)
+                        {
+                            auto objTransform = obj->GetTransform();
+                            glm::vec3 objPos = objTransform->GetWorldPosition();
+
+                            SDL_Rect objRect{
+                                static_cast<int>(objPos.x),
+                                static_cast<int>(objPos.y),
+                                16, 16
+                            };
+
+                            if (SDL_HasIntersection(&nobbinRect, &objRect))
+                            {
+                                std::cout << "[ChasingAndDiggingState] Destroyed Gem!\n";
+                                obj->MarkForDeletion();
+                            }
+
+                            continue; // don't try to also treat gem as moneybag
+                        }
+
+                        // Check for MoneyBag next
+                        auto moneyBag = obj->GetComponent<dae::MoneyBagComponent>();
+                        if (moneyBag)
+                        {
+                            // Check state: must not be FallingState
+                            if (!moneyBag->IsFalling()) // You'll need this helper
+                            {
+                                auto objTransform = obj->GetTransform();
+                                glm::vec3 objPos = objTransform->GetWorldPosition();
+
+                                SDL_Rect objRect{
+                                    static_cast<int>(objPos.x),
+                                    static_cast<int>(objPos.y),
+                                    16, 16
+                                };
+
+                                if (SDL_HasIntersection(&nobbinRect, &objRect))
+                                {
+                                    obj->MarkForDeletion();
+                                }
+                            }
                         }
                     }
                 }
@@ -614,15 +655,11 @@ namespace dae
         GameObject* m_Character;
         glm::vec3 m_Direction;
         float m_Speed;
-        bool m_CanDig;
+        bool m_CanDig = false;
         TileManagerComponent* m_pTileManager;
         SpriteAnimatorComponent* m_pAnimator;
         LevelManagerComponent* m_pLevelManager;
         AnimationState m_AnimState;
-
-        const Uint32 m_UnlockDelayMs;  // how long before digging allowed
-        const Uint32 m_SpawnTimeMs;    // SDL_GetTicks() at creation
-
         inline static glm::vec3 s_LastDirectionNobbin{ 1,0,0 };
     };
 }

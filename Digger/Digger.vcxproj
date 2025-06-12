@@ -89,6 +89,7 @@
     <ClCompile Include="ChasingAndDiggingState.cpp" />
     <ClCompile Include="ChasingState.cpp" />
     <ClCompile Include="CollectableState.cpp" />
+    <ClCompile Include="DigUnlockComponent.cpp" />
     <ClCompile Include="FallingState.cpp" />
     <ClCompile Include="FireBallComponent.cpp" />
     <ClCompile Include="GameObjectFactory.cpp" />
@@ -115,6 +116,7 @@
     <ClCompile Include="TileComponent.cpp" />
     <ClCompile Include="TileManagerComponent.cpp" />
     <ClCompile Include="TileTrackerComponent.cpp" />
+    <ClCompile Include="VersusDamageComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AIUtils.h" />
@@ -123,6 +125,7 @@
     <ClInclude Include="ChasingAndDiggingState.h" />
     <ClInclude Include="ChasingState.h" />
     <ClInclude Include="CollectableState.h" />
+    <ClInclude Include="DigUnlockComponent.h" />
     <ClInclude Include="FallingState.h" />
     <ClInclude Include="FireBallComponent.h" />
     <ClInclude Include="GameCommands.h" />
@@ -154,6 +157,7 @@
     <ClInclude Include="TileManagerComponent.h" />
     <ClInclude Include="TileTrackerComponent.h" />
     <ClInclude Include="TileTypes.h" />
+    <ClInclude Include="VersusDamageComponent.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

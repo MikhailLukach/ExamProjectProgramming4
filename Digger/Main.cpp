@@ -26,6 +26,7 @@
 #include "GemComponent.h"
 #include "NobbinControllerComponent.h"
 #include "NobbinSpawnerComponent.h"
+#include "DigUnlockComponent.h"
 #include "GridOutlineComponent.h"
 #include "NobbinComponent.h"
 #include "PlayerDebugComponent.h"
@@ -46,6 +47,7 @@
 #include "SoundServiceLocator.h"
 #include "SDLSoundSystem.h"
 #include "GameObjectFactory.h"
+#include "VersusDamageComponent.h"
 
 //exercise Game Scene
 /*
@@ -765,7 +767,7 @@ void LoadVersusGame()
 	auto nobbinPlayer = std::make_shared<dae::GameObject>();
 	int nPSpawnX = 14;
 	int nPSpawnY = 0;
-	auto nPSpawnPos = loader.GetWorldCenterForTile(nPSpawnX, nPSpawnY);
+	glm::vec3 nPSpawnPos = loader.GetWorldCenterForTile(nPSpawnX, nPSpawnY);
 	nobbinPlayer->GetTransform()->SetPosition(nPSpawnPos);
 
 	auto nPRender = nobbinPlayer->AddComponent<dae::RenderComponent>("NormalNobbinSpritesheet.png");
@@ -782,7 +784,9 @@ void LoadVersusGame()
 
 	auto nPRespawn = nobbinPlayer->AddComponent<dae::PlayerRespawnComponent>(nPSpawnPos, levelManager.get());
 
-	nobbinPlayer->AddComponent<dae::GemTrackerComponent>();
+	nobbinPlayer->AddComponent<dae::VersusDamageComponent>(levelManager.get(), nPSpawnPos, 5.f);
+
+	nobbinPlayer->AddComponent<dae::DigUnlockComponent>(60.f, 15.f);
 
 	scene.Add(nobbinPlayer);
 	//levelManager->RegisterPlayer(player.get());
@@ -804,11 +808,20 @@ void LoadVersusGame()
 	input.BindCommandKeyboard(SDLK_d, dae::InputType::Released, std::make_unique<dae::StopAnimationCommand>(nPAnimator.get()));
 	//--
 
+	//-- Other Nobbin spawn
+	auto spawner = std::make_shared<dae::GameObject>();
+	auto spawnerComp = spawner->AddComponent<dae::NobbinSpawnerComponent>(
+		&scene, levelManager.get(), &loader, tileManager.get(), 14, 0, 5.f, 2);
+
+	lives->AddObserver(spawnerComp);
+
+	scene.Add(spawner);
+	//--
+
 	//-- Game Logic Setup
 	auto resetGO = std::make_shared<dae::GameObject>();
-	auto resetComp = resetGO->AddComponent<dae::LevelResetComponent>(LoadCoopGame, true);
+	auto resetComp = resetGO->AddComponent<dae::LevelResetComponent>(LoadVersusGame, false);
 	lives->AddObserver(resetComp);
-	//lives2->AddObserver(resetComp);
 	scene.Add(resetGO);
 	//--
 }
