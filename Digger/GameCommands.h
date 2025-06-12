@@ -310,6 +310,57 @@ namespace dae
 
     Uint32 ShootFireballCommand::s_NextFireAllowed = 0;
 
+    class ShootFireballCommandIndividual : public Command
+    {
+    public:
+        ShootFireballCommandIndividual(GameObject* player,
+            TileManagerComponent* tileManager,
+            ScoreComponent* scoreComp,
+            float cooldownSeconds = 10.f)
+            : m_Player{ player }
+            , m_pTileManager{ tileManager }
+            , m_pScore{ scoreComp }
+            , m_CooldownMs{ static_cast<Uint32>(cooldownSeconds * 1000) }
+            , m_NextFireAllowed{ 0 }
+        {
+        }
+
+        void Execute() override
+        {
+            Uint32 now = SDL_GetTicks();
+            if (now < m_NextFireAllowed)
+                return;                       
+
+            m_NextFireAllowed = now + m_CooldownMs;
+
+            auto tracker = m_Player->GetComponent<TileTrackerComponent>();
+            glm::vec3 dir3 = MoveCommand::GetLastDirection();
+            glm::vec2 dir{ dir3.x, dir3.y };
+
+            auto fire = std::make_shared<GameObject>();
+            glm::vec3 spawnPos = m_Player->GetTransform()->GetWorldPosition();
+            fire->GetTransform()->SetWorldPosition(spawnPos + glm::vec3(dir * 16.f, 0.f));
+
+            auto render = fire->AddComponent<RenderComponent>("FireballAnim.png");
+            render->SetSize(32, 32);
+
+            auto animator = fire->AddComponent<SpriteAnimatorComponent>(
+                render.get(), 16, 16, 0.1f);
+            animator->PlayAnimation(0, 2, true);
+
+            fire->AddComponent<FireBallComponent>(dir, 200.f, 2.f, m_pTileManager, m_pScore);
+
+            SceneManager::GetInstance().GetCurrentScene()->Add(fire);
+        }
+
+    private:
+        GameObject* m_Player;
+        TileManagerComponent* m_pTileManager;
+        ScoreComponent* m_pScore;
+        Uint32 m_CooldownMs;
+        Uint32 m_NextFireAllowed;  
+    };
+
     //needs to react to something, like pick up pellets, so make this a add pellets
     class AddScoreCommand : public Command
     {

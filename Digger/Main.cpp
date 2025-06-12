@@ -311,6 +311,7 @@ void LoadGame()
 
 
 	scene.Add(player);
+	levelManager->RegisterPlayer(player.get());
 	//--
 
 	//-- UI Setup
@@ -351,7 +352,7 @@ void LoadGame()
 	//-- Enemies Setup
 	auto spawner = std::make_shared<dae::GameObject>();
 	auto spawnerComp = spawner->AddComponent<dae::NobbinSpawnerComponent>(
-		&scene, levelManager.get(), &loader, tileManager.get(), player.get(), 14, 0, 5.f, 0);
+		&scene, levelManager.get(), &loader, tileManager.get(), 14, 0, 5.f, 3);
 
 	lives->AddObserver(spawnerComp);
 
@@ -407,12 +408,12 @@ void LoadGame()
 	input.BindCommandKeyboard(SDLK_SPACE, dae::InputType::Released, std::make_unique<dae::ShootFireballCommand>(player.get(), tileManager.get(),
 		score.get(), kFireballCooldown));
 
-	/*input.BindCommandController(
+	input.BindCommandController(
 		0,
 		dae::GameController::A,
 		dae::InputType::Released,
 		std::make_unique<dae::PlaySoundCommand>(dae::ResourceManager::GetInstance().GetFullPath("Explosion Sound Effect.wav"))  // Replace with a valid file
-	);*/
+	);
 	//--
 
 	//-- Game Logic Setup
@@ -481,6 +482,7 @@ void LoadCoopGame()
 	player1->AddComponent<dae::GemTrackerComponent>();
 
 	scene.Add(player1);
+	levelManager->RegisterPlayer(player1.get());
 
 	input.BindCommandController(0, dae::GameController::DPAD_UP, dae::InputType::Pressed,
 		std::make_unique<dae::MoveCommand>(player1.get(), glm::vec3(0, -1, 0), playerSpeed,
@@ -508,7 +510,7 @@ void LoadCoopGame()
 
 	constexpr float kFireballCooldown = 10.f;
 	input.BindCommandController(0, dae::GameController::A, dae::InputType::Released,
-		std::make_unique<dae::ShootFireballCommand>(player1.get(),
+		std::make_unique<dae::ShootFireballCommandIndividual>(player1.get(),
 			tileManager.get(), score1.get(), kFireballCooldown));
 	//--
 
@@ -536,6 +538,7 @@ void LoadCoopGame()
 	player2->AddComponent<dae::GemTrackerComponent>();
 
 	scene.Add(player2);
+	levelManager->RegisterPlayer(player2.get());
 
 	input.BindCommandKeyboard(SDLK_w, dae::InputType::Pressed, std::make_unique<dae::MoveCommand>(player2.get(), glm::vec3(0, -1, 0), playerSpeed,
 		tileManager.get(), levelManager.get(), animator2.get(), dae::AnimationState::WalkUp));
@@ -554,7 +557,7 @@ void LoadCoopGame()
 	input.BindCommandKeyboard(SDLK_d, dae::InputType::Released, std::make_unique<dae::StopAnimationCommand>(animator2.get()));
 
 	input.BindCommandKeyboard(SDLK_SPACE, dae::InputType::Released,
-		std::make_unique<dae::ShootFireballCommand>(player2.get(),
+		std::make_unique<dae::ShootFireballCommandIndividual>(player2.get(),
 			tileManager.get(), score2.get(), kFireballCooldown));
 	//--
 
@@ -617,6 +620,19 @@ void LoadCoopGame()
 	scene.Add(hudObj2); scene.Add(scoreDisplay2);
 	score2->AddObserver(hud2);
 	lives2->AddObserver(hud2);
+	//--
+
+	//-- Enemies Setup
+	auto spawner = std::make_shared<dae::GameObject>();
+	auto spawnerComp = spawner->AddComponent<dae::NobbinSpawnerComponent>(
+		&scene, levelManager.get(), &loader, tileManager.get(), 14, 0, 5.f, 0);
+
+	lives1->AddObserver(spawnerComp);
+	lives2->AddObserver(spawnerComp);
+
+	scene.Add(spawner);
+
+	//--
 
 	//-- Game Logic Setup
 	auto resetGO = std::make_shared<dae::GameObject>();

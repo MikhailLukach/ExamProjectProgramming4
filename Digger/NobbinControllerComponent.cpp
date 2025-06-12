@@ -8,6 +8,7 @@
 #include "TileComponent.h"
 #include "SceneManager.h"
 #include "Scene.h"
+#include "GameObject.h"
 #include "LivesComponent.h"
 #include "AIUtils.h"
 #include "TileTypes.h"
@@ -23,19 +24,37 @@
 #include <glm.hpp>
 #include <memory>
 
-dae::NobbinControllerComponent::NobbinControllerComponent(GameObject* player,
-	TileManagerComponent* tileManager,
-	LevelManagerComponent* levelManager,
-	LevelLoader* levelLoader,
-	float decisionInterval, float speed)
-	: m_pPlayer(player)
-	, m_pTileManager(tileManager)
+dae::NobbinControllerComponent::NobbinControllerComponent(TileManagerComponent* tileManager, 
+	LevelManagerComponent* levelManager, LevelLoader* levelLoader, float decisionInterval, float speed)
+	: m_pTileManager(tileManager)
 	, m_pLevelManager(levelManager)
 	, m_pLevelLoader(levelLoader)
 	, m_DecisionInterval(decisionInterval)
 	, m_Speed(speed)
 {
 	ChangeState(std::make_unique<ChasingState>());
+}
+
+std::pair<dae::GameObject*, glm::ivec2> dae::NobbinControllerComponent::GetNearestPlayer(const std::vector<GameObject*>& players, const glm::ivec2& myTile)
+{
+	GameObject* best = nullptr;
+	glm::ivec2 bestTile{ 0,0 };
+	int bestDist = INT_MAX;
+
+	for (auto* p : players) 
+	{
+		if (!p) continue;
+		auto tracker = p->GetComponent<TileTrackerComponent>();
+		if (!tracker) continue;
+		glm::ivec2 pt = tracker->GetTileCoords();
+		int dist = abs(pt.x - myTile.x) + abs(pt.y - myTile.y);
+		if (dist < bestDist) {
+			bestDist = dist;
+			best = p;
+			bestTile = pt;
+		}
+	}
+	return { best, bestTile };
 }
 
 void dae::NobbinControllerComponent::Update(float deltaTime)
@@ -161,15 +180,21 @@ bool dae::NobbinControllerComponent::IsDugTile(const glm::ivec2& tile) const
 
 int dae::NobbinControllerComponent::GetTileCost(const glm::ivec2& tile) const
 {
-	auto playerTracker = m_pPlayer->GetComponent<TileTrackerComponent>();
-	if (!playerTracker) return 999;
+	const auto& players = m_pLevelManager->GetAllPlayers();
+	if (players.empty())
+		return 999;
 
-	const glm::ivec2 playerTile = playerTracker->GetTileCoords();
-	int distanceCost = glm::abs(tile.x - playerTile.x) + glm::abs(tile.y - playerTile.y);
+	// 2) Find nearest player and their tile coords
+	auto [nearestGO, nearestTile] = GetNearestPlayer(players, tile);
+	if (!nearestGO)
+		return 999;
 
-	// Add digging penalty
-	int diggingPenalty = 0;
-	if (!IsDugTile(tile)) diggingPenalty = 5; // cost of digging
+	// 3) Base cost = Manhattan distance to that nearest player
+	int distanceCost = abs(tile.x - nearestTile.x)
+		+ abs(tile.y - nearestTile.y);
+
+	// 4) Add digging penalty if needed
+	int diggingPenalty = IsDugTile(tile) ? 0 : 5;
 
 	return distanceCost + diggingPenalty;
 }

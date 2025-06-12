@@ -25,9 +25,19 @@ namespace dae
 
 		void Update(float deltaTime) override;
 
+		void RegisterPlayer(GameObject* player) {
+			m_Players.push_back(player);
+		}
+
+		// Return all registered players
+		const std::vector<GameObject*>& GetAllPlayers() const {
+			return m_Players;
+		}
+
 	private:
 		std::vector<std::shared_ptr<GameObject>> m_MoneyBags;
 		std::vector<std::shared_ptr<GameObject>> m_Nobbins;
+		std::vector<GameObject*> m_Players;
 	};
 }
 

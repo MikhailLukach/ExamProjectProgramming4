@@ -14,8 +14,8 @@
 #include "LivesComponent.h"
 
 dae::NobbinSpawnerComponent::NobbinSpawnerComponent(Scene* scene, LevelManagerComponent* levelMgr, LevelLoader* loader
-    , TileManagerComponent* tileManager, GameObject* player, int tileX, int tileY, float spawnDelay, int maxNobbins)
-	: m_Scene(scene), m_LevelManager(levelMgr), m_LevelLoader(loader), m_TileManager(tileManager), m_Player(player),
+    , TileManagerComponent* tileManager, int tileX, int tileY, float spawnDelay, int maxNobbins)
+	: m_Scene(scene), m_LevelManager(levelMgr), m_LevelLoader(loader), m_TileManager(tileManager),
 	m_SpawnTile(tileX, tileY), m_SpawnDelay(spawnDelay), m_MaxNobbins(maxNobbins), m_Timer(0.0f)
 {
 }
@@ -86,7 +86,7 @@ void dae::NobbinSpawnerComponent::SpawnNobbin()
 
     nobbin->AddComponent<TileTrackerComponent>(42, 43, 5, 48);
     nobbin->AddComponent<NobbinComponent>();
-    nobbin->AddComponent<NobbinControllerComponent>(m_Player, m_TileManager, m_LevelManager, m_LevelLoader, 0.05f, 100.f);
+    nobbin->AddComponent<NobbinControllerComponent>(m_TileManager, m_LevelManager, m_LevelLoader, 0.05f, 100.f);
 
     m_LevelManager->RegisterNobbin(nobbin);
     m_Scene->Add(nobbin);

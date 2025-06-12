@@ -33,17 +33,20 @@ namespace dae
 	class NobbinControllerComponent : public Component
 	{
 	public:
-		NobbinControllerComponent(GameObject* player,
-			TileManagerComponent* tileManager,
+		NobbinControllerComponent(TileManagerComponent* tileManager,
 			LevelManagerComponent* levelManager,
 			LevelLoader* levelLoader,
-			float decisionInterval = 0.4f, float speed = 2.5f);
+			float decisionInterval = 0.4f,
+			float speed = 2.5f);
+
+		static std::pair<GameObject*, glm::ivec2> GetNearestPlayer(
+			const std::vector<GameObject*>& players,
+			const glm::ivec2& myTile);
 
 		void Update(float deltaTime) override;
 
 		void ChangeState(std::unique_ptr<NobbinState> newState);
-
-		GameObject* GetPlayer() const { return m_pPlayer; }
+		//GameObject* GetPlayer() const { return m_pPlayer; }
 		TileManagerComponent* GetTileManager() const { return m_pTileManager; }
 		TileTrackerComponent* GetTracker()
 		{
@@ -69,7 +72,6 @@ namespace dae
 
 		std::vector<glm::ivec2> FindPath(const glm::ivec2& start, const glm::ivec2& goal);
 	private:
-		GameObject* m_pPlayer;
 		TileManagerComponent* m_pTileManager;
 		LevelManagerComponent* m_pLevelManager = nullptr;
 

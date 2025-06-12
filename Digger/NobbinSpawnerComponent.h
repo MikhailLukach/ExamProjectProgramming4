@@ -17,7 +17,7 @@ namespace dae
 	{
     public:
         NobbinSpawnerComponent(Scene* scene, LevelManagerComponent* levelMgr, LevelLoader* loader, TileManagerComponent* tileManager,
-            GameObject* player, int tileX, int tileY, float spawnDelay = 5.f, int maxNobbins = 3);
+            int tileX, int tileY, float spawnDelay = 5.f, int maxNobbins = 3);
 
         void Update(float deltaTime) override;
         //void OnNobbinDestroyed(GameObject* nobbin);
@@ -30,7 +30,6 @@ namespace dae
         LevelManagerComponent* m_LevelManager{};
         LevelLoader* m_LevelLoader{};
         TileManagerComponent* m_TileManager{};
-        GameObject* m_Player{};
         glm::ivec2 m_SpawnTile{};
         float m_SpawnDelay{};
         float m_Timer{};

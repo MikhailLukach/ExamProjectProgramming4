@@ -114,58 +114,43 @@ void dae::ChasingAndDiggingState::Update(dae::NobbinControllerComponent& control
         }
     }
 
-    auto tracker = controller.GetTracker();
-    auto player = controller.GetPlayer();
-    auto tileManager = controller.GetTileManager();
+    auto* tracker = controller.GetTracker();
+    auto* tileMgr = controller.GetTileManager();
     auto mover = controller.GetOwner()->GetComponent<dae::NobbinComponent>();
+    if (!tracker || !tileMgr || !mover || mover->NobbinIsMoving()) return;
 
-    if (!tracker || !player || !tileManager || !mover || mover->NobbinIsMoving())
-        return;
+    const glm::ivec2 myTile = tracker->GetTileCoords();
 
-    const auto myTile = tracker->GetTileCoords();
-    const auto playerTracker = player->GetComponent<dae::TileTrackerComponent>();
-    if (!playerTracker) return;
-
-    const auto playerTile = playerTracker->GetTileCoords();
-
-    std::vector<glm::ivec2> directions = {
-        {1, 0}, {-1, 0}, {0, 1}, {0, -1}
-    };
-
-    std::sort(directions.begin(), directions.end(), [&](const glm::ivec2& a, const glm::ivec2& b) {
-        auto costA = controller.GetTileCost(myTile + a);
-        auto costB = controller.GetTileCost(myTile + b);
-        return costA < costB;
+    std::vector<glm::ivec2> dirs = { {1,0},{-1,0},{0,1},{0,-1} };
+    std::sort(dirs.begin(), dirs.end(), [&](const glm::ivec2& a, const glm::ivec2& b) {
+        return controller.GetTileCost(myTile + a)
+            < controller.GetTileCost(myTile + b);
         });
 
     bool moved = false;
-    for (const auto& dir : directions)
+    for (auto d : dirs)
     {
-        glm::ivec2 nextTile = myTile + dir;
-        if (nextTile == controller.GetPreviousTile()) continue;
+        glm::ivec2 next = myTile + d;
+        if (next == controller.GetPreviousTile()) continue;
 
-        // Always allow movement, but dig if needed
-        auto tileObj = tileManager->GetTileAt(nextTile.x, nextTile.y);
-        if (tileObj)
+        if (auto tileObj = tileMgr->GetTileAt(next.x, next.y))
         {
-            auto tileComp = tileObj->GetComponent<dae::TileComponent>();
-            if (tileComp && tileComp->GetType() != TileVisualType::Dug_Spot)
-            {
-                tileComp->SetType(TileVisualType::Dug_Spot); // Dig through it!
-            }
+            auto tc = tileObj->GetComponent<dae::TileComponent>();
+            if (tc && tc->GetType() != TileVisualType::Dug_Spot)
+                tc->SetType(TileVisualType::Dug_Spot);
         }
 
-        controller.TryMoveInDirection(dir);
-        m_LastMoveDir = dir;
+        controller.TryMoveInDirection(d);
+        m_LastMoveDir = d;
         moved = true;
         break;
     }
 
     if (!moved)
     {
-        glm::ivec2 backtrackDir = controller.GetPreviousTile() - myTile;
-        controller.TryMoveInDirection(backtrackDir);
-        m_LastMoveDir = backtrackDir;
+        glm::ivec2 back = controller.GetPreviousTile() - myTile;
+        controller.TryMoveInDirection(back);
+        m_LastMoveDir = back;
     }
 }
 
