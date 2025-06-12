@@ -1,5 +1,6 @@
 #pragma once
 #include "Component.h"
+#include <algorithm>
 #include <vector>
 #include <memory>
 #include <glm.hpp>
@@ -28,6 +29,14 @@ namespace dae
 		void RegisterPlayer(GameObject* player) {
 			m_Players.push_back(player);
 		}
+
+		void UnregisterPlayer(GameObject* player)
+		{
+			auto it = std::find(m_Players.begin(), m_Players.end(), player);
+			if (it != m_Players.end())
+				m_Players.erase(it);
+		}
+
 
 		// Return all registered players
 		const std::vector<GameObject*>& GetAllPlayers() const {

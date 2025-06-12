@@ -304,7 +304,7 @@ void LoadGame()
 	auto tracker = player->AddComponent<dae::TileTrackerComponent>(TileWidth, TileHeight, OffsetX, OffsetY);
 	tracker->SetTrackingMode(dae::TrackingMode::Center);
 
-	auto respawn = player->AddComponent<dae::PlayerRespawnComponent>(spawnPos);
+	auto respawn = player->AddComponent<dae::PlayerRespawnComponent>(spawnPos, levelManager.get());
 	lives->AddObserver(respawn);
 
 	player->AddComponent<dae::GemTrackerComponent>();
@@ -418,7 +418,7 @@ void LoadGame()
 
 	//-- Game Logic Setup
 	auto resetGO = std::make_shared<dae::GameObject>();
-	auto resetComp = resetGO->AddComponent<dae::LevelResetComponent>(LoadGame);
+	auto resetComp = resetGO->AddComponent<dae::LevelResetComponent>(LoadGame, false);
 	lives->AddObserver(resetComp);
 	scene.Add(resetGO);
 	//--
@@ -476,7 +476,7 @@ void LoadCoopGame()
 		TileWidth, TileHeight, OffsetX, OffsetY
 	)->SetTrackingMode(dae::TrackingMode::Center);
 
-	auto respawn1 = player1->AddComponent<dae::PlayerRespawnComponent>(spawnPos1);
+	auto respawn1 = player1->AddComponent<dae::PlayerRespawnComponent>(spawnPos1, levelManager.get());
 	lives1->AddObserver(respawn1);
 
 	player1->AddComponent<dae::GemTrackerComponent>();
@@ -532,7 +532,7 @@ void LoadCoopGame()
 		TileWidth, TileHeight, OffsetX, OffsetY
 	)->SetTrackingMode(dae::TrackingMode::Center);
 
-	auto respawn2 = player2->AddComponent<dae::PlayerRespawnComponent>(spawnPos2);
+	auto respawn2 = player2->AddComponent<dae::PlayerRespawnComponent>(spawnPos2, levelManager.get());
 	lives2->AddObserver(respawn2);
 
 	player2->AddComponent<dae::GemTrackerComponent>();
@@ -625,7 +625,7 @@ void LoadCoopGame()
 	//-- Enemies Setup
 	auto spawner = std::make_shared<dae::GameObject>();
 	auto spawnerComp = spawner->AddComponent<dae::NobbinSpawnerComponent>(
-		&scene, levelManager.get(), &loader, tileManager.get(), 14, 0, 5.f, 0);
+		&scene, levelManager.get(), &loader, tileManager.get(), 14, 0, 5.f, 3);
 
 	lives1->AddObserver(spawnerComp);
 	lives2->AddObserver(spawnerComp);
@@ -636,8 +636,9 @@ void LoadCoopGame()
 
 	//-- Game Logic Setup
 	auto resetGO = std::make_shared<dae::GameObject>();
-	auto resetComp = resetGO->AddComponent<dae::LevelResetComponent>(LoadCoopGame);
+	auto resetComp = resetGO->AddComponent<dae::LevelResetComponent>(LoadCoopGame, true);
 	lives1->AddObserver(resetComp);
+	lives2->AddObserver(resetComp);
 	scene.Add(resetGO);
 	//--
 }
@@ -651,7 +652,7 @@ int main(int, char* [])
 
 	dae::SoundServiceLocator::Provide(soundSystem);
 	//engine.Run(load);
-	engine.Run(LoadCoopGame);
+	engine.Run(LoadGame);
 	return 0;
 }
 

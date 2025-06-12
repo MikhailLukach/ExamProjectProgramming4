@@ -8,7 +8,7 @@ namespace dae
 	class LevelResetComponent final : public Component, public Observer
 	{
 	public:
-		LevelResetComponent(std::function<void()> reloadFunc);
+		LevelResetComponent(std::function<void()> reloadFunc, bool isCoop = false);
 
 		void Update(float deltaTime) override;
 
@@ -20,6 +20,9 @@ namespace dae
 		bool m_Waiting = false;
 		float m_Timer = 0.0f;
 		const float kDelay = 5.0f;
+
+		int m_DeathsSeen = 0;
+		int m_DeathThreshold;
 	};
 }
 

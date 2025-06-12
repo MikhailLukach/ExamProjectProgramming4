@@ -1,11 +1,9 @@
 #include "PlayerRespawnComponent.h"
+#include "LevelManagerComponent.h"
 #include "GameObject.h"
 #include "InputManager.h"
 
-dae::PlayerRespawnComponent::PlayerRespawnComponent(const glm::vec3& spawnPos)
-	:m_SpawnPosition(spawnPos)
-{
-}
+
 
 void dae::PlayerRespawnComponent::Notify(EventId event, GameObject* gameObject)
 {
@@ -25,12 +23,25 @@ void dae::PlayerRespawnComponent::Notify(EventId event, GameObject* gameObject)
 			render->SetVisible(false);
 
 		dae::InputManager::GetInstance().DisableInputFor(gameObject);
+
+		m_HasDied = true;
+		if (m_pLevelManager)
+		{
+			m_pLevelManager->UnregisterPlayer(gameObject);
+		}
+		gameObject->MarkForDeletion();
 	}
+}
+
+dae::PlayerRespawnComponent::PlayerRespawnComponent(const glm::vec3& spawnPos, LevelManagerComponent* levelManager)
+	:m_SpawnPosition(spawnPos)
+	, m_pLevelManager(levelManager)
+{
 }
 
 void dae::PlayerRespawnComponent::Update(float deltaTime)
 {
-	if (!m_IsRespawning)
+	if (!m_IsRespawning || m_HasDied)
 		return;
 
 	m_RespawnTimer += deltaTime;
