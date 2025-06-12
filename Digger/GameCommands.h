@@ -399,44 +399,230 @@ namespace dae
         std::string m_SoundFile;
     };
 
-    class CycleMoneyBagStateCommand : public Command
+    class MoveCommandNobbin : public Command
     {
     public:
-        explicit CycleMoneyBagStateCommand(MoneyBagComponent* moneyBag)
-            : m_MoneyBag(moneyBag) {}
+        MoveCommandNobbin(GameObject* character,
+            const glm::vec3& direction,
+            float speed,
+            TileManagerComponent* tileManager,
+            LevelManagerComponent* levelManager,
+            SpriteAnimatorComponent* animator,
+            AnimationState state,
+            float unlockSeconds = 60.f)
+            : m_Character(character)
+            , m_Direction(direction)
+            , m_Speed(speed)
+            , m_pTileManager(tileManager)
+            , m_pLevelManager(levelManager)
+            , m_pAnimator(animator)
+            , m_AnimState(state)
+            , m_UnlockDelayMs(static_cast<Uint32>(unlockSeconds * 1000))
+            , m_SpawnTimeMs(SDL_GetTicks())
+        {
+        }
 
         void Execute() override
         {
-            if (!m_MoneyBag)
+            if (!m_Character) return;
+
+            if (!dae::InputManager::GetInstance().IsInputEnabled(m_Character))
                 return;
 
-            m_CurrentState = (m_CurrentState + 1) % 4;
+            Uint32 now = SDL_GetTicks();
 
-            switch (m_CurrentState)
+            // 1) Check unlock timer once
+            if (!m_CanDig && (now - m_SpawnTimeMs) >= m_UnlockDelayMs)
             {
-            case 0:
-                std::cout << "[Debug] Switching to IdleState\n";
-                m_MoneyBag->SetState(std::make_unique<IdleState>());
-                break;
-            case 1:
-                std::cout << "[Debug] Switching to FallingState\n";
-                m_MoneyBag->SetState(std::make_unique<FallingState>());
-                break;
-            case 2:
-                std::cout << "[Debug] Switching to BreakingState\n";
-                m_MoneyBag->SetState(std::make_unique<BreakingState>());
-                break;
-            case 3:
-                std::cout << "[Debug] Switching to CollectableState\n";
-                m_MoneyBag->SetState(std::make_unique<CollectableState>());
-                break;
-            default:
-                break;
+                m_CanDig = true;
+
+                auto render = m_Character->GetComponent<RenderComponent>();
+                // swap out the sprite-sheet on the RenderComponent
+                if (render)
+                {
+                    render->SetTexture("HobbinSpriteSheetVer2.png"); // Swap the sprite sheet
+                    render->SetSize(32, 32);                     // Ensure it matches Hobbin frames
+                    render->SetRenderOffset({ 0.f, -16.f });       // Optional: adjust if needed
+                }
+                // also tell the animator to use the new sheet
+                if (m_pAnimator)
+                {
+                    m_pAnimator->Configure(render.get(), 16, 16, 0.12f); // Adjust values as needed
+                    m_pAnimator->PlayAnimation(6, 3); // Start with default anim
+                }
+            }
+
+            auto transform = m_Character->GetTransform();
+            auto tracker = m_Character->GetComponent<TileTrackerComponent>();
+            if (!tracker) return;
+
+            glm::vec3 pos = transform->GetWorldPosition();
+            glm::ivec2 tile = tracker->GetTileCoords();
+
+            // Compute center of current tile
+            float centerX = tile.x * GridSettings::TileWidth + GridSettings::TileWidth / 2.0f + GridSettings::GridOffsetX;
+            float centerY = tile.y * GridSettings::TileHeight + GridSettings::TileHeight / 2.0f + GridSettings::GridOffsetY;
+            glm::vec3 center{ centerX + 5.0f, centerY + 5.0f, 0.0f }; // 5px sprite visual adjustment
+
+            glm::vec3 toCenter = center - pos;
+            float threshold = 1.0f;
+
+            glm::vec3 desiredDir = glm::normalize(m_Direction);
+            s_LastDirectionNobbin = desiredDir;
+
+            glm::vec3 orientedPos{ pos };
+            if (desiredDir.x < 0 || desiredDir.y < 0)
+            {
+                orientedPos = glm::vec3{ pos.x - 25, pos.y - 25, pos.z };
+            }
+            if (desiredDir.x > 0)
+            {
+                orientedPos = glm::vec3{ pos.x + 15, pos.y, pos.z };
+            }
+            if (desiredDir.y > 0)
+            {
+                orientedPos = glm::vec3{ pos.x, pos.y + 15, pos.z };
+            }
+            glm::vec3 predictedPosition = orientedPos + desiredDir * m_Speed;
+
+            int predictedTileX = static_cast<int>(std::floor((predictedPosition.x - GridSettings::GridOffsetX) / GridSettings::TileWidth));
+            int predictedTileY = static_cast<int>(std::floor((predictedPosition.y - GridSettings::GridOffsetY) / GridSettings::TileHeight));
+
+            glm::ivec2 nextTile{ predictedTileX, predictedTileY };
+            if (m_pTileManager && !m_pTileManager->IsDugTile(nextTile) && !m_CanDig)
+            {
+                return;
+            }
+
+            bool nextTileIsOutOfBounds =
+                predictedTileX < 0 || predictedTileX >= GridSettings::NumCols ||
+                predictedTileY < 0 || predictedTileY >= GridSettings::NumRows;
+
+            glm::vec3 velocity{};
+
+            if (nextTileIsOutOfBounds)
+            {
+                // If already centered and trying to move out of bounds  don't move
+                if (glm::length(toCenter) < threshold)
+                {
+                    return;
+                }
+
+                // If not centered, align to center first on perpendicular axis
+                if (desiredDir.x != 0.f && std::abs(toCenter.y) > threshold)
+                {
+                    velocity = glm::normalize(glm::vec3(0, toCenter.y, 0)) * m_Speed;
+                }
+                else if (desiredDir.y != 0.f && std::abs(toCenter.x) > threshold)
+                {
+                    velocity = glm::normalize(glm::vec3(toCenter.x, 0, 0)) * m_Speed;
+                }
+                else
+                {
+                    return;
+                }
+            }
+            else
+            {
+                if (auto render = m_Character->GetComponent<RenderComponent>())
+                {
+                    render->ResetRenderOffset();
+                }
+                // Movement allowed within bounds
+                if (desiredDir.x != 0.f && std::abs(toCenter.y) > threshold)
+                {
+                    velocity = glm::normalize(glm::vec3(0, toCenter.y, 0)) * m_Speed;
+                }
+                else if (desiredDir.y != 0.f && std::abs(toCenter.x) > threshold)
+                {
+                    velocity = glm::normalize(glm::vec3(toCenter.x, 0, 0)) * m_Speed;
+                }
+                else
+                {
+                    velocity = desiredDir * m_Speed;
+
+                    if (m_pAnimator)
+                    {
+                        switch (m_AnimState)
+                        {
+                        case AnimationState::WalkRight: m_pAnimator->PlayAnimation(0, 3); break;
+                        case AnimationState::WalkDown:  m_pAnimator->PlayAnimation(3, 3); break;
+                        case AnimationState::WalkLeft:  m_pAnimator->PlayAnimation(6, 3); break;
+                        case AnimationState::WalkUp:    m_pAnimator->PlayAnimation(9, 3); break;
+                        }
+                    }
+                }
+            }
+
+            if (m_pLevelManager && desiredDir.y != 0.f && desiredDir.x == 0.f)
+            {
+                glm::vec3 offset;
+                if (desiredDir.y == 1.f)
+                {
+                    offset = glm::vec3{ -16.f, 16.f, 0.f };
+                }
+                else
+                {
+                    offset = glm::vec3{ -16.f, -16.f, 0.f };
+                }
+                glm::vec3 predictedPosMoneyBag = pos + offset + desiredDir * m_Speed;
+                int predictedTileXMoneyBag = static_cast<int>((predictedPosMoneyBag.x - GridSettings::GridOffsetX + 16.0f) / GridSettings::TileWidth);
+                int predictedTileYMoneyBag = static_cast<int>((predictedPosMoneyBag.y - GridSettings::GridOffsetY) / GridSettings::TileHeight);
+
+                auto blockingBag = m_pLevelManager->GetMoneyBagAt(predictedTileXMoneyBag, predictedTileYMoneyBag);
+                if (blockingBag)
+                {
+                    auto bagComp = blockingBag->GetComponent<MoneyBagComponent>();
+                    if (bagComp && bagComp->IsIdle())
+                    {
+                        std::cout << "[MoveCommand] Movement blocked by idle MoneyBag at (" << predictedTileX << ", " << predictedTileY << ")\n";
+                        return;
+                    }
+                }
+            }
+
+            transform->SetPosition(pos + velocity);
+
+            if (tracker = m_Character->GetComponent<TileTrackerComponent>())
+            {
+                if (m_CanDig)
+                {
+                    glm::ivec2 coords = tracker->GetTileCoords();
+                    int col = coords.x;
+                    int row = coords.y;
+
+                    auto tileObj = m_pTileManager->GetTileAt(col, row);
+                    if (tileObj)
+                    {
+                        auto tileComp = tileObj->GetComponent<TileComponent>();
+                        if (tileComp)
+                        {
+                            tileComp->Dig();
+                        }
+                        else
+                        {
+                            std::cout << "[MoveCommandNobbin] Tile at (" << col << ", " << row << ") has no TileComponent!\n";
+                        }
+                    }
+                }
             }
         }
 
+        static glm::vec3 GetLastDirection() { return s_LastDirectionNobbin; }
+
     private:
-        MoneyBagComponent* m_MoneyBag;
-        int m_CurrentState{ -1 };
+        GameObject* m_Character;
+        glm::vec3 m_Direction;
+        float m_Speed;
+        bool m_CanDig;
+        TileManagerComponent* m_pTileManager;
+        SpriteAnimatorComponent* m_pAnimator;
+        LevelManagerComponent* m_pLevelManager;
+        AnimationState m_AnimState;
+
+        const Uint32 m_UnlockDelayMs;  // how long before digging allowed
+        const Uint32 m_SpawnTimeMs;    // SDL_GetTicks() at creation
+
+        inline static glm::vec3 s_LastDirectionNobbin{ 1,0,0 };
     };
 }

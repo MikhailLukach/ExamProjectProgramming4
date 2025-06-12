@@ -787,19 +787,19 @@ void LoadVersusGame()
 	scene.Add(nobbinPlayer);
 	//levelManager->RegisterPlayer(player.get());
 	 
-	input.BindCommandKeyboard(SDLK_w, dae::InputType::Pressed, std::make_unique<dae::MoveCommand>(nobbinPlayer.get(), glm::vec3(0, -1, 0), playerSpeed,
+	input.BindCommandKeyboard(SDLK_w, dae::InputType::Pressed, std::make_unique<dae::MoveCommandNobbin>(nobbinPlayer.get(), glm::vec3(0, -1, 0), playerSpeed,
 		tileManager.get(), levelManager.get(), nPAnimator.get(), dae::AnimationState::WalkUp));
 	input.BindCommandKeyboard(SDLK_w, dae::InputType::Released, std::make_unique<dae::StopAnimationCommand>(nPAnimator.get()));
 
-	input.BindCommandKeyboard(SDLK_s, dae::InputType::Pressed, std::make_unique<dae::MoveCommand>(nobbinPlayer.get(), glm::vec3(0, 1, 0), playerSpeed,
+	input.BindCommandKeyboard(SDLK_s, dae::InputType::Pressed, std::make_unique<dae::MoveCommandNobbin>(nobbinPlayer.get(), glm::vec3(0, 1, 0), playerSpeed,
 		tileManager.get(), levelManager.get(), nPAnimator.get(), dae::AnimationState::WalkDown));
 	input.BindCommandKeyboard(SDLK_s, dae::InputType::Released, std::make_unique<dae::StopAnimationCommand>(nPAnimator.get()));
 
-	input.BindCommandKeyboard(SDLK_a, dae::InputType::Pressed, std::make_unique<dae::MoveCommand>(nobbinPlayer.get(), glm::vec3(-1, 0, 0), playerSpeed,
+	input.BindCommandKeyboard(SDLK_a, dae::InputType::Pressed, std::make_unique<dae::MoveCommandNobbin>(nobbinPlayer.get(), glm::vec3(-1, 0, 0), playerSpeed,
 		tileManager.get(), levelManager.get(), nPAnimator.get(), dae::AnimationState::WalkLeft));
 	input.BindCommandKeyboard(SDLK_a, dae::InputType::Released, std::make_unique<dae::StopAnimationCommand>(nPAnimator.get()));
 
-	input.BindCommandKeyboard(SDLK_d, dae::InputType::Pressed, std::make_unique<dae::MoveCommand>(nobbinPlayer.get(), glm::vec3(1, 0, 0), playerSpeed,
+	input.BindCommandKeyboard(SDLK_d, dae::InputType::Pressed, std::make_unique<dae::MoveCommandNobbin>(nobbinPlayer.get(), glm::vec3(1, 0, 0), playerSpeed,
 		tileManager.get(), levelManager.get(), nPAnimator.get(), dae::AnimationState::WalkRight));
 	input.BindCommandKeyboard(SDLK_d, dae::InputType::Released, std::make_unique<dae::StopAnimationCommand>(nPAnimator.get()));
 	//--
