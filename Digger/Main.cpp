@@ -811,7 +811,7 @@ void LoadVersusGame()
 	//-- Other Nobbin spawn
 	auto spawner = std::make_shared<dae::GameObject>();
 	auto spawnerComp = spawner->AddComponent<dae::NobbinSpawnerComponent>(
-		&scene, levelManager.get(), &loader, tileManager.get(), 14, 0, 5.f, 2);
+		&scene, levelManager.get(), &loader, tileManager.get(), 14, 0, 5.f, 0);
 
 	lives->AddObserver(spawnerComp);
 
@@ -835,7 +835,7 @@ int main(int, char* [])
 
 	dae::SoundServiceLocator::Provide(soundSystem);
 	//engine.Run(load);
-	engine.Run(LoadGame);
+	engine.Run(LoadVersusGame);
 	return 0;
 }
 

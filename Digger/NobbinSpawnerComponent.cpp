@@ -110,6 +110,8 @@ void dae::NobbinSpawnerComponent::SpawnNobbin()
     m_LevelManager->RegisterNobbin(nobbin);
     m_Scene->Add(nobbin);
 
+    m_LiveNobbins.emplace_back(nobbin);
+
     std::cout << "[Spawner] Spawned Nobbin. Total: " << m_LiveNobbins.size() << "\n";
 }
 

@@ -8,6 +8,7 @@
 #include "GridSettings.h"
 #include "Scene.h"
 #include "TileComponent.h"
+#include "VersusDamageComponent.h"
 
 dae::FireBallComponent::FireBallComponent(const glm::vec2& direction, float speed, float lifeSec, TileManagerComponent* tileManager
     , ScoreComponent* scoreComp)
@@ -68,19 +69,38 @@ void dae::FireBallComponent::Update(float deltaTime)
     if (scene)
     {
         SDL_Rect fbR{ int(pos.x) + 12, int(pos.y) + 12, 16, 16 };
+
         for (auto& obj : scene->GetObjects())
         {
+            if (!obj || obj.get() == GetOwner())
+                continue;
+
             if (auto nobCtrl = obj->GetComponent<NobbinControllerComponent>())
             {
                 auto p = obj->GetTransform()->GetWorldPosition();
                 SDL_Rect nbR{ int(p.x), int(p.y), 32, 32 };
                 if (SDL_HasIntersection(&fbR, &nbR))
                 {
-                    std::cout << "[FireBallComponent] intersects with Nobbin" << std::endl;
-                    if (m_pScore)
-                        m_pScore->AddPoints(250);
-                    obj->MarkForDeletion();         
-                    GetOwner()->MarkForDeletion(); 
+                    std::cout << "[FireBallComponent] hit AI Nobbin\n";
+                    if (m_pScore) m_pScore->AddPoints(250);
+                    obj->MarkForDeletion();
+                    GetOwner()->MarkForDeletion();
+                    return;
+                }
+            }
+
+            if (auto vsComp = obj->GetComponent<VersusDamageComponent>())
+            {
+                auto p = obj->GetTransform()->GetWorldPosition();
+                SDL_Rect nbR{ int(p.x), int(p.y), 32, 32 };
+                if (SDL_HasIntersection(&fbR, &nbR))
+                {
+                    std::cout << "[FireBallComponent] hit Nobbin Player\n";
+
+                    vsComp->SetNeedsToRespawn(true);
+
+                    if (m_pScore) m_pScore->AddPoints(250);
+                    GetOwner()->MarkForDeletion();
                     return;
                 }
             }
