@@ -391,12 +391,28 @@ void LoadGame()
 	input.BindCommandController(0, dae::GameController::DPAD_RIGHT, dae::InputType::Released,
 		std::make_unique<dae::StopAnimationCommand>(animator.get()));
 
-	input.BindCommandController(
-		0,
-		dae::GameController::A,
-		dae::InputType::Released,
-		std::make_unique<dae::ShootFireballCommand>(player.get(), tileManager.get(), score.get(), 10.f)
-	);
+	input.BindCommandKeyboard(SDLK_w, dae::InputType::Pressed, std::make_unique<dae::MoveCommand>(player.get(), glm::vec3(0, -1, 0), playerSpeed,
+		tileManager.get(), levelManager.get(), animator.get(), dae::AnimationState::WalkUp));
+	input.BindCommandKeyboard(SDLK_w, dae::InputType::Released, std::make_unique<dae::StopAnimationCommand>(animator.get()));
+
+	input.BindCommandKeyboard(SDLK_s, dae::InputType::Pressed, std::make_unique<dae::MoveCommand>(player.get(), glm::vec3(0, 1, 0), playerSpeed,
+		tileManager.get(), levelManager.get(), animator.get(), dae::AnimationState::WalkDown));
+	input.BindCommandKeyboard(SDLK_s, dae::InputType::Released, std::make_unique<dae::StopAnimationCommand>(animator.get()));
+
+	input.BindCommandKeyboard(SDLK_a, dae::InputType::Pressed, std::make_unique<dae::MoveCommand>(player.get(), glm::vec3(-1, 0, 0), playerSpeed,
+		tileManager.get(), levelManager.get(), animator.get(), dae::AnimationState::WalkLeft));
+	input.BindCommandKeyboard(SDLK_a, dae::InputType::Released, std::make_unique<dae::StopAnimationCommand>(animator.get()));
+
+	input.BindCommandKeyboard(SDLK_d, dae::InputType::Pressed, std::make_unique<dae::MoveCommand>(player.get(), glm::vec3(1, 0, 0), playerSpeed,
+		tileManager.get(), levelManager.get(), animator.get(), dae::AnimationState::WalkRight));
+	input.BindCommandKeyboard(SDLK_d, dae::InputType::Released, std::make_unique<dae::StopAnimationCommand>(animator.get()));
+
+	constexpr float kFireballCooldown = 10.f;
+	input.BindCommandController(0, dae::GameController::A, dae::InputType::Released,std::make_unique<dae::ShootFireballCommand>(player.get(), 
+		tileManager.get(), score.get(), kFireballCooldown));
+
+	input.BindCommandKeyboard(SDLK_SPACE, dae::InputType::Released, std::make_unique<dae::ShootFireballCommand>(player.get(), tileManager.get(),
+		score.get(), kFireballCooldown));
 
 	/*input.BindCommandController(
 		0,

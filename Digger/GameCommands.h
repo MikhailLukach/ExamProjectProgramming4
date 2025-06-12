@@ -265,7 +265,7 @@ namespace dae
     {
     public:
         ShootFireballCommand(GameObject* player, TileManagerComponent* tileManager, ScoreComponent* scoreComp, float cooldown = 10.f)
-            : m_Player(player), m_Cooldown(cooldown), m_pTileManager(tileManager), m_pScore(scoreComp)
+            : m_Player(player), m_CooldownMs(static_cast<Uint32>(cooldown * 1000)), m_pTileManager(tileManager), m_pScore(scoreComp)
         {
         }
 
@@ -273,8 +273,12 @@ namespace dae
         {
             std::cout << "Fire!\n";
             Uint32 now = SDL_GetTicks();
-            if (now < m_LastShotMs + (Uint32)(m_Cooldown * 1000)) return;
-            m_LastShotMs = now;
+            if (now < s_NextFireAllowed)
+            {
+                return;
+            }
+
+            s_NextFireAllowed = now + m_CooldownMs;
 
             // **Pull the direction from MoveCommand’s static**
             glm::vec3 dir3 = MoveCommand::GetLastDirection();
@@ -300,9 +304,11 @@ namespace dae
         GameObject* m_Player;
         TileManagerComponent* m_pTileManager;
         ScoreComponent* m_pScore;
-        float m_Cooldown;
-        Uint32 m_LastShotMs = 0;
+        Uint32 m_CooldownMs;
+        static Uint32 s_NextFireAllowed;
     };
+
+    Uint32 ShootFireballCommand::s_NextFireAllowed = 0;
 
     //needs to react to something, like pick up pellets, so make this a add pellets
     class AddScoreCommand : public Command
