@@ -36,8 +36,6 @@ namespace dae
         int m_MaxNobbins{};
         bool m_IsPaused{ false };
         float m_PauseTimer{ 0.f };
-
-        std::vector<std::weak_ptr<GameObject>> m_LiveNobbins;
 	};
 }
 

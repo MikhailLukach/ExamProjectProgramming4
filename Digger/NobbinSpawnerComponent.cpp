@@ -22,6 +22,23 @@ dae::NobbinSpawnerComponent::NobbinSpawnerComponent(Scene* scene, LevelManagerCo
 
 void dae::NobbinSpawnerComponent::Update(float deltaTime)
 {
+    auto* scene = m_Scene;  // you already stored this in the ctor
+    if (!scene) return;
+
+    // 2) Count how many *active* NobbinControllers there are
+    int currentCount = 0;
+    for (auto& obj : scene->GetObjects())
+    {
+        if (!obj)
+            continue;
+
+        // only count those still active and still have a controller
+        if (obj->GetComponent<NobbinControllerComponent>() != nullptr)
+        {
+            ++currentCount;
+        }
+    }
+
     if (m_IsPaused)
     {
         m_PauseTimer -= deltaTime;
@@ -39,7 +56,7 @@ void dae::NobbinSpawnerComponent::Update(float deltaTime)
         m_LiveNobbins.end());
 
     // Spawn logic
-    if (static_cast<int>(m_LiveNobbins.size()) < m_MaxNobbins)
+    if (currentCount < m_MaxNobbins)
     {
         m_Timer += deltaTime; 
 
@@ -47,8 +64,10 @@ void dae::NobbinSpawnerComponent::Update(float deltaTime)
         {
             SpawnNobbin();
             m_Timer = 0.0f;
+            ++currentCount;
         }
     }
+    std::cout << "[NobbinSpawner] current count: " << currentCount << std::endl;
 }
 
 void dae::NobbinSpawnerComponent::Notify(EventId event, GameObject*)
@@ -90,8 +109,6 @@ void dae::NobbinSpawnerComponent::SpawnNobbin()
 
     m_LevelManager->RegisterNobbin(nobbin);
     m_Scene->Add(nobbin);
-
-    m_LiveNobbins.emplace_back(nobbin);
 
     std::cout << "[Spawner] Spawned Nobbin. Total: " << m_LiveNobbins.size() << "\n";
 }
