@@ -111,6 +111,8 @@ void dae::VersusDamageComponent::SetNeedsToRespawn(bool needsToRespawn)
         // hide immediately
         if (auto r = GetOwner()->GetComponent<RenderComponent>())
             r->SetVisible(false);
+
+        dae::InputManager::GetInstance().DisableInputFor(GetOwner());
     }
     else if (!needsToRespawn)
     {

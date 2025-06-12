@@ -15,6 +15,9 @@ namespace dae
 		const char* GetID() const override { return "ChasingAndDigging"; }
 	private:
 		glm::ivec2 m_LastMoveDir{};
+
+		float m_DigTimer = 0.f;
+		const float m_MaxDigTime = 15.f;
 	};
 }
 

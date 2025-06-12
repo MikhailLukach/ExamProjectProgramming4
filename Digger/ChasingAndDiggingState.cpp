@@ -14,6 +14,7 @@
 #include <glm.hpp>
 #include <algorithm>
 #include <iostream>
+#include "ChasingState.h"
 
 void dae::ChasingAndDiggingState::OnEnter(dae::NobbinControllerComponent& controller)
 {
@@ -42,11 +43,22 @@ void dae::ChasingAndDiggingState::OnEnter(dae::NobbinControllerComponent& contro
         animator->Configure(render.get(), 16, 16, 0.12f); // Adjust values as needed
         animator->PlayAnimation(6, 3); // Start with default anim
     }
+
+    m_DigTimer = 0.f;
+
+    controller.SetIsDigging(true);
 }
 
 void dae::ChasingAndDiggingState::Update(dae::NobbinControllerComponent& controller, float deltaTime)
 {
-    (void)deltaTime;
+    m_DigTimer += deltaTime;
+    if (m_DigTimer >= m_MaxDigTime)
+    {
+        std::cout << "[ChasingAndDiggingState] Dig window expired, back to chasing.\n";
+        controller.ChangeState(std::make_unique<ChasingState>());
+        return;
+    }
+
     auto pOwner = controller.GetOwner();
     if (pOwner)
     {
@@ -156,6 +168,20 @@ void dae::ChasingAndDiggingState::Update(dae::NobbinControllerComponent& control
 
 void dae::ChasingAndDiggingState::OnExit(dae::NobbinControllerComponent& controller)
 {
-    (void)controller;
     std::cout << "[ChasingAndDiggingState] Nobbin is no longer digging.\n";
+    // swap back to “nobbin” sheet:
+    auto render = controller.GetOwner()->GetComponent<RenderComponent>();
+    if (render)
+    {
+        render->SetTexture("NormalNobbinSpritesheet.png");
+        render->SetSize(32, 32);                     // Ensure it matches Hobbin frames
+        render->SetRenderOffset({ 0.f, -16.f });       // Optional: adjust if needed
+    }
+    if (auto anim = controller.GetOwner()->GetComponent<SpriteAnimatorComponent>())
+    {
+        anim->Configure(render.get(), /*frameW=*/16, /*frameH=*/16, /*speed=*/0.1f);
+        anim->PlayAnimation(6, 3, false);
+    }
+
+    controller.SetIsDigging(false);
 }

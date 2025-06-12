@@ -835,7 +835,7 @@ int main(int, char* [])
 
 	dae::SoundServiceLocator::Provide(soundSystem);
 	//engine.Run(load);
-	engine.Run(LoadVersusGame);
+	engine.Run(LoadGame);
 	return 0;
 }
 

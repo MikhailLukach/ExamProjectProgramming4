@@ -61,6 +61,8 @@ namespace dae
 
 		void SetSpeed(float newSpeed) { m_Speed = newSpeed; }
 
+		void SetIsDigging(bool isDigging) { m_IsDigging = isDigging; }
+
 		LevelLoader* GetLevelLoader() const { return m_pLevelLoader; }
 
 		LevelManagerComponent* GetLevelManager() const { return m_pLevelManager; }
@@ -93,6 +95,8 @@ namespace dae
 		bool m_Initialized = false;
 
 		bool m_HasHitPlayer = false;
+
+		bool m_IsDigging = false;
 
 		void UpdateAnimationState();
 	};

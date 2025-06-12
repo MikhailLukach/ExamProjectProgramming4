@@ -194,7 +194,9 @@ int dae::NobbinControllerComponent::GetTileCost(const glm::ivec2& tile) const
 		+ abs(tile.y - nearestTile.y);
 
 	// 4) Add digging penalty if needed
-	int diggingPenalty = IsDugTile(tile) ? 0 : 5;
+	const bool inDigMode = m_IsDigging;
+	int diggingPenalty = (!IsDugTile(tile) && !inDigMode) ? 5 : 0;
+
 
 	return distanceCost + diggingPenalty;
 }
