@@ -251,7 +251,7 @@ void LoadGame()
 	//-- Initial Game Setup
 	auto& scene = dae::SceneManager::GetInstance().CreateScene("DiggerLevel1");
 
-	const float playerSpeed = 2.5f;
+	const float playerSpeed = 2.f;
 
 	auto& input = dae::InputManager::GetInstance();
 	//--
@@ -280,7 +280,7 @@ void LoadGame()
 	auto spawnPos = loader.GetWorldCenterForTile(spawnX, spawnY);
 	player->GetTransform()->SetPosition(spawnPos);
 
-	auto score = player->AddComponent<dae::ScoreComponent>(19875);
+	auto score = player->AddComponent<dae::ScoreComponent>(0);
 	auto lives = player->AddComponent<dae::LivesComponent>(3);
 
 	auto render = player->AddComponent<dae::RenderComponent>("CharacterSpriteSheetFilledBackground.png");
@@ -358,7 +358,7 @@ void LoadGame()
 	//-- Enemies Setup
 	auto spawner = std::make_shared<dae::GameObject>();
 	auto spawnerComp = spawner->AddComponent<dae::NobbinSpawnerComponent>(
-		&scene, levelManager.get(), &loader, tileManager.get(), player.get(), 14, 0, 5.f, 1);
+		&scene, levelManager.get(), &loader, tileManager.get(), player.get(), 14, 0, 5.f, 0);
 
 	lives->AddObserver(spawnerComp);
 
