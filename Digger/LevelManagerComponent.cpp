@@ -4,6 +4,12 @@
 #include "SceneManager.h"
 #include "Scene.h"
 #include "GemComponent.h"
+#include "LevelResetComponent.h"
+
+dae::LevelManagerComponent::LevelManagerComponent(int levelIndex)
+    :m_CurrentLevelIndex(levelIndex)
+{
+}
 
 void dae::LevelManagerComponent::RegisterMoneyBag(std::shared_ptr<GameObject> moneyBag)
 {
@@ -77,6 +83,12 @@ void dae::LevelManagerComponent::Update(float deltaTime)
         ++m_CurrentLevelIndex;
         char buf[64];
         std::snprintf(buf, sizeof(buf), m_LevelFilePattern.c_str(), m_CurrentLevelIndex);
+
+        auto resetObj = scene->FindObjectWithComponent<LevelResetComponent>();
+        if (auto reset = resetObj ? resetObj->GetComponent<LevelResetComponent>() : nullptr)
+        {
+            reset->QueueResetToLevel(m_CurrentLevelIndex);
+        }
 
         m_LoadedNextLevel = true;
 

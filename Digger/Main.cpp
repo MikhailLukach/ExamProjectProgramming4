@@ -256,7 +256,7 @@ void LoadScoreBoard()
 	//--
 }
 
-void LoadGame()
+void LoadGame(int levelIndex = 1)
 {
 	//-- Initial Game Setup
 	auto& scene = dae::SceneManager::GetInstance().CreateScene("DiggerLevel1");
@@ -268,16 +268,19 @@ void LoadGame()
 
 	//-- Level Setup
 
+	char levelFile[64];
+	std::snprintf(levelFile, sizeof(levelFile), "Level%d.lvl", levelIndex);
+
 	dae::LevelLoader loader;
 	auto tileManagerObj = std::make_shared<dae::GameObject>();
 	auto tileManager = tileManagerObj->AddComponent<dae::TileManagerComponent>();
 
 	auto levelManagerObj = std::make_shared<dae::GameObject>();
-	auto levelManager = levelManagerObj->AddComponent<dae::LevelManagerComponent>();
+	auto levelManager = levelManagerObj->AddComponent<dae::LevelManagerComponent>(levelIndex);
 	scene.Add(levelManagerObj);
 
 	std::vector<std::vector<std::shared_ptr<dae::GameObject>>> tileGrid;
-	loader.LoadLevelBinary("Level1.lvl",
+	loader.LoadLevelBinary(levelFile ,
 		scene,
 		tileGrid,
 		levelManager.get(),
@@ -293,6 +296,7 @@ void LoadGame()
 	int spawnX = 0;
 	int spawnY = 0;
 	auto spawnPos = loader.GetWorldCenterForTile(spawnX, spawnY);
+	spawnPos -= glm::vec3{ 0, 16, 0 };
 	player->GetTransform()->SetPosition(spawnPos);
 
 	auto score = player->AddComponent<dae::ScoreComponent>(0);
@@ -305,7 +309,7 @@ void LoadGame()
 
 	auto animator = player->AddComponent<dae::SpriteAnimatorComponent>(render.get(), 16, 16, 0.2f);
 
-	animator->PlayAnimation(3, 3);
+	animator->PlayAnimation(0, 3);
 
 	constexpr int TileWidth = 42;
 	constexpr int TileHeight = 43;
@@ -429,13 +433,16 @@ void LoadGame()
 
 	//-- Game Logic Setup
 	auto resetGO = std::make_shared<dae::GameObject>();
-	auto resetComp = resetGO->AddComponent<dae::LevelResetComponent>(LoadGame, false);
+	auto resetComp = resetGO->AddComponent<dae::LevelResetComponent>([](int levelIndex) {
+		LoadGame(levelIndex); // your global or static LoadGame
+		},
+		/* isCoop = */ false);
 	lives->AddObserver(resetComp);
 	scene.Add(resetGO);
 	//--
 }
 
-void LoadCoopGame()
+void LoadCoopGame(int levelIndex = 1)
 {
 	//-- Initial Game Setup
 	auto& scene = dae::SceneManager::GetInstance().CreateScene("DiggerCoop");
@@ -444,16 +451,19 @@ void LoadCoopGame()
 	//-- 
 
 	//-- Level Setup
+	char levelFile[64];
+	std::snprintf(levelFile, sizeof(levelFile), "Level%d.lvl", levelIndex);
+
 	dae::LevelLoader loader;
 	auto tileManagerObj = std::make_shared<dae::GameObject>();
 	auto tileManager = tileManagerObj->AddComponent<dae::TileManagerComponent>();
 
 	auto levelManagerObj = std::make_shared<dae::GameObject>();
-	auto levelManager = levelManagerObj->AddComponent<dae::LevelManagerComponent>();
+	auto levelManager = levelManagerObj->AddComponent<dae::LevelManagerComponent>(levelIndex);
 	scene.Add(levelManagerObj);
 
 	std::vector<std::vector<std::shared_ptr<dae::GameObject>>> tileGrid;
-	loader.LoadLevelBinary("Level1.lvl",
+	loader.LoadLevelBinary(levelFile,
 		scene,
 		tileGrid,
 		levelManager.get(),
@@ -471,6 +481,7 @@ void LoadCoopGame()
 	//-- Player 1 Setup 
 	auto player1 = std::make_shared<dae::GameObject>();
 	glm::vec3 spawnPos1 = loader.GetWorldCenterForTile(0, 0);
+	spawnPos1 -= glm::vec3{ 0, 16, 0 };
 	player1->GetTransform()->SetPosition(spawnPos1);
 
 	auto score1 = player1->AddComponent<dae::ScoreComponent>(0);
@@ -527,7 +538,8 @@ void LoadCoopGame()
 
 	//-- Player 2 Setup 
 	auto player2 = std::make_shared<dae::GameObject>();
-	glm::vec3 spawnPos2 = loader.GetWorldCenterForTile(10, 8);
+	glm::vec3 spawnPos2 = loader.GetWorldCenterForTile(7, 9);
+	spawnPos2 -= glm::vec3{ 0, 16, 0 };
 	player2->GetTransform()->SetPosition(spawnPos2);
 
 	auto score2 = player2->AddComponent<dae::ScoreComponent>(0);
@@ -636,7 +648,7 @@ void LoadCoopGame()
 	//-- Enemies Setup
 	auto spawner = std::make_shared<dae::GameObject>();
 	auto spawnerComp = spawner->AddComponent<dae::NobbinSpawnerComponent>(
-		&scene, levelManager.get(), &loader, tileManager.get(), 14, 0, 5.f, 3);
+		&scene, levelManager.get(), &loader, tileManager.get(), 14, 0, 5.f, 0);
 
 	lives1->AddObserver(spawnerComp);
 	lives2->AddObserver(spawnerComp);
@@ -647,31 +659,37 @@ void LoadCoopGame()
 
 	//-- Game Logic Setup
 	auto resetGO = std::make_shared<dae::GameObject>();
-	auto resetComp = resetGO->AddComponent<dae::LevelResetComponent>(LoadCoopGame, true);
+	auto resetComp = resetGO->AddComponent<dae::LevelResetComponent>([](int levelIndex) {
+		LoadCoopGame(levelIndex); // your global or static LoadGame
+		},
+		/* isCoop = */ false);
 	lives1->AddObserver(resetComp);
 	lives2->AddObserver(resetComp);
 	scene.Add(resetGO);
 	//--
 }
 
-void LoadVersusGame()
+void LoadVersusGame(int levelIndex = 1)
 {
 	auto& scene = dae::SceneManager::GetInstance().CreateScene("DiggerVersus");
 	const float playerSpeed = 2.f;
 	auto& input = dae::InputManager::GetInstance();
 
 	//-- Level setup
+	char levelFile[64];
+	std::snprintf(levelFile, sizeof(levelFile), "Level%d.lvl", levelIndex);
+
 	dae::LevelLoader loader;
 	auto tileManagerObj = std::make_shared<dae::GameObject>();
 	auto tileManager = tileManagerObj->AddComponent<dae::TileManagerComponent>();
 	scene.Add(tileManagerObj);
 
 	auto levelManagerObj = std::make_shared<dae::GameObject>();
-	auto levelManager = levelManagerObj->AddComponent<dae::LevelManagerComponent>();
+	auto levelManager = levelManagerObj->AddComponent<dae::LevelManagerComponent>(levelIndex);
 	scene.Add(levelManagerObj);
 
 	std::vector<std::vector<std::shared_ptr<dae::GameObject>>> tileGrid;
-	loader.LoadLevelBinary("Level1.lvl", scene, tileGrid, levelManager.get(), tileManager.get());
+	loader.LoadLevelBinary(levelFile, scene, tileGrid, levelManager.get(), tileManager.get());
 	tileManager->InitWithTileGrid(std::move(tileGrid));
 	//--
 
@@ -680,6 +698,7 @@ void LoadVersusGame()
 	int spawnX = 0;
 	int spawnY = 0;
 	auto spawnPos = loader.GetWorldCenterForTile(spawnX, spawnY);
+	spawnPos -= glm::vec3{ 0, 16, 0 };
 	player->GetTransform()->SetPosition(spawnPos);
 
 	auto score = player->AddComponent<dae::ScoreComponent>(0);
@@ -777,6 +796,7 @@ void LoadVersusGame()
 	int nPSpawnX = 14;
 	int nPSpawnY = 0;
 	glm::vec3 nPSpawnPos = loader.GetWorldCenterForTile(nPSpawnX, nPSpawnY);
+	nPSpawnPos -= glm::vec3{ 0, 16, 0 };
 	nobbinPlayer->GetTransform()->SetPosition(nPSpawnPos);
 
 	auto nPRender = nobbinPlayer->AddComponent<dae::RenderComponent>("NormalNobbinSpritesheet.png");
@@ -820,7 +840,7 @@ void LoadVersusGame()
 	//-- Other Nobbin spawn
 	auto spawner = std::make_shared<dae::GameObject>();
 	auto spawnerComp = spawner->AddComponent<dae::NobbinSpawnerComponent>(
-		&scene, levelManager.get(), &loader, tileManager.get(), 14, 0, 5.f, 2);
+		&scene, levelManager.get(), &loader, tileManager.get(), 14, 0, 5.f, 0);
 
 	lives->AddObserver(spawnerComp);
 
@@ -829,7 +849,10 @@ void LoadVersusGame()
 
 	//-- Game Logic Setup
 	auto resetGO = std::make_shared<dae::GameObject>();
-	auto resetComp = resetGO->AddComponent<dae::LevelResetComponent>(LoadVersusGame, false);
+	auto resetComp = resetGO->AddComponent<dae::LevelResetComponent>([](int levelIndex) {
+		LoadVersusGame(levelIndex); // your global or static LoadGame
+		},
+		/* isCoop = */ false);
 	lives->AddObserver(resetComp);
 	scene.Add(resetGO);
 	//--
@@ -844,7 +867,9 @@ int main(int, char* [])
 
 	dae::SoundServiceLocator::Provide(soundSystem);
 	//engine.Run(load);
-	engine.Run(LoadGame);
+	engine.Run([] {
+		LoadVersusGame(1); // start with Level 1
+		});
 	return 0;
 }
 

@@ -14,6 +14,7 @@ namespace dae
 	class LevelManagerComponent : public Component
 	{
 	public:
+		LevelManagerComponent(int levelIndex);
 		void RegisterMoneyBag(std::shared_ptr<GameObject> moneyBag);
 		void RegisterNobbin(std::shared_ptr<GameObject> nobbin);
 		std::shared_ptr<GameObject> GetMoneyBagAt(int col, int row) const;

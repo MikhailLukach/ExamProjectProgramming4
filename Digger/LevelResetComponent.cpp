@@ -4,8 +4,8 @@
 
 
 
-dae::LevelResetComponent::LevelResetComponent(std::function<void()> reloadFunc, bool isCoop)
-    : m_ReloadFunc(reloadFunc)
+dae::LevelResetComponent::LevelResetComponent(std::function<void(int)> reloadFunc, bool isCoop)
+    : m_ReloadFunc(std::move(reloadFunc))
     , m_DeathThreshold(isCoop ? 2 : 1)
 {
 }
@@ -19,8 +19,9 @@ void dae::LevelResetComponent::Update(float deltaTime)
 
     m_Waiting = false;
 
-    // clear and reload immediately
-    SceneManager::GetInstance().RequestReload(m_ReloadFunc);
+    SceneManager::GetInstance().RequestReload([target = m_TargetLevel, func = m_ReloadFunc]() {
+        func(target);
+        });
 }
 
 void dae::LevelResetComponent::Notify(EventId event, GameObject*)
@@ -37,4 +38,11 @@ void dae::LevelResetComponent::Notify(EventId event, GameObject*)
         m_Waiting = true;
         m_Timer = kDelay;
     }
+}
+
+void dae::LevelResetComponent::QueueResetToLevel(int levelIndex)
+{
+    m_TargetLevel = levelIndex;
+    m_Waiting = true;
+    m_Timer = kDelay;
 }
