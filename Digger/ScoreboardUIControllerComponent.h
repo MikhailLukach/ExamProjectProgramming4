@@ -23,6 +23,7 @@ namespace dae
 	class ScoreBoardUIControllerComponent final : public Component
 	{
 	public:
+		ScoreBoardUIControllerComponent();
 		void SetScoreTextObjects(const std::vector<std::shared_ptr<GameObject>>& scoreObjects);
 		void SetModeTextObjects(const std::vector<std::shared_ptr<GameObject>>& modeObjects);
 		void SetNewScore(int score);
@@ -37,6 +38,9 @@ namespace dae
 
 		void MoveLetterLeft();
 		void MoveLetterRight();
+
+		void SaveScores(const std::string& filename) const;
+		void LoadScores(const std::string& filename);
 
 		Section GetCurrentSection() const { return m_CurrentSection; }
 

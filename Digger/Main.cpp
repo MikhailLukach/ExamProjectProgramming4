@@ -302,9 +302,6 @@ void LoadScoreBoard()
 	input.BindCommandKeyboard(SDLK_a, dae::InputType::Down, std::make_unique<dae::MoveLetterLeftCommand>(scoreboardUI.get()));
 	input.BindCommandKeyboard(SDLK_d, dae::InputType::Down, std::make_unique<dae::MoveLetterRightCommand>(scoreboardUI.get()));
 	input.BindCommandKeyboard(SDLK_SPACE, dae::InputType::Down, std::make_unique<dae::ConfirmSelectionCommand>(scoreboardUI.get()));
-
-	scoreboardUI->SetNewScore(78787); // Player 1
-	scoreboardUI->SetNewScore(54321); // Player 2
 }
 
 void LoadGame(int levelIndex = 1)
