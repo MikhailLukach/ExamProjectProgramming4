@@ -11,6 +11,8 @@
 #include <glm.hpp>
 #include <SDL.h>
 #include <cmath>
+#include <CollisionHelper.h>
+#include <SoundServiceLocator.h>
 
 dae::VersusDamageComponent::VersusDamageComponent(LevelManagerComponent* levelManager, const glm::vec3& spawnPos, float hitCooldownSeconds)
     : m_pLevelManager(levelManager)
@@ -44,17 +46,15 @@ void dae::VersusDamageComponent::Update(float deltaTime)
     if (m_CooldownTimer > 0.f || m_NeedsRespawn)
         return;
 
-    auto  myPos = owner->GetTransform()->GetWorldPosition();
-    const float radius = 16.f;
-
     for (auto* player : m_pLevelManager->GetAllPlayers())
     {
         if (!player || player == owner)
             continue;
 
-        auto pos = player->GetTransform()->GetWorldPosition();
-        if (std::abs(pos.x - myPos.x) < radius &&
-            std::abs(pos.y - myPos.y) < radius)
+        if (!player->GetComponent<RenderComponent>() || !owner->GetComponent<RenderComponent>())
+            continue;
+
+        if (CheckRenderComponentCollision(owner, player))
         {
             if (auto lives = player->GetComponent<LivesComponent>())
             {
@@ -73,28 +73,31 @@ void dae::VersusDamageComponent::Update(float deltaTime)
     }
 
     auto scene = dae::SceneManager::GetInstance().GetCurrentScene();
-    if (scene)
+    if (!scene) return;
+
+    for (auto& obj : scene->GetObjects())
     {
-        for (auto& obj : scene->GetObjects())
+        if (!obj || obj.get() == owner)
+            continue;
+
+        auto bagComp = obj->GetComponent<MoneyBagComponent>();
+        if (!bagComp || !bagComp->IsFalling())
+            continue;
+
+        if (!obj->GetComponent<RenderComponent>() || !owner->GetComponent<RenderComponent>())
+            continue;
+
+        if (CheckRenderComponentCollision(owner, obj.get()))
         {
-            if (!obj || obj.get() == owner)
-                continue;
+            // Crushed by falling bag, trigger Nobbin respawn
+            if (auto r = owner->GetComponent<RenderComponent>())
+                r->SetVisible(false);
 
-            auto bagComp = obj->GetComponent<MoneyBagComponent>();
-            if (!bagComp || !bagComp->IsFalling())
-                continue;
+            dae::SoundServiceLocator::Get().PlaySound(dae::ResourceManager::GetInstance().GetFullPath("AppleCrushes.wav"));
 
-            auto bagPos = obj->GetTransform()->GetWorldPosition();
-            if (std::abs(bagPos.x - myPos.x) < radius &&
-                std::abs(bagPos.y - myPos.y) < radius)
-            {
-                // crushed by bag trigger Nobbin respawn
-                if (auto r = owner->GetComponent<RenderComponent>())
-                    r->SetVisible(false);
-                m_CooldownTimer = m_HitCooldownSecs;
-                m_NeedsRespawn = true;
-                return;  // done
-            }
+            m_CooldownTimer = m_HitCooldownSecs;
+            m_NeedsRespawn = true;
+            return;
         }
     }
 

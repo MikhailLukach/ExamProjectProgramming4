@@ -9,6 +9,7 @@
 #include "GameObject.h"
 #include "TileTrackerComponent.h"
 #include "GettingCrushedState.h"
+#include <SoundServiceLocator.h>
 
 void dae::FallingState::OnEnter(MoneyBagComponent& bag)
 {
@@ -51,6 +52,8 @@ void dae::FallingState::OnEnter(MoneyBagComponent& bag)
 
     glm::vec3 worldPos = finalTile->GetTransform()->GetWorldPosition() + glm::vec3{ 6.f, 20.f, 0.f };
     bag.StartMoveTo(worldPos, totalDuration);
+
+    dae::SoundServiceLocator::Get().PlaySound(dae::ResourceManager::GetInstance().GetFullPath("AppleFallsVer2.wav"));
 
     std::cout << "[FallingState] Falling down " << maxFall + 1 << " tiles.\n";
 }

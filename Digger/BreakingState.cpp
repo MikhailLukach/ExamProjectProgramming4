@@ -4,6 +4,7 @@
 #include "CollectableState.h"
 #include "GameObject.h"
 #include "SpriteAnimatorComponent.h"
+#include <SoundServiceLocator.h>
 
 void dae::BreakingState::OnEnter(MoneyBagComponent& bag)
 {
@@ -22,6 +23,8 @@ void dae::BreakingState::OnEnter(MoneyBagComponent& bag)
 
         animator->PlayAnimation(0, 3, false);  
     }
+
+    dae::SoundServiceLocator::Get().PlaySound(dae::ResourceManager::GetInstance().GetFullPath("AppleBreaks.wav"));
 }
 
 std::unique_ptr<dae::MoneyBagState> dae::BreakingState::Update(MoneyBagComponent& bag, float deltaTime)

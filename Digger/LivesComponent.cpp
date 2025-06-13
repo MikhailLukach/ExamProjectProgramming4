@@ -1,5 +1,7 @@
 #include "LivesComponent.h"
 #include "PersistentPlayerStats.h"
+#include <SoundServiceLocator.h>
+#include "ResourceManager.h"
 
 void dae::LivesComponent::LoseLife()
 {
@@ -9,6 +11,7 @@ void dae::LivesComponent::LoseLife()
     }
     else
     {
+        dae::SoundServiceLocator::Get().PlaySound(dae::ResourceManager::GetInstance().GetFullPath("LoseaLife.wav"));
         NotifyObservers(EventId::PlAYER_HIT, GetOwner());
     }
 }

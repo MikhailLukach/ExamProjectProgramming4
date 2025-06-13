@@ -8,6 +8,8 @@
 #include "Scene.h"
 #include <iostream>
 #include "LivesComponent.h"
+#include <CollisionHelper.h>
+#include <SoundServiceLocator.h>
 
 dae::MoneyBagComponent::MoneyBagComponent(LevelManagerComponent* levelManager)
 	:m_pLevelManager(levelManager)
@@ -65,30 +67,29 @@ void dae::MoneyBagComponent::Update(float deltaTime)
 
 	if (IsFalling() && !m_HasHitPlayer)
 	{
-		auto bagPos = GetOwner()->GetTransform()->GetWorldPosition();
+		auto* owner = GetOwner();
+		if (!owner) return;
 
 		auto* scene = dae::SceneManager::GetInstance().GetCurrentScene();
-		if (scene)
+		if (!scene) return;
+
+		for (const auto& obj : scene->GetObjects())
 		{
-			for (auto& obj : scene->GetObjects())
+			if (!obj || obj.get() == owner) continue;
+
+			if (!obj->GetComponent<LivesComponent>()) continue;
+			if (!obj->GetComponent<RenderComponent>()) continue;
+			if (!owner->GetComponent<RenderComponent>()) continue;
+
+			if (CheckRenderComponentCollision(owner, obj.get()))
 			{
-				if (!obj || obj.get() == GetOwner()) continue;
+				std::cout << "[MoneyBag] Player hit mid-fall!\n";
 
 				auto lives = obj->GetComponent<LivesComponent>();
-				if (!lives) continue;
-
-				auto playerPos = obj->GetTransform()->GetWorldPosition();
-				float overlapThreshold = 16.0f;
-
-				if (std::abs(playerPos.x - bagPos.x) < overlapThreshold &&
-					std::abs(playerPos.y - bagPos.y) < overlapThreshold)
-				{
-					std::cout << "[MoneyBag] Player hit mid-fall!\n";
-					lives->LoseLife();
-					m_HasHitPlayer = true;
-					// Optional: apply crushed behavior, animation, etc.
-					break;
-				}
+				lives->LoseLife();
+				dae::SoundServiceLocator::Get().PlaySound(dae::ResourceManager::GetInstance().GetFullPath("AppleCrushes.wav"));
+				m_HasHitPlayer = true;
+				break;
 			}
 		}
 	}

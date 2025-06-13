@@ -956,7 +956,7 @@ int main(int, char* [])
 	dae::SoundServiceLocator::Provide(soundSystem);
 	//engine.Run(LoadScoreBoard);
 	engine.Run([] {
-		LoadVersusGame(1); // start with Level 1
+		LoadGame(1); // start with Level 1
 		});
 	return 0;
 }

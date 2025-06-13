@@ -62,20 +62,23 @@ std::pair<dae::GameObject*, glm::ivec2> dae::NobbinControllerComponent::GetNeare
 void dae::NobbinControllerComponent::Update(float deltaTime)
 {
 	(void)deltaTime;
-	auto nobbinBounds = GetOwner()->GetTransform()->GetWorldPosition(); // center
+	auto* owner = GetOwner();
+	if (!owner) return;
+
+	if (!owner->GetComponent<RenderComponent>()) return;
+
 	for (const auto& bag : m_pLevelManager->GetAllMoneyBags())
 	{
-		if (!bag) continue;
+		if (!bag || bag.get() == owner) continue;
 
 		auto bagComp = bag->GetComponent<MoneyBagComponent>();
 		if (!bagComp || !bagComp->IsFalling()) continue;
 
-		auto bagBounds = bag->GetTransform()->GetWorldPosition();
+		if (!bag->GetComponent<RenderComponent>()) continue;
 
-		float overlapThreshold = 16.0f; // half tile width
-		if (abs(nobbinBounds.x - bagBounds.x) < overlapThreshold &&
-			abs(nobbinBounds.y - bagBounds.y) < overlapThreshold)
+		if (CheckRenderComponentCollision(owner, bag.get()))
 		{
+			dae::SoundServiceLocator::Get().PlaySound(dae::ResourceManager::GetInstance().GetFullPath("AppleCrushes.wav"));
 			ChangeState(std::make_unique<GettingCrushedState>());
 			return;
 		}
@@ -92,7 +95,6 @@ void dae::NobbinControllerComponent::Update(float deltaTime)
 			if (CheckRenderComponentCollision(player.get(), GetOwner()))
 			{
 				std::cout << "[Nobbin] Player hit!\n";
-				dae::SoundServiceLocator::Get().PlaySound(dae::ResourceManager::GetInstance().GetFullPath("LoseaLife.wav"));
 				player->GetComponent<dae::LivesComponent>()->LoseLife();
 				m_HasHitPlayer = true;
 				break;
