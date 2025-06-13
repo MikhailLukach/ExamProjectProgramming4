@@ -24,6 +24,7 @@
 #include <glm.hpp>
 #include <memory>
 #include <CollisionHelper.h>
+#include <SoundServiceLocator.h>
 
 dae::NobbinControllerComponent::NobbinControllerComponent(TileManagerComponent* tileManager, 
 	LevelManagerComponent* levelManager, LevelLoader* levelLoader, float decisionInterval, float speed)
@@ -91,6 +92,7 @@ void dae::NobbinControllerComponent::Update(float deltaTime)
 			if (CheckRenderComponentCollision(player.get(), GetOwner()))
 			{
 				std::cout << "[Nobbin] Player hit!\n";
+				dae::SoundServiceLocator::Get().PlaySound(dae::ResourceManager::GetInstance().GetFullPath("LoseaLife.wav"));
 				player->GetComponent<dae::LivesComponent>()->LoseLife();
 				m_HasHitPlayer = true;
 				break;

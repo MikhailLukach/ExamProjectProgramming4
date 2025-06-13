@@ -45,6 +45,23 @@ void dae::SDLSoundSystem::PlaySound(const std::string& soundFile)
     m_Condition.notify_one();
 }
 
+void dae::SDLSoundSystem::PlayMusic(const std::string& musicFile, int loops)
+{
+	Mix_Music* music = Mix_LoadMUS(musicFile.c_str());
+	if (!music)
+	{
+		std::cerr << "Failed to load music: " << Mix_GetError() << '\n';
+		return;
+	}
+
+	if (Mix_PlayMusic(music, loops) == -1)
+	{
+		std::cerr << "Failed to play music: " << Mix_GetError() << '\n';
+		Mix_FreeMusic(music);
+		return;
+	}
+}
+
 
 void dae::SDLSoundSystem::ProcessQueue()
 {

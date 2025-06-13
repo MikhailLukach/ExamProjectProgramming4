@@ -18,6 +18,7 @@ namespace dae
 		~SDLSoundSystem() override;
 
 		void PlaySound(const std::string& soundFile) override;
+		void PlayMusic(const std::string& musicFile, int loops = -1) override;
 
 	private:
 		void ProcessQueue();

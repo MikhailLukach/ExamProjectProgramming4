@@ -505,13 +505,6 @@ void LoadGame(int levelIndex = 1)
 
 	input.BindCommandKeyboard(SDLK_SPACE, dae::InputType::Released, std::make_unique<dae::ShootFireballCommand>(player.get(), tileManager.get(),
 		score.get(), kFireballCooldown));
-
-	input.BindCommandController(
-		0,
-		dae::GameController::A,
-		dae::InputType::Released,
-		std::make_unique<dae::PlaySoundCommand>(dae::ResourceManager::GetInstance().GetFullPath("Explosion Sound Effect.wav"))  // Replace with a valid file
-	);
 	//--
 
 	//-- Game Logic Setup
@@ -525,6 +518,10 @@ void LoadGame(int levelIndex = 1)
 	lives->AddObserver(resetComp);
 	scene.Add(resetGO);
 	//--
+
+	//-- Music Setup
+	dae::SoundServiceLocator::Get().PlayMusic(dae::ResourceManager::GetInstance().GetFullPath("02LevelBGMLoopable.wav"),-1);
+	//-- 
 }
 
 void LoadCoopGame(int levelIndex = 1)
@@ -751,6 +748,10 @@ void LoadCoopGame(int levelIndex = 1)
 	lives2->AddObserver(resetComp);
 	scene.Add(resetGO);
 	//--
+
+	//-- Music Setup
+	dae::SoundServiceLocator::Get().PlayMusic(dae::ResourceManager::GetInstance().GetFullPath("02LevelBGMLoopable.wav"), -1);
+	//-- 
 }
 
 void LoadVersusGame(int levelIndex = 1)
@@ -939,6 +940,10 @@ void LoadVersusGame(int levelIndex = 1)
 	lives->AddObserver(resetComp);
 	scene.Add(resetGO);
 	//--
+
+	//-- Music Setup
+	dae::SoundServiceLocator::Get().PlayMusic(dae::ResourceManager::GetInstance().GetFullPath("02LevelBGMLoopable.wav"), -1);
+	//-- 
 }
 
 int main(int, char* [])
@@ -949,7 +954,7 @@ int main(int, char* [])
 	auto soundSystem = new dae::SDLSoundSystem();
 
 	dae::SoundServiceLocator::Provide(soundSystem);
-	engine.Run(LoadScoreBoard);
+	//engine.Run(LoadScoreBoard);
 	engine.Run([] {
 		LoadGame(1); // start with Level 1
 		});
