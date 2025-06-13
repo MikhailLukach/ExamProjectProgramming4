@@ -9,6 +9,8 @@
 #include "Scene.h"
 #include "TileComponent.h"
 #include "VersusDamageComponent.h"
+#include <CollisionHelper.h>
+#include <SoundServiceLocator.h>
 
 dae::FireBallComponent::FireBallComponent(const glm::vec2& direction, float speed, float lifeSec, TileManagerComponent* tileManager
     , ScoreComponent* scoreComp)
@@ -77,11 +79,10 @@ void dae::FireBallComponent::Update(float deltaTime)
 
             if (auto nobCtrl = obj->GetComponent<NobbinControllerComponent>())
             {
-                auto p = obj->GetTransform()->GetWorldPosition();
-                SDL_Rect nbR{ int(p.x), int(p.y), 32, 32 };
-                if (SDL_HasIntersection(&fbR, &nbR))
+                if (CheckRenderComponentCollision(GetOwner(), obj.get()))
                 {
                     std::cout << "[FireBallComponent] hit AI Nobbin\n";
+                    dae::SoundServiceLocator::Get().PlaySound(dae::ResourceManager::GetInstance().GetFullPath("PowershotHitsEnemy.wav"));
                     if (m_pScore) m_pScore->AddPoints(250);
                     obj->MarkForDeletion();
                     GetOwner()->MarkForDeletion();
@@ -91,14 +92,11 @@ void dae::FireBallComponent::Update(float deltaTime)
 
             if (auto vsComp = obj->GetComponent<VersusDamageComponent>())
             {
-                auto p = obj->GetTransform()->GetWorldPosition();
-                SDL_Rect nbR{ int(p.x), int(p.y), 32, 32 };
-                if (SDL_HasIntersection(&fbR, &nbR))
+                if (CheckRenderComponentCollision(GetOwner(), obj.get()))
                 {
                     std::cout << "[FireBallComponent] hit Nobbin Player\n";
-
+                    dae::SoundServiceLocator::Get().PlaySound(dae::ResourceManager::GetInstance().GetFullPath("PowershotHitsEnemy.wav"));
                     vsComp->SetNeedsToRespawn(true);
-
                     if (m_pScore) m_pScore->AddPoints(250);
                     GetOwner()->MarkForDeletion();
                     return;
