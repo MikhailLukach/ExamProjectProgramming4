@@ -9,6 +9,20 @@
 
 #include <SDL.h>
 #include <iostream>
+#include <array>
+#include <SoundServiceLocator.h>
+#include <CollisionHelper.h>
+
+const std::array<std::string, 8> dae::GemComponent::soundPaths = {
+	"gem_pickup_1.wav",
+	"gem_pickup_2.wav",
+	"gem_pickup_3.wav",
+	"gem_pickup_4.wav",
+	"gem_pickup_5.wav",
+	"gem_pickup_6.wav",
+	"gem_pickup_7.wav",
+	"gem_pickup_8.wav"
+};
 
 void dae::GemComponent::Render() const
 {
@@ -37,12 +51,7 @@ void dae::GemComponent::Render() const
 void dae::GemComponent::Update(float)
 {
 	auto* owner = GetOwner();
-	auto transform = owner->GetTransform();
-	auto render = owner->GetComponent<RenderComponent>();
-	if (!render) return;
-
-	glm::vec3 gemPos = transform->GetWorldPosition();
-	SDL_Rect gemRect{ static_cast<int>(gemPos.x), static_cast<int>(gemPos.y - 16), 32, 32 };
+	if (!owner || !owner->GetComponent<RenderComponent>()) return;
 
 	auto* scene = dae::SceneManager::GetInstance().GetCurrentScene();
 	if (!scene) return;
@@ -51,25 +60,30 @@ void dae::GemComponent::Update(float)
 	{
 		if (obj.get() == owner) continue;
 
-		auto score = obj->GetComponent<ScoreComponent>();
-		if (!score) continue;
+		if (!obj->GetComponent<RenderComponent>()) continue;
+		if (!obj->GetComponent<ScoreComponent>()) continue;
 
-		auto playerTransform = obj->GetTransform();
-		SDL_Rect playerRect{ static_cast<int>(playerTransform->GetWorldPosition().x), static_cast<int>(playerTransform->GetWorldPosition().y), 32, 32 };
-
-		if (SDL_HasIntersection(&gemRect, &playerRect))
+		if (CheckRenderComponentCollision(owner, obj.get()))
 		{
-			std::cout << "[GemComponent] Player collected a gem!\n";
+			auto score = obj->GetComponent<ScoreComponent>();
 			auto gemTracker = obj->GetComponent<dae::GemTrackerComponent>();
-			if (gemTracker && gemTracker->Collect())
+
+			if (gemTracker)
 			{
-				score->AddPoints(250);
-				std::cout << "[GemComponent] 8-in-a-row! special bonus!\n";
+				int index = std::min(gemTracker->GetConsecutive(), 7);
+				dae::SoundServiceLocator::Get().PlaySound(dae::ResourceManager::GetInstance().GetFullPath(soundPaths[index]));
+
+				if (gemTracker->Collect())
+				{
+					score->AddPoints(250);
+					std::cout << "[GemComponent] 8-in-a-row! special bonus!\n";
+				}
+				else
+				{
+					score->AddPoints(25);
+				}
 			}
-			else
-			{
-				score->AddPoints(25);
-			}
+
 			owner->MarkForDeletion();
 			break;
 		}
