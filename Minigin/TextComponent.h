@@ -17,6 +17,11 @@ namespace dae
 		void Render() const override;
 		void SetText(const std::string& newText);
 		void SetColor(SDL_Color color);
+
+		std::string GetText()
+		{
+			return m_text;
+		}
 		//void SetPosition(float x, float y);
 	private:
 		void UpdateTexture();

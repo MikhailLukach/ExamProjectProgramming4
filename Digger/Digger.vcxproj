@@ -111,6 +111,7 @@
     <ClCompile Include="PlayerDebugComponent.cpp" />
     <ClCompile Include="PlayerRespawnComponent.cpp" />
     <ClCompile Include="RotatorComponent.cpp" />
+    <ClCompile Include="ScoreboardUIControllerComponent.cpp" />
     <ClCompile Include="ScoreComponent.cpp" />
     <ClCompile Include="SpriteAnimatorComponent.cpp" />
     <ClCompile Include="TileComponent.cpp" />
@@ -142,6 +143,7 @@
     <ClInclude Include="LevelManagerComponent.h" />
     <ClInclude Include="LevelResetComponent.h" />
     <ClInclude Include="LivesComponent.h" />
+    <ClInclude Include="MenuCommands.h" />
     <ClInclude Include="MoneyBagComponent.h" />
     <ClInclude Include="MoneyBagState.h" />
     <ClInclude Include="NobbinComponent.h" />
@@ -152,7 +154,9 @@
     <ClInclude Include="PlayerDebugComponent.h" />
     <ClInclude Include="PlayerRespawnComponent.h" />
     <ClInclude Include="RotatorComponent.h" />
+    <ClInclude Include="ScoreboardUIControllerComponent.h" />
     <ClInclude Include="ScoreComponent.h" />
+    <ClInclude Include="ScoreRecordSystem.h" />
     <ClInclude Include="SpriteAnimatorComponent.h" />
     <ClInclude Include="TileComponent.h" />
     <ClInclude Include="TileManagerComponent.h" />

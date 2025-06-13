@@ -12,6 +12,7 @@
 #include "InputManager.h"
 #include "Command.h"
 #include "HUDDisplay.h"
+#include <array> 
 
 //components
 #include "RotatorComponent.h"
@@ -49,6 +50,8 @@
 #include "GameObjectFactory.h"
 #include "VersusDamageComponent.h"
 #include "PersistentPlayerStats.h"
+#include "ScoreboardUIControllerComponent.h"
+#include "MenuCommands.h"
 
 //exercise Game Scene
 /*
@@ -250,11 +253,58 @@ void load()
 
 void LoadScoreBoard()
 {
-	//-- Initial Game Setup
-	//auto& scene = dae::SceneManager::GetInstance().CreateScene("Scoreboard");
+	auto& scene = dae::SceneManager::GetInstance().CreateScene("Scoreboard");
+	
+	auto uiControllerGO = std::make_shared<dae::GameObject>();
+	auto scoreboardUI = uiControllerGO->AddComponent<dae::ScoreBoardUIControllerComponent>();
+	scene.Add(uiControllerGO);
 
-	//auto& input = dae::InputManager::GetInstance();
-	//--
+	std::vector<std::shared_ptr<dae::GameObject>> scoreTextObjects;
+	std::vector<std::shared_ptr<dae::TextComponent>> scoreTextComps;
+	const float startX = 50.f;
+	const float startY = 50.f;
+	const float verticalSpacing = 32.f;
+
+	for (int i = 0; i < 10; ++i)
+	{
+		auto scoreEntry = std::make_shared<dae::GameObject>();
+		auto text = scoreEntry->AddComponent<dae::TextComponent>("--- 00000", "ScoreBoardFont.otf", 24);
+		scoreEntry->GetTransform()->SetPosition(startX, startY + i * verticalSpacing, 0);
+		scene.Add(scoreEntry);
+		scoreTextObjects.push_back(scoreEntry);
+		scoreTextComps.push_back(text);
+	}
+
+	std::vector<std::shared_ptr<dae::GameObject>> modeTextObjects;
+	std::vector<std::shared_ptr<dae::TextComponent>> modeTextComps;
+	std::vector<std::string> gameModes = { "Single Player", "Versus Mode", "Coop Mode" };
+
+	const float modeStartX = 350.f;
+	const float modeStartY = 150.f;
+
+	for (int i = 0; i < static_cast<int>(gameModes.size()); ++i)
+	{
+		auto modeObj = std::make_shared<dae::GameObject>();
+		auto text = modeObj->AddComponent<dae::TextComponent>(gameModes[i], "ScoreBoardFont.otf", 24);
+		modeObj->GetTransform()->SetPosition(modeStartX, modeStartY + i * 40.f, 0);
+		scene.Add(modeObj);
+		modeTextObjects.push_back(modeObj);
+		modeTextComps.push_back(text);
+	}
+
+	scoreboardUI->SetScoreTextObjects(scoreTextObjects);
+	scoreboardUI->SetModeTextObjects(modeTextObjects);
+
+	auto& input = dae::InputManager::GetInstance();
+
+	input.BindCommandKeyboard(SDLK_w, dae::InputType::Down, std::make_unique<dae::VerticalMenuCommand>(scoreboardUI.get(), true));
+	input.BindCommandKeyboard(SDLK_s, dae::InputType::Down, std::make_unique<dae::VerticalMenuCommand>(scoreboardUI.get(), false));
+	input.BindCommandKeyboard(SDLK_a, dae::InputType::Down, std::make_unique<dae::MoveLetterLeftCommand>(scoreboardUI.get()));
+	input.BindCommandKeyboard(SDLK_d, dae::InputType::Down, std::make_unique<dae::MoveLetterRightCommand>(scoreboardUI.get()));
+	input.BindCommandKeyboard(SDLK_SPACE, dae::InputType::Down, std::make_unique<dae::ConfirmSelectionCommand>(scoreboardUI.get()));
+
+	scoreboardUI->SetNewScore(78787); // Player 1
+	scoreboardUI->SetNewScore(54321); // Player 2
 }
 
 void LoadGame(int levelIndex = 1)
@@ -864,10 +914,10 @@ int main(int, char* [])
 	auto soundSystem = new dae::SDLSoundSystem();
 
 	dae::SoundServiceLocator::Provide(soundSystem);
-	//engine.Run(load);
-	engine.Run([] {
+	engine.Run(LoadScoreBoard);
+	/*engine.Run([] {
 		LoadGame(1); // start with Level 1
-		});
+		});*/
 	return 0;
 }
 
