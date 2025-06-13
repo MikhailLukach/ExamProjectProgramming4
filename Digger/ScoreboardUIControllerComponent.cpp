@@ -3,7 +3,8 @@
 #include "InputManager.h"
 #include "GameObject.h"
 #include <fstream>
-
+#include "PersistentPlayerStats.h"
+#include "SceneManager.h"
 
 
 dae::ScoreBoardUIControllerComponent::ScoreBoardUIControllerComponent()
@@ -68,11 +69,15 @@ void dae::ScoreBoardUIControllerComponent::SetNewScore(int score)
 		m_CurrentSection = Section::InitialsEntry;
 		m_CurrentLetterIndex = 0;
 		m_NumPlayersEntered = 0;
-		m_NumPlayersToEnter = 2;
 		m_ActiveScoreIndex = m_ScoreEntryIndicesToEdit[0];
 	}
 
 	UpdateScoreDisplay();
+}
+
+void dae::ScoreBoardUIControllerComponent::SetNumPlayersToEnter(int num)
+{
+	m_NumPlayersToEnter = std::clamp(num, 1, 2); // max 2 players currently
 }
 
 void dae::ScoreBoardUIControllerComponent::Update(float)
@@ -138,6 +143,9 @@ void dae::ScoreBoardUIControllerComponent::ConfirmSelection()
 				m_CurrentSection = Section::GameModeSelection;
 
 				SaveScores("highscores.txt");
+
+				dae::g_Player1Stats = {};
+				dae::g_Player2Stats = {};
 			}
 			else
 			{
@@ -158,6 +166,16 @@ void dae::ScoreBoardUIControllerComponent::ConfirmSelection()
 			UpdateScoreDisplay();
 			UpdateModeDisplay();
 
+		}
+	}
+	else if(m_CurrentSection == Section::GameModeSelection)
+	{
+		if (m_LoadModeCallback)
+		{
+			std::cout << "[DEBUG] perform reload on gamemode" << std::endl;
+			SceneManager::GetInstance().RequestReload([index = m_SelectedModeIndex, cb = m_LoadModeCallback]() {
+				cb(index); // Call the actual load function from main
+				});
 		}
 	}
 
@@ -210,6 +228,11 @@ void dae::ScoreBoardUIControllerComponent::LoadScores(const std::string& filenam
 		m_HighScores.push_back({ "---", 0 });
 
 	UpdateScoreDisplay();
+}
+
+void dae::ScoreBoardUIControllerComponent::SetLoadModeCallback(std::function<void(int)> callback)
+{
+	m_LoadModeCallback = std::move(callback);
 }
 
 void dae::ScoreBoardUIControllerComponent::UpdateScoreDisplay()

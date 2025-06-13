@@ -75,6 +75,7 @@ namespace dae
 				break;
 			case Section::GameModeSelection:
 				// Maybe call StartGame(m_pController->GetSelectedMode()) or similar later
+				m_pController->ConfirmSelection();
 				break;
 			}
 		}

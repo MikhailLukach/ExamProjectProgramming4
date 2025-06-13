@@ -182,3 +182,11 @@ bool dae::InputManager::IsInputEnabled(dae::GameObject* obj) const
 {
 	return m_DisabledObjects.find(obj) == m_DisabledObjects.end();
 }
+
+void dae::InputManager::ClearAllBindings()
+{
+	m_ControllerCommands.clear();
+	m_KeyboardCommands.clear();
+	m_PreviousKeyStates.clear();
+	m_DisabledObjects.clear();
+}

@@ -239,9 +239,6 @@
     <ClInclude Include="PersistentPlayerStats.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ScoreRecordSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ScoreboardUIControllerComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>

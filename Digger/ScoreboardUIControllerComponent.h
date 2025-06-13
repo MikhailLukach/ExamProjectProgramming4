@@ -3,6 +3,7 @@
 #include <vector>
 #include <memory>
 #include <string>
+#include <functional>
 
 namespace dae
 {
@@ -28,6 +29,8 @@ namespace dae
 		void SetModeTextObjects(const std::vector<std::shared_ptr<GameObject>>& modeObjects);
 		void SetNewScore(int score);
 
+		void SetNumPlayersToEnter(int num);
+
 		void Update(float deltaTime) override;
 
 		void MoveCursorUp();
@@ -44,6 +47,7 @@ namespace dae
 
 		Section GetCurrentSection() const { return m_CurrentSection; }
 
+		void SetLoadModeCallback(std::function<void(int)> callback);
 	private:
 		void UpdateScoreDisplay();
 		void UpdateModeDisplay();
@@ -65,6 +69,8 @@ namespace dae
 
 		int m_NumPlayersToEnter{ 1 };      // Set to 2 for versus/coop
 		int m_NumPlayersEntered{ 0 };
+
+		std::function<void(int)> m_LoadModeCallback;
 	};
 
 }

@@ -108,13 +108,14 @@ void dae::Minigin::Run(const std::function<void()>& load)
 
 		dae::TimeService::SetDeltaTime(deltaTime);
 
-		doContinue = input.ProcessInput();
-		sceneManager.Update(deltaTime);
-
 		if (sceneManager.HasPendingReload())
 		{
+			input.ClearAllBindings();
 			sceneManager.PerformReload();
 		}
+
+		doContinue = input.ProcessInput();
+		sceneManager.Update(deltaTime);
 
 		renderer.Render();
 

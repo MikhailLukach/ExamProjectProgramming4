@@ -64,6 +64,8 @@ void dae::LevelResetComponent::Notify(EventId event, GameObject*)
     {
         m_Waiting = true;
         m_Timer = kDelay;
+
+        m_TargetLevel = -1;
     }
 }
 

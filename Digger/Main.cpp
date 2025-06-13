@@ -251,6 +251,10 @@ void load()
 }
 */
 
+void LoadGame(int level);
+void LoadVersusGame(int level);
+void LoadCoopGame(int level);
+
 void LoadScoreBoard()
 {
 	auto& scene = dae::SceneManager::GetInstance().CreateScene("Scoreboard");
@@ -258,6 +262,25 @@ void LoadScoreBoard()
 	auto uiControllerGO = std::make_shared<dae::GameObject>();
 	auto scoreboardUI = uiControllerGO->AddComponent<dae::ScoreBoardUIControllerComponent>();
 	scene.Add(uiControllerGO);
+
+	scoreboardUI->SetLoadModeCallback([](int modeIndex)
+		{
+			switch (modeIndex)
+			{
+			case 0:
+				LoadGame(1);
+				break;
+			case 1:
+				LoadVersusGame(1);
+				break;
+			case 2:
+				LoadCoopGame(1);
+				break;
+			default:
+				std::cerr << "Unknown game mode index: " << modeIndex << '\n';
+				break;
+			}
+		});
 
 	std::vector<std::shared_ptr<dae::GameObject>> scoreTextObjects;
 	std::vector<std::shared_ptr<dae::TextComponent>> scoreTextComps;
@@ -302,6 +325,18 @@ void LoadScoreBoard()
 	input.BindCommandKeyboard(SDLK_a, dae::InputType::Down, std::make_unique<dae::MoveLetterLeftCommand>(scoreboardUI.get()));
 	input.BindCommandKeyboard(SDLK_d, dae::InputType::Down, std::make_unique<dae::MoveLetterRightCommand>(scoreboardUI.get()));
 	input.BindCommandKeyboard(SDLK_SPACE, dae::InputType::Down, std::make_unique<dae::ConfirmSelectionCommand>(scoreboardUI.get()));
+
+	if (dae::g_Player1Stats.Score > 0 && dae::g_Player2Stats.Score > 0)
+	{
+		scoreboardUI->SetNumPlayersToEnter(2);
+		scoreboardUI->SetNewScore(dae::g_Player1Stats.Score);
+		scoreboardUI->SetNewScore(dae::g_Player2Stats.Score);
+	}
+	else if(dae::g_Player1Stats.Score > 0)
+	{
+		scoreboardUI->SetNumPlayersToEnter(1);
+		scoreboardUI->SetNewScore(dae::g_Player1Stats.Score);
+	}
 }
 
 void LoadGame(int levelIndex = 1)
@@ -482,8 +517,11 @@ void LoadGame(int levelIndex = 1)
 	//-- Game Logic Setup
 	auto resetGO = std::make_shared<dae::GameObject>();
 	auto resetComp = resetGO->AddComponent<dae::LevelResetComponent>([](int levelIndex) {
-		LoadGame(levelIndex); // your global or static LoadGame
-		},false);
+		if (levelIndex == -1)
+			LoadScoreBoard();
+		else
+			LoadGame(levelIndex);
+		}, false);
 	lives->AddObserver(resetComp);
 	scene.Add(resetGO);
 	//--

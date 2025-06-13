@@ -37,6 +37,8 @@ namespace dae
 		void DisableInputFor(dae::GameObject* obj);
 		void EnableInputFor(dae::GameObject* obj);
 		bool IsInputEnabled(dae::GameObject* obj) const;
+
+		void ClearAllBindings();
 	private:
 		//std::vector<GameController> m_Controllers;
 		std::vector<std::unique_ptr<GameController>> m_Controllers;

@@ -5,17 +5,6 @@ void dae::LivesComponent::LoseLife()
 {
     if (--m_Lives <= -1)
     {
-        if (m_PlayerId == 1)
-        {
-            dae::g_Player1Stats.Lives = 3;
-            dae::g_Player1Stats.Score = 0;
-        }
-        else if (m_PlayerId == 2)
-        {
-            dae::g_Player2Stats.Lives = 3;
-            dae::g_Player2Stats.Score = 0;
-        }
-
         NotifyObservers(EventId::PLAYER_DIED, GetOwner());
     }
     else

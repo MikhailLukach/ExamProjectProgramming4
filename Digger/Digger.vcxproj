@@ -156,7 +156,6 @@
     <ClInclude Include="RotatorComponent.h" />
     <ClInclude Include="ScoreboardUIControllerComponent.h" />
     <ClInclude Include="ScoreComponent.h" />
-    <ClInclude Include="ScoreRecordSystem.h" />
     <ClInclude Include="SpriteAnimatorComponent.h" />
     <ClInclude Include="TileComponent.h" />
     <ClInclude Include="TileManagerComponent.h" />
