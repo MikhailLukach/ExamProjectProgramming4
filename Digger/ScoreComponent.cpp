@@ -1,9 +1,11 @@
 #include "ScoreComponent.h"
 #include "LivesComponent.h"
 #include "GameObject.h"
+#include "PersistentPlayerStats.h"
 
-dae::ScoreComponent::ScoreComponent(int score)
+dae::ScoreComponent::ScoreComponent(int score, int playerId)
 	:m_Score(score)
+	, m_Player_Id(playerId)
 {
 }
 
@@ -12,6 +14,11 @@ void dae::ScoreComponent::AddPoints(int points)
 	std::cout << "[DEBUG] Player gains points! Notifying observers...\n";
 	//int oldScore = m_Score;
 	m_Score += points;
+
+	if (m_Player_Id == 1)
+		dae::g_Player1Stats.Score = m_Score;
+	else if (m_Player_Id == 2)
+		dae::g_Player2Stats.Score = m_Score;
 	
 	// update HUD score text
 	NotifyObservers(EventId::PLAYER_ADDSCORE, GetOwner());
@@ -34,5 +41,21 @@ void dae::ScoreComponent::AddPoints(int points)
 
 int dae::ScoreComponent::GetScore() const
 {
+	if (m_Player_Id == 1)
+	{
+		std::cout << "[DEBUG] GetScore called. Player " << m_Player_Id << " has score " << m_Score << " (stored: "
+			<< (m_Player_Id == 1 ? dae::g_Player1Stats.Score : dae::g_Player2Stats.Score) << ")\n";
+		return dae::g_Player1Stats.Score;
+	}
+	else if (m_Player_Id == 2)
+	{
+		std::cout << "[DEBUG] GetScore called. Player " << m_Player_Id << " has score " << m_Score << " (stored: "
+			<< (m_Player_Id == 1 ? dae::g_Player1Stats.Score : dae::g_Player2Stats.Score) << ")\n";
+		return dae::g_Player2Stats.Score;
+	}
+
+	std::cout << "[DEBUG] GetScore called. Player " << m_Player_Id << " has score " << m_Score << " (stored: "
+		<< (m_Player_Id == 1 ? dae::g_Player1Stats.Score : dae::g_Player2Stats.Score) << ")\n";
+
 	return m_Score;
 }

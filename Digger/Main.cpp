@@ -48,6 +48,7 @@
 #include "SDLSoundSystem.h"
 #include "GameObjectFactory.h"
 #include "VersusDamageComponent.h"
+#include "PersistentPlayerStats.h"
 
 //exercise Game Scene
 /*
@@ -299,8 +300,8 @@ void LoadGame(int levelIndex = 1)
 	spawnPos -= glm::vec3{ 0, 16, 0 };
 	player->GetTransform()->SetPosition(spawnPos);
 
-	auto score = player->AddComponent<dae::ScoreComponent>(0);
-	auto lives = player->AddComponent<dae::LivesComponent>(3);
+	auto score = player->AddComponent<dae::ScoreComponent>(dae::g_Player1Stats.Score,1);
+	auto lives = player->AddComponent<dae::LivesComponent>(dae::g_Player1Stats.Lives,1);
 
 	auto render = player->AddComponent<dae::RenderComponent>("CharacterSpriteSheetFilledBackground.png");
 	render->SetSize(32, 32);
@@ -367,7 +368,7 @@ void LoadGame(int levelIndex = 1)
 	//-- Enemies Setup
 	auto spawner = std::make_shared<dae::GameObject>();
 	auto spawnerComp = spawner->AddComponent<dae::NobbinSpawnerComponent>(&scene, levelManager.get(), &loader, tileManager.get(),
-		14, 0, 5.f, 0);
+		14, 0, 5.f, 3);
 
 	lives->AddObserver(spawnerComp);
 
@@ -435,8 +436,7 @@ void LoadGame(int levelIndex = 1)
 	auto resetGO = std::make_shared<dae::GameObject>();
 	auto resetComp = resetGO->AddComponent<dae::LevelResetComponent>([](int levelIndex) {
 		LoadGame(levelIndex); // your global or static LoadGame
-		},
-		/* isCoop = */ false);
+		},false);
 	lives->AddObserver(resetComp);
 	scene.Add(resetGO);
 	//--
@@ -484,8 +484,8 @@ void LoadCoopGame(int levelIndex = 1)
 	spawnPos1 -= glm::vec3{ 0, 16, 0 };
 	player1->GetTransform()->SetPosition(spawnPos1);
 
-	auto score1 = player1->AddComponent<dae::ScoreComponent>(0);
-	auto lives1 = player1->AddComponent<dae::LivesComponent>(3);
+	auto score1 = player1->AddComponent<dae::ScoreComponent>(dae::g_Player1Stats.Score,1);
+	auto lives1 = player1->AddComponent<dae::LivesComponent>(dae::g_Player2Stats.Lives,1);
 
 	auto rend1 = player1->AddComponent<dae::RenderComponent>("CharacterSpriteSheetFilledBackground.png");
 	rend1->SetSize(32, 32);
@@ -542,8 +542,8 @@ void LoadCoopGame(int levelIndex = 1)
 	spawnPos2 -= glm::vec3{ 0, 16, 0 };
 	player2->GetTransform()->SetPosition(spawnPos2);
 
-	auto score2 = player2->AddComponent<dae::ScoreComponent>(0);
-	auto lives2 = player2->AddComponent<dae::LivesComponent>(3);
+	auto score2 = player2->AddComponent<dae::ScoreComponent>(dae::g_Player2Stats.Score,2);
+	auto lives2 = player2->AddComponent<dae::LivesComponent>(dae::g_Player2Stats.Lives,2);
 
 	auto rend2 = player2->AddComponent<dae::RenderComponent>("CharacterSpriteSheetFilledBackground.png");
 	rend2->SetSize(32, 32);
@@ -661,8 +661,7 @@ void LoadCoopGame(int levelIndex = 1)
 	auto resetGO = std::make_shared<dae::GameObject>();
 	auto resetComp = resetGO->AddComponent<dae::LevelResetComponent>([](int levelIndex) {
 		LoadCoopGame(levelIndex); // your global or static LoadGame
-		},
-		/* isCoop = */ false);
+		},true);
 	lives1->AddObserver(resetComp);
 	lives2->AddObserver(resetComp);
 	scene.Add(resetGO);
@@ -701,8 +700,8 @@ void LoadVersusGame(int levelIndex = 1)
 	spawnPos -= glm::vec3{ 0, 16, 0 };
 	player->GetTransform()->SetPosition(spawnPos);
 
-	auto score = player->AddComponent<dae::ScoreComponent>(0);
-	auto lives = player->AddComponent<dae::LivesComponent>(3);
+	auto score = player->AddComponent<dae::ScoreComponent>(dae::g_Player1Stats.Score,1);
+	auto lives = player->AddComponent<dae::LivesComponent>(dae::g_Player1Stats.Lives,1);
 
 	auto render = player->AddComponent<dae::RenderComponent>("CharacterSpriteSheetFilledBackground.png");
 	render->SetSize(32, 32);
@@ -851,8 +850,7 @@ void LoadVersusGame(int levelIndex = 1)
 	auto resetGO = std::make_shared<dae::GameObject>();
 	auto resetComp = resetGO->AddComponent<dae::LevelResetComponent>([](int levelIndex) {
 		LoadVersusGame(levelIndex); // your global or static LoadGame
-		},
-		/* isCoop = */ false);
+		},false);
 	lives->AddObserver(resetComp);
 	scene.Add(resetGO);
 	//--
@@ -868,7 +866,7 @@ int main(int, char* [])
 	dae::SoundServiceLocator::Provide(soundSystem);
 	//engine.Run(load);
 	engine.Run([] {
-		LoadVersusGame(1); // start with Level 1
+		LoadGame(1); // start with Level 1
 		});
 	return 0;
 }

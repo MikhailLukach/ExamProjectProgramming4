@@ -148,6 +148,7 @@
     <ClInclude Include="NobbinControllerComponent.h" />
     <ClInclude Include="NobbinSpawnerComponent.h" />
     <ClInclude Include="NobbinState.h" />
+    <ClInclude Include="PersistentPlayerStats.h" />
     <ClInclude Include="PlayerDebugComponent.h" />
     <ClInclude Include="PlayerRespawnComponent.h" />
     <ClInclude Include="RotatorComponent.h" />

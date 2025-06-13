@@ -8,6 +8,10 @@
 dae::HUDDisplay::HUDDisplay(TextComponent* scoreText, ScoreComponent* score)
     : m_pScoreTextComponent(scoreText), m_pScoreComponent(score)
 {
+    std::ostringstream ss;
+    ss << std::setfill('0') << std::setw(5) << m_pScoreComponent->GetScore();
+
+    m_pScoreTextComponent->SetText(ss.str());
 }
 
 void dae::HUDDisplay::Notify(EventId event, GameObject* gameObject)

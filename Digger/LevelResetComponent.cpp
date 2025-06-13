@@ -1,6 +1,9 @@
 #include "LevelResetComponent.h"
 #include "SceneManager.h"
 #include "Scene.h"
+#include "LivesComponent.h"
+#include "ScoreComponent.h"
+#include "PersistentPlayerStats.h"
 
 
 
@@ -18,6 +21,30 @@ void dae::LevelResetComponent::Update(float deltaTime)
     if (m_Timer > 0.0f) return;
 
     m_Waiting = false;
+
+    auto* scene = dae::SceneManager::GetInstance().GetCurrentScene();
+    if (scene)
+    {
+        // Player 1
+        auto player1 = scene->FindObjectWithComponent<LivesComponent>();
+        if (auto lives = player1 ? player1->GetComponent<LivesComponent>() : nullptr)
+            dae::g_Player1Stats.Lives = lives->GetLives();
+
+        auto scoreObj1 = scene->FindObjectWithComponent<ScoreComponent>();
+        if (auto score = scoreObj1 ? scoreObj1->GetComponent<ScoreComponent>() : nullptr)
+            dae::g_Player1Stats.Score = score->GetScore();
+
+        // Player 2
+        auto allPlayers = scene->FindObjectsWithComponent<LivesComponent>();
+        if (allPlayers.size() > 1)
+        {
+            if (auto lives = allPlayers[1]->GetComponent<LivesComponent>())
+                dae::g_Player2Stats.Lives = lives->GetLives();
+
+            if (auto score = allPlayers[1]->GetComponent<ScoreComponent>())
+                dae::g_Player2Stats.Score = score->GetScore();
+        }
+    }
 
     SceneManager::GetInstance().RequestReload([target = m_TargetLevel, func = m_ReloadFunc]() {
         func(target);

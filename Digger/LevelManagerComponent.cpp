@@ -5,6 +5,7 @@
 #include "Scene.h"
 #include "GemComponent.h"
 #include "LevelResetComponent.h"
+#include "NobbinControllerComponent.h"
 
 dae::LevelManagerComponent::LevelManagerComponent(int levelIndex)
     :m_CurrentLevelIndex(levelIndex)
@@ -76,10 +77,19 @@ void dae::LevelManagerComponent::Update(float deltaTime)
     auto gems = scene->FindObjectsWithComponent<GemComponent>();
     const int remainingGems = static_cast<int>(gems.size());
 
-    std::cout << "[LevelManagerComponent] Remaining gems: " << remainingGems << std::endl;
+    //std::cout << "[LevelManagerComponent] Remaining gems: " << remainingGems << std::endl;
 
     if (remainingGems == 0)
     {
+        auto nobbins = scene->FindObjectsWithComponent<NobbinControllerComponent>();
+        for (const auto& obj : nobbins)
+        {
+            if (auto ctrl = obj->GetComponent<NobbinControllerComponent>())
+            {
+                ctrl->SetSpeed(0.f);
+            }
+        }
+
         ++m_CurrentLevelIndex;
         char buf[64];
         std::snprintf(buf, sizeof(buf), m_LevelFilePattern.c_str(), m_CurrentLevelIndex);
