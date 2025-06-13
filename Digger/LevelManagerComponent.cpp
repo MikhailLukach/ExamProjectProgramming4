@@ -1,6 +1,9 @@
 #include "LevelManagerComponent.h"
 #include "TileTrackerComponent.h"
 #include "GameObject.h"
+#include "SceneManager.h"
+#include "Scene.h"
+#include "GemComponent.h"
 
 void dae::LevelManagerComponent::RegisterMoneyBag(std::shared_ptr<GameObject> moneyBag)
 {
@@ -59,5 +62,26 @@ void dae::LevelManagerComponent::Update(float deltaTime)
 
         glm::ivec2 tile = tracker->GetTileCoords();
         //std::cout << "[LevelManager] MoneyBag at tile: (" << tile.x << ", " << tile.y << ")\n";
+    }
+
+    auto* scene = dae::SceneManager::GetInstance().GetCurrentScene();
+    if (!scene || m_LoadedNextLevel) return;
+
+    auto gems = scene->FindObjectsWithComponent<GemComponent>();
+    const int remainingGems = static_cast<int>(gems.size());
+
+    std::cout << "[LevelManagerComponent] Remaining gems: " << remainingGems << std::endl;
+
+    if (remainingGems == 0)
+    {
+        ++m_CurrentLevelIndex;
+        char buf[64];
+        std::snprintf(buf, sizeof(buf), m_LevelFilePattern.c_str(), m_CurrentLevelIndex);
+
+        m_LoadedNextLevel = true;
+
+        std::cout << "[LevelManager] Loaded next level: " << buf << "\n";
+
+        // m_pLoader->LoadLevelBinary(buf, ...);
     }
 }

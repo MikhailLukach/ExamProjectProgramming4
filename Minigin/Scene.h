@@ -1,5 +1,6 @@
 #pragma once
 #include "SceneManager.h"
+#include "GameObject.h"
 
 namespace dae
 {
@@ -17,6 +18,12 @@ namespace dae
 
 		void RemoveDeletedObjects();
 
+		template <typename T>
+		std::shared_ptr<GameObject> FindObjectWithComponent() const;
+
+		template <typename T>
+		std::vector<std::shared_ptr<GameObject>> FindObjectsWithComponent() const;
+
 		~Scene();
 		Scene(const Scene& other) = delete;
 		Scene(Scene&& other) = delete;
@@ -33,5 +40,28 @@ namespace dae
 
 		static unsigned int m_idCounter; 
 	};
+
+	template<typename T>
+	inline std::shared_ptr<GameObject> Scene::FindObjectWithComponent() const
+	{
+		for (const auto& obj : m_objects)
+		{
+			if (obj && obj->GetComponent<T>() != nullptr)
+				return obj;
+		}
+		return nullptr;
+	}
+
+	template<typename T>
+	inline std::vector<std::shared_ptr<GameObject>> Scene::FindObjectsWithComponent() const
+	{
+		std::vector<std::shared_ptr<dae::GameObject>> results;
+		for (const auto& obj : m_objects)
+		{
+			if (obj && obj->GetComponent<T>() != nullptr)
+				results.push_back(obj);
+		}
+		return results;
+	}
 
 }

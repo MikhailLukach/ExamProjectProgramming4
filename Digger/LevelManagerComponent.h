@@ -47,6 +47,10 @@ namespace dae
 		std::vector<std::shared_ptr<GameObject>> m_MoneyBags;
 		std::vector<std::shared_ptr<GameObject>> m_Nobbins;
 		std::vector<GameObject*> m_Players;
+
+		int m_CurrentLevelIndex{ 1 };
+		std::string m_LevelFilePattern{ "Level%d.lvl" };
+		bool m_LoadedNextLevel{ false };
 	};
 }
 

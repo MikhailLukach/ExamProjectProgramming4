@@ -67,7 +67,7 @@ void dae::NobbinSpawnerComponent::Update(float deltaTime)
             ++currentCount;
         }
     }
-    std::cout << "[NobbinSpawner] current count: " << currentCount << std::endl;
+    //std::cout << "[NobbinSpawner] current count: " << currentCount << std::endl;
 }
 
 void dae::NobbinSpawnerComponent::Notify(EventId event, GameObject*)

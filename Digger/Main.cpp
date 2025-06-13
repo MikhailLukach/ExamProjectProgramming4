@@ -247,6 +247,14 @@ void load()
 }
 */
 
+void LoadScoreBoard()
+{
+	//-- Initial Game Setup
+	//auto& scene = dae::SceneManager::GetInstance().CreateScene("Scoreboard");
+
+	//auto& input = dae::InputManager::GetInstance();
+	//--
+}
 
 void LoadGame()
 {
@@ -259,6 +267,8 @@ void LoadGame()
 	//--
 
 	//-- Level Setup
+
+	dae::LevelLoader loader;
 	auto tileManagerObj = std::make_shared<dae::GameObject>();
 	auto tileManager = tileManagerObj->AddComponent<dae::TileManagerComponent>();
 
@@ -266,7 +276,6 @@ void LoadGame()
 	auto levelManager = levelManagerObj->AddComponent<dae::LevelManagerComponent>();
 	scene.Add(levelManagerObj);
 
-	dae::LevelLoader loader;
 	std::vector<std::vector<std::shared_ptr<dae::GameObject>>> tileGrid;
 	loader.LoadLevelBinary("Level1.lvl",
 		scene,
@@ -353,8 +362,8 @@ void LoadGame()
 
 	//-- Enemies Setup
 	auto spawner = std::make_shared<dae::GameObject>();
-	auto spawnerComp = spawner->AddComponent<dae::NobbinSpawnerComponent>(
-		&scene, levelManager.get(), &loader, tileManager.get(), 14, 0, 5.f, 3);
+	auto spawnerComp = spawner->AddComponent<dae::NobbinSpawnerComponent>(&scene, levelManager.get(), &loader, tileManager.get(),
+		14, 0, 5.f, 0);
 
 	lives->AddObserver(spawnerComp);
 
@@ -434,7 +443,8 @@ void LoadCoopGame()
 	auto& input = dae::InputManager::GetInstance();
 	//-- 
 
-	//-- Level Setup 
+	//-- Level Setup
+	dae::LevelLoader loader;
 	auto tileManagerObj = std::make_shared<dae::GameObject>();
 	auto tileManager = tileManagerObj->AddComponent<dae::TileManagerComponent>();
 
@@ -442,7 +452,6 @@ void LoadCoopGame()
 	auto levelManager = levelManagerObj->AddComponent<dae::LevelManagerComponent>();
 	scene.Add(levelManagerObj);
 
-	dae::LevelLoader loader;
 	std::vector<std::vector<std::shared_ptr<dae::GameObject>>> tileGrid;
 	loader.LoadLevelBinary("Level1.lvl",
 		scene,
@@ -651,7 +660,8 @@ void LoadVersusGame()
 	const float playerSpeed = 2.f;
 	auto& input = dae::InputManager::GetInstance();
 
-	//-- Level setup 
+	//-- Level setup
+	dae::LevelLoader loader;
 	auto tileManagerObj = std::make_shared<dae::GameObject>();
 	auto tileManager = tileManagerObj->AddComponent<dae::TileManagerComponent>();
 	scene.Add(tileManagerObj);
@@ -660,7 +670,6 @@ void LoadVersusGame()
 	auto levelManager = levelManagerObj->AddComponent<dae::LevelManagerComponent>();
 	scene.Add(levelManagerObj);
 
-	dae::LevelLoader loader;
 	std::vector<std::vector<std::shared_ptr<dae::GameObject>>> tileGrid;
 	loader.LoadLevelBinary("Level1.lvl", scene, tileGrid, levelManager.get(), tileManager.get());
 	tileManager->InitWithTileGrid(std::move(tileGrid));
@@ -811,7 +820,7 @@ void LoadVersusGame()
 	//-- Other Nobbin spawn
 	auto spawner = std::make_shared<dae::GameObject>();
 	auto spawnerComp = spawner->AddComponent<dae::NobbinSpawnerComponent>(
-		&scene, levelManager.get(), &loader, tileManager.get(), 14, 0, 5.f, 0);
+		&scene, levelManager.get(), &loader, tileManager.get(), 14, 0, 5.f, 2);
 
 	lives->AddObserver(spawnerComp);
 
@@ -835,7 +844,7 @@ int main(int, char* [])
 
 	dae::SoundServiceLocator::Provide(soundSystem);
 	//engine.Run(load);
-	engine.Run(LoadVersusGame);
+	engine.Run(LoadGame);
 	return 0;
 }
 
