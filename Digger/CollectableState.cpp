@@ -6,6 +6,8 @@
 #include "SpriteAnimatorComponent.h"
 #include "MoneyBagComponent.h"
 #include "ScoreComponent.h"
+#include <CollisionHelper.h>
+#include <SoundServiceLocator.h>
 
 void dae::CollectableState::OnEnter(MoneyBagComponent& bag)
 {
@@ -34,54 +36,30 @@ void dae::CollectableState::OnEnter(MoneyBagComponent& bag)
 std::unique_ptr<dae::MoneyBagState> dae::CollectableState::Update(MoneyBagComponent& bag, float deltaTime)
 {
 	(void)deltaTime;
+	auto* bagObj = bag.GetOwner();
+	if (!bagObj) return nullptr;
 
-	auto bagObj = bag.GetOwner();
-	auto bagTransform = bagObj->GetTransform();
 	auto bagRender = bagObj->GetComponent<RenderComponent>();
-
 	if (!bagRender) return nullptr;
 
-	glm::vec3 bagPos = bagTransform->GetWorldPosition();
-	float bagWidth = 32.f;  // consistent with SetSize in OnEnter
-	float bagHeight = 32.f;
-
-	// Simple AABB for the bag
-	SDL_Rect bagRect{
-		static_cast<int>(bagPos.x),
-		static_cast<int>(bagPos.y),
-		static_cast<int>(bagWidth),
-		static_cast<int>(bagHeight)
-	};
-
-	// Look through all GameObjects in the scene
-	auto* scene = dae::SceneManager::GetInstance().GetCurrentScene(); // optionally add a getter
-
+	auto* scene = dae::SceneManager::GetInstance().GetCurrentScene();
 	if (!scene) return nullptr;
 
-	for (auto& obj : scene->GetObjects()) // you may need to expose GetObjects()
+	for (const auto& obj : scene->GetObjects())
 	{
-		if (obj.get() == bagObj) continue;
+		if (!obj || obj.get() == bagObj) continue;
 
 		auto scoreComp = obj->GetComponent<ScoreComponent>();
-		if (!scoreComp) continue; // Not a player
+		if (!scoreComp) continue;
 
-		auto playerTransform = obj->GetTransform();
-		glm::vec3 playerPos = playerTransform->GetWorldPosition();
+		if (!obj->GetComponent<RenderComponent>()) continue;
 
-		// Assuming player has similar size
-		SDL_Rect playerRect{
-			static_cast<int>(playerPos.x),
-			static_cast<int>(playerPos.y),
-			32, 32
-		};
-
-		// AABB collision
-		bool isOverlapping = SDL_HasIntersection(&bagRect, &playerRect);
-		if (isOverlapping)
+		if (CheckRenderComponentCollision(bagObj, obj.get()))
 		{
-			//std::cout << "[CollectableState] Player overlapped with collectable!\n";
 			scoreComp->AddPoints(500);
-			bag.GetOwner()->MarkForDeletion();
+			dae::SoundServiceLocator::Get().PlaySound(dae::ResourceManager::GetInstance().GetFullPath("ItemCollected.wav"));
+			bagObj->MarkForDeletion();
+			break;
 		}
 	}
 
