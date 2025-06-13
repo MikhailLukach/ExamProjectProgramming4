@@ -19,6 +19,7 @@ namespace dae
 
 		void PlaySound(const std::string& soundFile) override;
 		void PlayMusic(const std::string& musicFile, int loops = -1) override;
+		void StopMusic() override;
 
 	private:
 		void ProcessQueue();

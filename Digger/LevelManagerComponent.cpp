@@ -6,6 +6,7 @@
 #include "GemComponent.h"
 #include "LevelResetComponent.h"
 #include "NobbinControllerComponent.h"
+#include <SoundServiceLocator.h>
 
 dae::LevelManagerComponent::LevelManagerComponent(int levelIndex)
     :m_CurrentLevelIndex(levelIndex)
@@ -89,6 +90,8 @@ void dae::LevelManagerComponent::Update(float deltaTime)
                 ctrl->SetSpeed(0.f);
             }
         }
+
+        dae::SoundServiceLocator::Get().PlaySound(dae::ResourceManager::GetInstance().GetFullPath("LevelComplete.wav"));
 
         ++m_CurrentLevelIndex;
         char buf[64];

@@ -16,5 +16,10 @@ namespace dae
 		{
 			std::cout << "[NullSoundSystem] Would play music: " << musicFile << " looping: " << loops << "\n";
 		}
+
+		void StopMusic() override
+		{
+			std::cout << "[NullSoundSystem] Would stop music " << "\n";
+		}
 	};
 }

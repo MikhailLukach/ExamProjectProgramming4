@@ -62,6 +62,11 @@ void dae::SDLSoundSystem::PlayMusic(const std::string& musicFile, int loops)
 	}
 }
 
+void dae::SDLSoundSystem::StopMusic()
+{
+	Mix_HaltMusic();
+}
+
 
 void dae::SDLSoundSystem::ProcessQueue()
 {

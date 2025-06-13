@@ -5,6 +5,7 @@
 #include <fstream>
 #include "PersistentPlayerStats.h"
 #include "SceneManager.h"
+#include <SoundServiceLocator.h>
 
 
 dae::ScoreBoardUIControllerComponent::ScoreBoardUIControllerComponent()
@@ -173,6 +174,7 @@ void dae::ScoreBoardUIControllerComponent::ConfirmSelection()
 		if (m_LoadModeCallback)
 		{
 			std::cout << "[DEBUG] perform reload on gamemode" << std::endl;
+			dae::SoundServiceLocator::Get().StopMusic();
 			SceneManager::GetInstance().RequestReload([index = m_SelectedModeIndex, cb = m_LoadModeCallback]() {
 				cb(index); // Call the actual load function from main
 				});

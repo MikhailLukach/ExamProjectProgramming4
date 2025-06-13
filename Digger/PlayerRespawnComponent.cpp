@@ -2,6 +2,7 @@
 #include "LevelManagerComponent.h"
 #include "GameObject.h"
 #include "InputManager.h"
+#include <SoundServiceLocator.h>
 
 
 
@@ -57,5 +58,6 @@ void dae::PlayerRespawnComponent::Update(float deltaTime)
 			render->SetVisible(true);
 
 		dae::InputManager::GetInstance().EnableInputFor(obj);
+		dae::SoundServiceLocator::Get().PlayMusic(dae::ResourceManager::GetInstance().GetFullPath("02LevelBGMLoopable.wav"), -1);
 	}
 }

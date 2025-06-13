@@ -337,6 +337,10 @@ void LoadScoreBoard()
 		scoreboardUI->SetNumPlayersToEnter(1);
 		scoreboardUI->SetNewScore(dae::g_Player1Stats.Score);
 	}
+
+	//-- Music Setup
+	dae::SoundServiceLocator::Get().PlayMusic(dae::ResourceManager::GetInstance().GetFullPath("CreditEntry.wav"), -1);
+	//-- 
 }
 
 void LoadGame(int levelIndex = 1)
@@ -954,10 +958,10 @@ int main(int, char* [])
 	auto soundSystem = new dae::SDLSoundSystem();
 
 	dae::SoundServiceLocator::Provide(soundSystem);
-	//engine.Run(LoadScoreBoard);
-	engine.Run([] {
+	engine.Run(LoadScoreBoard);
+	/*engine.Run([] {
 		LoadGame(1); // start with Level 1
-		});
+		});*/
 	return 0;
 }
 
