@@ -5,6 +5,7 @@
 #include "Scene.h"
 #include "GemComponent.h"
 #include "LevelResetComponent.h"
+#include "MoneyBagComponent.h"
 #include "NobbinControllerComponent.h"
 #include <SoundServiceLocator.h>
 
@@ -28,15 +29,18 @@ void dae::LevelManagerComponent::RegisterNobbin(std::shared_ptr<GameObject> nobb
 
 std::shared_ptr<dae::GameObject> dae::LevelManagerComponent::GetMoneyBagAt(int col, int row) const
 {
-    for (const auto& bag : m_MoneyBags)
+    auto* scene = dae::SceneManager::GetInstance().GetCurrentScene();
+    if (!scene) return nullptr;
+
+    const auto& bags = scene->FindObjectsWithComponent<MoneyBagComponent>();
+    for (const auto& bag : bags)
     {
         if (!bag) continue;
 
         auto tracker = bag->GetComponent<TileTrackerComponent>();
-
         if (!tracker) continue;
 
-        glm::ivec2 tile = tracker->GetTileCoords();
+        const glm::ivec2 tile = tracker->GetTileCoords();
         if (tile.x == col && tile.y == row)
             return bag;
     }

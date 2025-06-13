@@ -10,6 +10,7 @@
 #include "SoundServiceLocator.h"
 #include "ISoundSystem.h"
 #include "GridSettings.h"
+#include <CollisionHelper.h>
 
 namespace dae
 {
@@ -588,60 +589,36 @@ namespace dae
 
             if (m_CanDig)
             {
-                SDL_Rect nobbinRect{
-                    static_cast<int>(pos.x),
-                    static_cast<int>(pos.y),
-                    32, 32
-                };
-
                 auto* scene = dae::SceneManager::GetInstance().GetCurrentScene();
-                if (scene)
+                if (!scene) return;
+
+                auto* owner = m_Character;
+                if (!owner) return;
+
+                for (const auto& obj : scene->GetObjects())
                 {
-                    for (auto& obj : scene->GetObjects())
+                    if (!obj || obj.get() == owner) continue;
+
+                    // Gem logic
+                    if (auto gem = obj->GetComponent<dae::GemComponent>())
                     {
-                        if (obj.get() == m_Character) continue;
-
-                        auto gem = obj->GetComponent<dae::GemComponent>();
-                        if (gem)
+                        if (dae::CheckRenderComponentCollision(owner, obj.get()))
                         {
-                            auto objTransform = obj->GetTransform();
-                            glm::vec3 objPos = objTransform->GetWorldPosition();
-
-                            SDL_Rect objRect{
-                                static_cast<int>(objPos.x),
-                                static_cast<int>(objPos.y),
-                                16, 16
-                            };
-
-                            if (SDL_HasIntersection(&nobbinRect, &objRect))
-                            {
-                                std::cout << "[ChasingAndDiggingState] Destroyed Gem!\n";
-                                obj->MarkForDeletion();
-                            }
-
-                            continue; // don't try to also treat gem as moneybag
+                            std::cout << "[ChasingAndDiggingState] Destroyed Gem!\n";
+                            obj->MarkForDeletion();
                         }
+                        continue; // don't treat gem as moneybag
+                    }
 
-                        // Check for MoneyBag next
-                        auto moneyBag = obj->GetComponent<dae::MoneyBagComponent>();
-                        if (moneyBag)
+                    // MoneyBag logic
+                    if (auto moneyBag = obj->GetComponent<dae::MoneyBagComponent>())
+                    {
+                        if (!moneyBag->IsFalling()) // Ensure only grounded bags
                         {
-                            // Check state: must not be FallingState
-                            if (!moneyBag->IsFalling()) // You'll need this helper
+                            if (dae::CheckRenderComponentCollision(owner, obj.get()))
                             {
-                                auto objTransform = obj->GetTransform();
-                                glm::vec3 objPos = objTransform->GetWorldPosition();
-
-                                SDL_Rect objRect{
-                                    static_cast<int>(objPos.x),
-                                    static_cast<int>(objPos.y),
-                                    16, 16
-                                };
-
-                                if (SDL_HasIntersection(&nobbinRect, &objRect))
-                                {
-                                    obj->MarkForDeletion();
-                                }
+                                std::cout << "[ChasingAndDiggingState] Destroyed MoneyBag!\n";
+                                obj->MarkForDeletion();
                             }
                         }
                     }

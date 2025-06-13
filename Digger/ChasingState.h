@@ -14,7 +14,7 @@ namespace dae
 		const char* GetID() const override { return "Chasing"; }
 	private:
 		float m_AngerTimer = 0.f;
-		const float m_AngerThreshold = 60.f;
+		const float m_AngerThreshold = 30.f;
 	};
 }
 

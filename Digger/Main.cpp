@@ -734,7 +734,7 @@ void LoadCoopGame(int levelIndex = 1)
 	//-- Enemies Setup
 	auto spawner = std::make_shared<dae::GameObject>();
 	auto spawnerComp = spawner->AddComponent<dae::NobbinSpawnerComponent>(
-		&scene, levelManager.get(), &loader, tileManager.get(), 14, 0, 5.f, 0);
+		&scene, levelManager.get(), &loader, tileManager.get(), 14, 0, 5.f, 3);
 
 	lives1->AddObserver(spawnerComp);
 	lives2->AddObserver(spawnerComp);
@@ -904,7 +904,7 @@ void LoadVersusGame(int levelIndex = 1)
 
 	nobbinPlayer->AddComponent<dae::VersusDamageComponent>(levelManager.get(), nPSpawnPos, 5.f);
 
-	nobbinPlayer->AddComponent<dae::DigUnlockComponent>(60.f, 15.f);
+	nobbinPlayer->AddComponent<dae::DigUnlockComponent>(30.f, 15.f);
 
 	scene.Add(nobbinPlayer);
 	//levelManager->RegisterPlayer(player.get());
@@ -929,7 +929,7 @@ void LoadVersusGame(int levelIndex = 1)
 	//-- Other Nobbin spawn
 	auto spawner = std::make_shared<dae::GameObject>();
 	auto spawnerComp = spawner->AddComponent<dae::NobbinSpawnerComponent>(
-		&scene, levelManager.get(), &loader, tileManager.get(), 14, 0, 5.f, 0);
+		&scene, levelManager.get(), &loader, tileManager.get(), 14, 0, 5.f, 2);
 
 	lives->AddObserver(spawnerComp);
 
