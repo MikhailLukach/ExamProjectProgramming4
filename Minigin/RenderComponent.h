@@ -23,6 +23,10 @@ namespace dae
 
 		void SetVisible(bool visible) { m_IsVisible = visible; }
 		bool IsVisible() const { return m_IsVisible; }
+
+		glm::vec2 GetRenderOffset() const { return m_RenderOffset; }
+		float GetWidth() const { return m_Width; }
+		float GetHeight() const { return m_Height; }
 	private:
 		std::shared_ptr<Texture2D> m_texture;
 

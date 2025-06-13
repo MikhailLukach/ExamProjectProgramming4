@@ -23,6 +23,7 @@
 #include <algorithm>
 #include <glm.hpp>
 #include <memory>
+#include <CollisionHelper.h>
 
 dae::NobbinControllerComponent::NobbinControllerComponent(TileManagerComponent* tileManager, 
 	LevelManagerComponent* levelManager, LevelLoader* levelLoader, float decisionInterval, float speed)
@@ -82,21 +83,15 @@ void dae::NobbinControllerComponent::Update(float deltaTime)
 	auto* scene = dae::SceneManager::GetInstance().GetCurrentScene();
 	if (!m_HasHitPlayer && scene)
 	{
-		for (auto& obj : scene->GetObjects())
+		const auto& players = scene->FindObjectsWithComponent<dae::LivesComponent>();
+		for (const auto& player : players)
 		{
-			if (!obj || obj.get() == GetOwner()) continue;
+			if (!player || player.get() == GetOwner()) continue;
 
-			auto lives = obj->GetComponent<dae::LivesComponent>();
-			if (!lives) continue;
-
-			auto playerPos = obj->GetTransform()->GetWorldPosition();
-
-			float overlapThreshold = 16.0f;
-			if (abs(nobbinBounds.x - playerPos.x) < overlapThreshold &&
-				abs(nobbinBounds.y - playerPos.y) < overlapThreshold)
+			if (CheckRenderComponentCollision(player.get(), GetOwner()))
 			{
 				std::cout << "[Nobbin] Player hit!\n";
-				lives->LoseLife();
+				player->GetComponent<dae::LivesComponent>()->LoseLife();
 				m_HasHitPlayer = true;
 				break;
 			}

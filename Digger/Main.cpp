@@ -950,9 +950,9 @@ int main(int, char* [])
 
 	dae::SoundServiceLocator::Provide(soundSystem);
 	engine.Run(LoadScoreBoard);
-	/*engine.Run([] {
+	engine.Run([] {
 		LoadGame(1); // start with Level 1
-		});*/
+		});
 	return 0;
 }
 
