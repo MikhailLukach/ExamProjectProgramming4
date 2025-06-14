@@ -67,6 +67,20 @@ void dae::SDLSoundSystem::StopMusic()
 	Mix_HaltMusic();
 }
 
+void dae::SDLSoundSystem::SetMuted(bool mute)
+{
+	if (mute)
+	{
+		Mix_Volume(-1, 0);
+		Mix_VolumeMusic(0);
+	}
+	else
+	{
+		Mix_Volume(-1, MIX_MAX_VOLUME);
+		Mix_VolumeMusic(MIX_MAX_VOLUME);
+	}
+}
+
 
 void dae::SDLSoundSystem::ProcessQueue()
 {

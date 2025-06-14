@@ -10,5 +10,6 @@ namespace dae
 		virtual void PlayMusic(const std::string& musicFile, int loops = -1) = 0;
 		virtual void PlaySound(const std::string& soundFile) = 0;
 		virtual void StopMusic() = 0;
+		virtual void SetMuted(bool mute) = 0;
 	};
 }

@@ -383,21 +383,38 @@ namespace dae
         int m_Points;
     };
 
-    class PlaySoundCommand : public Command
+    class SkipLevelCommand : public Command
     {
     public:
-        explicit PlaySoundCommand(const std::string& soundFilePath)
-            : m_SoundFile(soundFilePath) {}
+        explicit SkipLevelCommand(LevelManagerComponent* levelManager)
+            : m_pLevelManager(levelManager) {
+        }
 
         void Execute() override
         {
-            ISoundSystem& soundSystem = SoundServiceLocator::Get();
-            std::cout << "Trying to play sound" << std::endl;
-            soundSystem.PlaySound(m_SoundFile);
+            if (m_pLevelManager)
+            {
+                m_pLevelManager->LoadNextLevelOrScoreboard(); // Will trigger scoreboard if at level 3
+            }
         }
 
     private:
-        std::string m_SoundFile;
+        LevelManagerComponent* m_pLevelManager;
+    };
+
+    class ToggleMuteCommand : public Command
+    {
+    public:
+        void Execute() override
+        {
+            auto& soundSystem = dae::SoundServiceLocator::Get();
+            m_IsMuted = !m_IsMuted;
+            soundSystem.SetMuted(m_IsMuted);
+            std::cout << "[Sound] " << (m_IsMuted ? "Muted" : "Unmuted") << "\n";
+        }
+
+    private:
+       bool m_IsMuted = false;
     };
 
     class MoveCommandNobbin : public Command

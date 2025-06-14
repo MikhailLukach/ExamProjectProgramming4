@@ -97,20 +97,33 @@ void dae::LevelManagerComponent::Update(float deltaTime)
 
         dae::SoundServiceLocator::Get().PlaySound(dae::ResourceManager::GetInstance().GetFullPath("LevelComplete.wav"));
 
-        ++m_CurrentLevelIndex;
-        char buf[64];
-        std::snprintf(buf, sizeof(buf), m_LevelFilePattern.c_str(), m_CurrentLevelIndex);
-
-        auto resetObj = scene->FindObjectWithComponent<LevelResetComponent>();
-        if (auto reset = resetObj ? resetObj->GetComponent<LevelResetComponent>() : nullptr)
-        {
-            reset->QueueResetToLevel(m_CurrentLevelIndex);
-        }
-
-        m_LoadedNextLevel = true;
-
-        std::cout << "[LevelManager] Loaded next level: " << buf << "\n";
-
-        // m_pLoader->LoadLevelBinary(buf, ...);
+        LoadNextLevelOrScoreboard();
     }
+}
+
+void dae::LevelManagerComponent::LoadNextLevelOrScoreboard()
+{
+    auto* scene = dae::SceneManager::GetInstance().GetCurrentScene();
+    if (!scene || m_LoadedNextLevel) return;
+
+    auto resetObj = scene->FindObjectWithComponent<LevelResetComponent>();
+
+    if (m_CurrentLevelIndex >= 3)
+    {
+        std::cout << "[LevelManager] Max level reached, loading scoreboard.\n";
+        if (auto reset = resetObj ? resetObj->GetComponent<LevelResetComponent>() : nullptr)
+            reset->QueueResetToLevel(-1);
+        m_LoadedNextLevel = true;
+        return;
+    }
+
+    ++m_CurrentLevelIndex;
+    char buf[64];
+    std::snprintf(buf, sizeof(buf), m_LevelFilePattern.c_str(), m_CurrentLevelIndex);
+
+    if (auto reset = resetObj ? resetObj->GetComponent<LevelResetComponent>() : nullptr)
+        reset->QueueResetToLevel(m_CurrentLevelIndex);
+
+    std::cout << "[LevelManager] Loaded next level: " << buf << "\n";
+    m_LoadedNextLevel = true;
 }

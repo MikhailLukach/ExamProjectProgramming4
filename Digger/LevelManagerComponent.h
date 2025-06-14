@@ -44,6 +44,8 @@ namespace dae
 			return m_Players;
 		}
 
+		void LoadNextLevelOrScoreboard();
+
 	private:
 		std::vector<std::shared_ptr<GameObject>> m_MoneyBags;
 		std::vector<std::shared_ptr<GameObject>> m_Nobbins;

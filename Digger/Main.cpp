@@ -503,6 +503,10 @@ void LoadGame(int levelIndex = 1)
 		tileManager.get(), levelManager.get(), animator.get(), dae::AnimationState::WalkRight));
 	input.BindCommandKeyboard(SDLK_d, dae::InputType::Released, std::make_unique<dae::StopAnimationCommand>(animator.get()));
 
+	input.BindCommandKeyboard(SDLK_F1, dae::InputType::Released, std::make_unique<dae::SkipLevelCommand>(levelManager.get()));
+
+	input.BindCommandKeyboard(SDLK_F2, dae::InputType::Down, std::make_unique<dae::ToggleMuteCommand>());
+
 	constexpr float kFireballCooldown = 10.f;
 	input.BindCommandController(0, dae::GameController::A, dae::InputType::Released,std::make_unique<dae::ShootFireballCommand>(player.get(), 
 		tileManager.get(), score.get(), kFireballCooldown));
@@ -664,6 +668,10 @@ void LoadCoopGame(int levelIndex = 1)
 	input.BindCommandKeyboard(SDLK_d, dae::InputType::Pressed, std::make_unique<dae::MoveCommand>(player2.get(), glm::vec3(1, 0, 0), playerSpeed,
 		tileManager.get(), levelManager.get(), animator2.get(), dae::AnimationState::WalkRight));
 	input.BindCommandKeyboard(SDLK_d, dae::InputType::Released, std::make_unique<dae::StopAnimationCommand>(animator2.get()));
+
+	input.BindCommandKeyboard(SDLK_F1, dae::InputType::Released, std::make_unique<dae::SkipLevelCommand>(levelManager.get()));
+
+	input.BindCommandKeyboard(SDLK_F2, dae::InputType::Down, std::make_unique<dae::ToggleMuteCommand>());
 
 	input.BindCommandKeyboard(SDLK_SPACE, dae::InputType::Released,
 		std::make_unique<dae::ShootFireballCommandIndividual>(player2.get(),
@@ -924,6 +932,10 @@ void LoadVersusGame(int levelIndex = 1)
 	input.BindCommandKeyboard(SDLK_d, dae::InputType::Pressed, std::make_unique<dae::MoveCommandNobbin>(nobbinPlayer.get(), glm::vec3(1, 0, 0), playerSpeed,
 		tileManager.get(), levelManager.get(), nPAnimator.get(), dae::AnimationState::WalkRight));
 	input.BindCommandKeyboard(SDLK_d, dae::InputType::Released, std::make_unique<dae::StopAnimationCommand>(nPAnimator.get()));
+
+	input.BindCommandKeyboard(SDLK_F1, dae::InputType::Released, std::make_unique<dae::SkipLevelCommand>(levelManager.get()));
+
+	input.BindCommandKeyboard(SDLK_F2, dae::InputType::Down, std::make_unique<dae::ToggleMuteCommand>());
 	//--
 
 	//-- Other Nobbin spawn

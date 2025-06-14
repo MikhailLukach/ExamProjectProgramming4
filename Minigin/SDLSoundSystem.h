@@ -21,6 +21,8 @@ namespace dae
 		void PlayMusic(const std::string& musicFile, int loops = -1) override;
 		void StopMusic() override;
 
+		void SetMuted(bool mute) override;
+
 	private:
 		void ProcessQueue();
 		Mix_Chunk* GetOrLoadChunk(const std::string& file);

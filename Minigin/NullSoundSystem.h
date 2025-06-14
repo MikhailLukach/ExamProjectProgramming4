@@ -21,5 +21,10 @@ namespace dae
 		{
 			std::cout << "[NullSoundSystem] Would stop music " << "\n";
 		}
+
+		void  SetMuted(bool mute) override
+		{
+			std::cout << "[NullSoundSystem] Would mute music if: " << mute << "\n";
+		}
 	};
 }
