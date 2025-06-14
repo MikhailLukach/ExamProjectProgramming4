@@ -26,7 +26,7 @@ const std::array<std::string, 8> dae::GemComponent::soundPaths = {
 
 void dae::GemComponent::Render() const
 {
-	auto* owner = GetOwner();
+	/*auto* owner = GetOwner();
 	if (!owner) return;
 
 	auto transform = owner->GetTransform();
@@ -45,7 +45,7 @@ void dae::GemComponent::Render() const
 
 	// Red debug box
 	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-	SDL_RenderDrawRect(renderer, &gemRect);
+	SDL_RenderDrawRect(renderer, &gemRect);*/
 }
 
 void dae::GemComponent::Update(float)

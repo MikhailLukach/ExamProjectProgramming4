@@ -11,7 +11,7 @@ dae::GridOutlineComponent::GridOutlineComponent(int tileWidth, int tileHeight, S
 
 void dae::GridOutlineComponent::Render() const
 {
-	if (!GetOwner()) return;
+	/*if (!GetOwner()) return;
 
 	auto pos = GetOwner()->GetTransform()->GetLocalPosition();
 	SDL_Rect rect{};
@@ -25,5 +25,5 @@ void dae::GridOutlineComponent::Render() const
 
 	SDL_SetRenderDrawColor(renderer, m_Color.r, m_Color.g, m_Color.b, m_Color.a);
 	SDL_RenderDrawRect(renderer, &rect);
-	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // Reset to white
+	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // Reset to white*/
 }

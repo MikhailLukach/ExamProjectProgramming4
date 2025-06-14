@@ -392,8 +392,6 @@ void LoadGame(int levelIndex = 1)
 	auto render = player->AddComponent<dae::RenderComponent>("CharacterSpriteSheetFilledBackground.png");
 	render->SetSize(32, 32);
 
-	player->AddComponent<dae::PlayerDebugComponent>();
-
 	auto animator = player->AddComponent<dae::SpriteAnimatorComponent>(render.get(), 16, 16, 0.2f);
 
 	animator->PlayAnimation(0, 3);
@@ -754,8 +752,11 @@ void LoadCoopGame(int levelIndex = 1)
 	//-- Game Logic Setup
 	auto resetGO = std::make_shared<dae::GameObject>();
 	auto resetComp = resetGO->AddComponent<dae::LevelResetComponent>([](int levelIndex) {
-		LoadCoopGame(levelIndex); // your global or static LoadGame
-		},true);
+		if (levelIndex == -1)
+			LoadScoreBoard();
+		else
+			LoadCoopGame(levelIndex);
+		}, false);
 	lives1->AddObserver(resetComp);
 	lives2->AddObserver(resetComp);
 	scene.Add(resetGO);
@@ -803,8 +804,6 @@ void LoadVersusGame(int levelIndex = 1)
 
 	auto render = player->AddComponent<dae::RenderComponent>("CharacterSpriteSheetFilledBackground.png");
 	render->SetSize(32, 32);
-
-	player->AddComponent<dae::PlayerDebugComponent>();
 
 	auto animator = player->AddComponent<dae::SpriteAnimatorComponent>(render.get(), 16, 16, 0.2f);
 
@@ -899,8 +898,6 @@ void LoadVersusGame(int levelIndex = 1)
 	auto nPRender = nobbinPlayer->AddComponent<dae::RenderComponent>("NormalNobbinSpritesheet.png");
 	nPRender->SetSize(32, 32);
 
-	nobbinPlayer->AddComponent<dae::PlayerDebugComponent>();
-
 	auto nPAnimator = nobbinPlayer->AddComponent<dae::SpriteAnimatorComponent>(nPRender.get(), 16, 16, 0.2f);
 
 	nPAnimator->PlayAnimation(3, 3);
@@ -951,8 +948,11 @@ void LoadVersusGame(int levelIndex = 1)
 	//-- Game Logic Setup
 	auto resetGO = std::make_shared<dae::GameObject>();
 	auto resetComp = resetGO->AddComponent<dae::LevelResetComponent>([](int levelIndex) {
-		LoadVersusGame(levelIndex); // your global or static LoadGame
-		},false);
+		if (levelIndex == -1)
+			LoadScoreBoard();
+		else
+			LoadVersusGame(levelIndex);
+		}, false);
 	lives->AddObserver(resetComp);
 	scene.Add(resetGO);
 	//--

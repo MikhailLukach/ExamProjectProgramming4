@@ -20,7 +20,7 @@ dae::FireBallComponent::FireBallComponent(const glm::vec2& direction, float spee
 
 void dae::FireBallComponent::Render() const
 {
-    SDL_Renderer* renderer = Renderer::GetInstance().GetSDLRenderer();
+    /*SDL_Renderer* renderer = Renderer::GetInstance().GetSDLRenderer();
     if (!renderer) return;
 
     auto pos = GetOwner()->GetTransform()->GetWorldPosition();
@@ -31,7 +31,7 @@ void dae::FireBallComponent::Render() const
     rect.h = 16;
 
     SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
-    SDL_RenderDrawRect(renderer, &rect);
+    SDL_RenderDrawRect(renderer, &rect);*/
 }
 
 void dae::FireBallComponent::Update(float deltaTime)

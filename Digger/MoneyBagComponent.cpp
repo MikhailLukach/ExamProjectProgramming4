@@ -18,25 +18,7 @@ dae::MoneyBagComponent::MoneyBagComponent(LevelManagerComponent* levelManager)
 
 void dae::MoneyBagComponent::Render() const
 {
-#ifdef _DEBUG // Optional: only in debug builds
-	SDL_Renderer* renderer = dae::Renderer::GetInstance().GetSDLRenderer(); // Or your equivalent
 
-	if (renderer)
-	{
-		SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255); // Red for falling bag
-
-		int boxSize = 16; // Match your sprite/tile size
-		auto pos = GetOwner()->GetTransform()->GetWorldPosition();
-
-		SDL_Rect debugRect{};
-		debugRect.x = static_cast<int>(pos.x - boxSize / 2);
-		debugRect.y = static_cast<int>(pos.y - boxSize / 2);
-		debugRect.w = boxSize;
-		debugRect.h = boxSize;
-
-		SDL_RenderDrawRect(renderer, &debugRect);
-	}
-#endif
 }
 
 void dae::MoneyBagComponent::Update(float deltaTime)
